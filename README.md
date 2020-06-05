@@ -24,5 +24,5 @@ C-SDK与OS/硬件平台无关, 全部部分用C编写, 它定义了HAL层来对�
 
 SDK提供了一系列的编程文档来描述如何使用SDK提供的软件功能, 请[访问此处](https://code.aliyun.com/edward.yangx/public-docs/wikis/user-guide/Linkkit_User_Manual)进行了解
 
-#变更说明
+# 变更说明
 20200605 在阿里SDK-3.20基础上进行了协议层框架封装
