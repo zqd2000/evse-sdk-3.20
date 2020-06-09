@@ -3,42 +3,43 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <stddef.h>
-#include <stdint.h>
+#include "infra_types.h"
 
 #define EVS_MAX_TRADE_LEN 32 + 1
 #define EVS_MAX_CAR_VIN_LEN 17 + 1
 #define EVS_MAX_MAC_ADDR_LEN 32 + 1
-#define EVS_MAX_DATA_LEN 256
 #define EVS_MAX_MODEL_ID_LEN 16 + 1
 #define EVS_MAX_ALARM_LEN 32
+#define EVS_MAX_DATA_LEN 1024
 
 typedef enum
 {
-	evs_send_event_fireware_info = 10,
-	evs_send_event_ask_feeModel = 11,
-	evs_send_event_startCharge = 12,
-	evs_send_event_startResult = 13,
-	evs_send_event_stopCharge = 14,
-	evs_send_event_tradeInfo = 15,
-	evs_send_event_alarm = 16,
-	evs_send_event_acPile_change = 17,
-	evs_send_event_dcPile_change = 18,
-	evs_send_event_groundLock_change = 19,
-	evs_send_event_gateLock_change = 20,
+	EVS_CMD_EVENT_FIREWARE_INFO = 10,
+	EVS_CMD_EVENT_ASK_FEEMODEL = 11,
+	EVS_CMD_EVENT_STARTCHARGE = 12,
+	EVS_CMD_EVENT_STARTRESULT = 13,
+	EVS_CMD_EVENT_STOPCHARGE = 14,
+	EVS_CMD_EVENT_TRADEINFO = 15,
+	EVS_CMD_EVENT_ALARM = 16,
+	EVS_CMD_EVENT_ACPILE_CHANGE = 17,
+	EVS_CMD_EVENT_DCPILE_CHANGE = 18,
+	EVS_CMD_EVENT_GROUNDLOCK_CHANGE = 19,
+	EVS_CMD_EVENT_GATELOCK_CHANGE = 20,
+
 } evs_cmd_event_enum;
 
 typedef enum
 {
-	evs_send_property_dcPile = 10,
-	evs_send_property_acPile = 11,
-	evs_send_property_ac_work = 12,
-	evs_send_property_ac_nonwork = 13,
-	evs_send_property_dc_work = 14,
-	evs_send_property_dc_nonwork = 15,
-	evs_send_property_meter = 16,
-	evs_send_property_BMS = 17,
-	evs_send_property_dc_input_meter = 18,
+	EVS_CMD_PROPERTY_DCPILE = 10,
+	EVS_CMD_PROPERTY_ACPILE = 11,
+	EVS_CMD_PROPERTY_AC_WORK = 12,
+	EVS_CMD_PROPERTY_AC_NONWORK = 13,
+	EVS_CMD_PROPERTY_DC_WORK = 14,
+	EVS_CMD_PROPERTY_DC_NONWORK = 15,
+	EVS_CMD_PROPERTY_DC_OUTMETER = 16,
+	EVS_CMD_PROPERTY_AC_OUTMETER = 17,
+	EVS_CMD_PROPERTY_BMS = 18,
+	EVS_CMD_PROPERTY_DC_INPUT_METER = 19,
 } evs_cmd_property_enum;
 
 //固件信息上报事件参数
@@ -71,8 +72,8 @@ typedef struct
 	uint8_t modelId[EVS_MAX_MODEL_ID_LEN];
 	uint8_t stakeModel[20];
 	uint32_t vendorCode;
-	uint8_t deSn[16 + 1]; //字符串
-	uint8_t deType;
+	uint8_t devSn[16 + 1]; //字符串
+	uint8_t devType;
 	uint8_t portNum;
 	uint8_t simMac[EVS_MAX_MAC_ADDR_LEN]; //HEX数组
 	uint32_t longitude;
@@ -83,6 +84,8 @@ typedef struct
 	uint8_t btMac[EVS_MAX_MAC_ADDR_LEN]; //HEX数组
 	uint8_t meaType;
 	uint32_t otRate;
+	uint32_t otMinVol;
+	uint32_t otMaxVol;
 	uint32_t otVol;
 	uint32_t otCur;
 	uint8_t inMeter[2][6];	//压缩BCD
@@ -166,7 +169,8 @@ typedef struct
 typedef struct
 {
 	uint8_t gunNo;
-	uint8_t modelId[EVS_MAX_MODEL_ID_LEN];
+	uint8_t eleModelId[EVS_MAX_MODEL_ID_LEN];
+	uint8_t serModeId[EVS_MAX_MODEL_ID_LEN];
 } evs_event_ask_feeModel;
 
 //计费模型更新服务下发参数
@@ -179,13 +183,18 @@ typedef struct
 // 7		服务费
 typedef struct
 {
-	uint8_t modelId[EVS_MAX_MODEL_ID_LEN];
-	uint8_t validTime[8];
-	uint8_t segNo;
-	uint8_t timeSeg[14][4];
-	uint8_t segFlag[14];
-	uint32_t chargeFee[14];
-	uint32_t serviceFee[14];
+	uint8_t eleModelId[EVS_MAX_MODEL_ID_LEN];
+	uint8_t serModelId[EVS_MAX_MODEL_ID_LEN];
+	//uint8_t validTime[8];
+	uint8_t eleTimeNum;
+	uint8_t eleTimeSeg[14][4];
+	uint8_t eleSegFlag[14];
+	uint8_t chargeFee[4];
+
+	uint8_t serTimeNum;
+	uint8_t serTimeSeg[14][4];
+	uint32_t serSegFlag[14];
+	uint32_t serviceFee[4];
 } evs_service_issue_feeModel;
 
 //计费模型更新结果设备回复参数
@@ -193,7 +202,8 @@ typedef struct
 // 2		失败原因
 typedef struct
 {
-	uint8_t modelId[EVS_MAX_MODEL_ID_LEN];
+	uint8_t eleModelId[EVS_MAX_MODEL_ID_LEN];
+	uint8_t serModelId[EVS_MAX_MODEL_ID_LEN];
 	uint8_t res;
 } evs_service_feedback_feeModel;
 
@@ -268,7 +278,7 @@ typedef struct
 	uint8_t preTradeNo[EVS_MAX_TRADE_LEN];
 	uint8_t tradeNo[EVS_MAX_TRADE_LEN];
 	uint8_t startType;
-	uint8_t vinCode[EVS_MAX_CAR_VIN_LEN];
+	uint8_t authCode[EVS_MAX_CAR_VIN_LEN];
 	uint8_t batterySOC;
 	uint32_t batteryCap;
 	uint32_t chargeTimes;
@@ -293,7 +303,8 @@ typedef struct
 	uint8_t gunNo;
 	uint8_t preTradeNo[EVS_MAX_TRADE_LEN];
 	uint8_t tradeNo[EVS_MAX_TRADE_LEN];
-	uint8_t authCode[40]; //若启动方式为反向扫码，填入二维码信息；若启动方式为即插即充，填VIN信息。
+	uint8_t vinCode[18];  //若启动方式为反向扫码，填入二维码信息；若启动方式为即插即充，填VIN信息。
+	uint8_t oppoCode[40]; //若启动方式为反向扫码，填入二维码信息；若启动方式为即插即充，填VIN信息。
 	uint8_t result;
 	uint8_t chargeMode;
 	uint32_t limitData;
@@ -515,7 +526,7 @@ typedef struct
 // 2	控制指令
 typedef struct
 {
-	uint8_t lcokNo;
+	uint8_t lockNo;
 	uint8_t ctrlFlag;
 } evs_service_gateLock_ctrl;
 
@@ -569,7 +580,7 @@ typedef struct
 	uint8_t gunNo;
 	uint32_t time;
 	uint16_t Sum;
-	uint16_t val[7]; //格式为“[标识1：值,标识2：值,...标识N：值]”，标识详见附录 I
+	uint8_t val[7][8]; //格式为“[标识1：值,标识2：值,...标识N：值]”，标识详见附录 I
 } evs_event_pile_stutus_change;
 
 /*********************************************交流业务相关************************************************************/
@@ -597,8 +608,9 @@ typedef struct
 	uint32_t acCurB;
 	uint32_t acVolC;
 	uint32_t acCurC;
-	uint16_t caseTamp;
-	uint8_t modelID[EVS_MAX_MODEL_ID_LEN];
+	uint16_t caseTemp;
+	uint8_t eleModelId[EVS_MAX_MODEL_ID_LEN];
+	uint8_t serModelId[EVS_MAX_MODEL_ID_LEN];
 } evs_property_acPile;
 
 //交流充电枪充电中实时监测属性
@@ -631,8 +643,7 @@ typedef struct
 typedef struct
 {
 	uint8_t gunNo;
-	uint8_t RunStatus;
-	uint8_t WorkStatus;
+	uint8_t workStatus;
 	uint8_t conStatus;
 	uint8_t outRelayStatus;
 	uint8_t eLockStatus;
@@ -674,8 +685,7 @@ typedef struct
 typedef struct
 {
 	uint8_t gunNo;
-	uint8_t RunStatus;
-	uint8_t WorkStatus;
+	uint8_t workStatus;
 	uint8_t conStatus;
 	uint8_t outRelayStatus;
 	uint8_t eLockStatus;
@@ -715,10 +725,10 @@ typedef struct
 	uint32_t acCurB;
 	uint32_t acVolC;
 	uint32_t acCurC;
-	uint16_t caseTamp;
+	uint16_t caseTemp;
 	uint16_t inletTemp;
 	uint16_t outletTemp;
-	uint8_t modelID[EVS_MAX_MODEL_ID_LEN];
+	uint8_t modelId[EVS_MAX_MODEL_ID_LEN];
 } evs_property_dcPile;
 //直流充电枪BMS监测属性
 // 1	充电枪编号
@@ -796,9 +806,8 @@ typedef struct
 typedef struct
 {
 	uint8_t gunNo;
-	uint8_t RunStatus;
-	uint8_t WorkStatus;
-	uint8_t conStatus;
+	uint8_t workStatus;
+	uint8_t gunStatus;
 	uint8_t outRelayStatus;
 	uint8_t eLockStatus;
 
@@ -819,7 +828,6 @@ typedef struct
 	uint8_t socVal;
 	uint16_t needVol;
 	uint16_t needCur;
-	uint32_t totalElect;
 	uint8_t chargeMode;
 	uint16_t bmsVol;
 	uint16_t bmsCur;
@@ -827,6 +835,7 @@ typedef struct
 	uint16_t remainT;
 	uint16_t MHTemp;
 	uint16_t MLTemp;
+	uint32_t totalElect;
 	uint32_t sharpElect;
 	uint32_t peakElect;
 	uint32_t flatElect;
@@ -852,9 +861,8 @@ typedef struct
 typedef struct
 {
 	uint8_t gunNo;
-	uint8_t RunStatus;
-	uint8_t WorkStatus;
-	uint8_t conStatus;
+	uint8_t workStatus;
+	uint8_t gunStatus;
 	uint8_t eLockStatus;
 
 	uint8_t DCK1Status;
@@ -865,7 +873,7 @@ typedef struct
 	uint16_t conTemp2;
 	uint32_t dcVol;
 	uint32_t dcCur;
-} evs_property_dc_nonwork;
+} evs_property_dc_nonWork;
 
 //直流输入电表底值监测属性
 // 充电枪编号
@@ -880,7 +888,7 @@ typedef struct
 typedef struct
 {
 	uint8_t gunNo;
-	uint32_t acqTime;
+	uint8_t acqTime[15];
 	uint8_t mailAddr[6]; //压缩BCD
 	uint8_t meterNo[6];
 	uint8_t assetID[32];
@@ -904,7 +912,7 @@ typedef struct
 typedef struct
 {
 	uint8_t gunNo;
-	uint32_t acqTime;
+	uint8_t acqTime[15];
 	uint8_t mailAddr[6]; //压缩BCD
 	uint8_t meterNo[6];
 	uint8_t assetID[32];
@@ -912,7 +920,273 @@ typedef struct
 	uint8_t lastTrade[EVS_MAX_TRADE_LEN];
 	uint32_t power;
 } evs_property_meter;
+/******************************************SDK提供的接口供用户调用*************************************************/
 
+/**
+ *
+ * 函数 evs_send_event() SDK内部实现的事件发送接口, 供使用者调用。
+ * ---
+ * Interface of evs_send_event() implemented by SDK， provide for user of SDK.
+ *
+ * 
+ */
+/**
+ * @brief Send pile event data to SDK.
+ *---
+ * @param [in] event_type: @n the event you want to send.
+ * @param [in] param: @n the event data will be written.
+ * @return failed -1 success 0.
+ * @see None.
+ * @note None.
+ */
+int8_t evs_send_event(evs_cmd_event_enum event_type, void *param);
 
+/**
+ *
+ * 函数 evs_send_property() SDK内部实现的事件发送接口, 供使用者调用。
+ * ---
+ * Interface of evs_send_property() implemented by SDK， provide for user of SDK.
+ *
+ * 
+ */
+/**
+ * @brief Send pile porperty data to SDK.
+ *---
+ * @param [in] event_type: @n the property you want to send.
+ * @param [in] param: @n the property data will be written.
+ * @return failed -1 success 0.
+ * @see None.
+ * @note None.
+ */
+int8_t evs_send_property(evs_cmd_property_enum property_type, void *param);
+
+/******************************************需用户实现的回调函数*************************************************/
+
+/**
+ *
+ * 函数 callback_service_query_log() 需要SDK的使用者针对SDK将运行的硬件平台填充实现, 供SDK调用
+ * ---
+ * Interface of callback_service_query_log() requires to be implemented by user of SDK.
+ *
+ * 
+ */
+/**
+ * @brief Reply IOT platform log query service by param through SDK.
+ *---
+ * @param [in] param: @n the param received from IOT platform.
+ * @param [out] result: @n the result data will be written by user of SDK.
+ * @return failed -1 success 0.
+ * @see None.
+ * @note None.
+ */
+int8_t callback_service_query_log(evs_service_query_log *param, evs_service_feedback_query_log *result);
+
+/**
+ *
+ * 函数 callback_service_devCtrl() 需要SDK的使用者针对SDK将运行的硬件平台填充实现, 供SDK调用
+ * ---
+ * Interface of callback_service_devCtrl() requires to be implemented by user of SDK.
+ *
+ * 
+ */
+/**
+ * @brief Reply IOT platform device control service by param through SDK.
+ *---
+ * @param [in] param: @n the param received from IOT platform.
+ * @param [out] result: @n the result data will be written by user of SDK.
+ * @return failed -1 success 0.
+ * @see None.
+ * @note None.
+ */
+int8_t callback_service_devCtrl(evs_service_devCtrl *param, evs_service_feedback_devCtrl *result);
+
+/**
+ *
+ * 函数 callback_service_lockCtrl() 需要SDK的使用者针对SDK将运行的硬件平台填充实现, 供SDK调用
+ * ---
+ * Interface of callback_service_lockCtrl() requires to be implemented by user of SDK.
+ *
+ * 
+ */
+/**
+ * @brief Reply IOT platform chargeGun e-lock control service by param through SDK.
+ *---
+ * @param [in] param: @n the param received from IOT platform.
+ * @param [out] result: @n the result data will be written by user of SDK.
+ * @return failed -1 success 0.
+ * @see None.
+ * @note None.
+ */
+int8_t callback_service_lockCtrl(evs_service_lockCtrl *param, evs_service_feedback_lockCtrl *result);
+
+/**
+ *
+ * 函数 callback_service_issue_feeModel() 需要SDK的使用者针对SDK将运行的硬件平台填充实现, 供SDK调用
+ * ---
+ * Interface of callback_service_issue_feeModel() requires to be implemented by user of SDK.
+ *
+ * 
+ */
+/**
+ * @brief Reply IOT platform feemodel issue service by param through SDK.
+ *---
+ * @param [in] param: @n the param received from IOT platform.
+ * @param [out] result: @n the result data will be written by user of SDK.
+ * @return failed -1 success 0.
+ * @see None.
+ * @note None.
+ */
+int8_t callback_service_issue_feeModel(evs_service_issue_feeModel *param, evs_service_feedback_feeModel *result);
+
+/**
+ *
+ * 函数 callback_service_startCharge() 需要SDK的使用者针对SDK将运行的硬件平台填充实现, 供SDK调用
+ * ---
+ * Interface of callback_service_startCharge() requires to be implemented by user of SDK.
+ *
+ * 
+ */
+/**
+ * @brief Reply IOT platform remote start-charge service by param through SDK.
+ *---
+ * @param [in] param: @n the param received from IOT platform.
+ * @param [out] result: @n the result data will be written by user of SDK.
+ * @return failed -1 success 0.
+ * @see None.
+ * @note None.
+ */
+int8_t callback_service_startCharge(evs_service_startCharge *param, evs_service_feedback_startCharge *result);
+
+/**
+ *
+ * 函数 callback_service_authCharge() 需要SDK的使用者针对SDK将运行的硬件平台填充实现, 供SDK调用
+ * ---
+ * Interface of callback_service_authCharge() requires to be implemented by user of SDK.
+ *
+ * 
+ */
+/**
+ * @brief Reply IOT platform authorization charge service by param through SDK.
+ *---
+ * @param [in] param: @n the param received from IOT platform.
+ * @param [out] result: @n the result data will be written by user of SDK.
+ * @return failed -1 success 0.
+ * @see None.
+ * @note None.
+ */
+int8_t callback_service_authCharge(evs_service_authCharge *param, evs_service_feedback_authCharge *result);
+
+/**
+ *
+ * 函数 callback_service_stopCharge() 需要SDK的使用者针对SDK将运行的硬件平台填充实现, 供SDK调用
+ * ---
+ * Interface of callback_service_stopCharge() requires to be implemented by user of SDK.
+ *
+ * 
+ */
+/**
+ * @brief Reply IOT platform remote stop-charge service by param through SDK.
+ *---
+ * @param [in] param: @n the param received from IOT platform.
+ * @param [out] result: @n the result data will be written by user of SDK.
+ * @return failed -1 success 0.
+ * @see None.
+ * @note None.
+ */
+int8_t callback_service_stopCharge(evs_service_stopCharge *param, evs_service_feedback_stopCharge *result);
+
+/**
+ *
+ * 函数 callback_service_rsvCharge() 需要SDK的使用者针对SDK将运行的硬件平台填充实现, 供SDK调用
+ * ---
+ * Interface of callback_service_rsvCharge() requires to be implemented by user of SDK.
+ *
+ * 
+ */
+/**
+ * @brief Reply IOT platform reservation charge service by param through SDK.
+ *---
+ * @param [in] param: @n the param received from IOT platform.
+ * @param [out] result: @n the result data will be written by user of SDK.
+ * @return failed -1 success 0.
+ * @see None.
+ * @note None.
+ */
+int8_t callback_service_rsvCharge(evs_service_rsvCharge *param, evs_service_feedback_rsvCharge *result);
+
+/**
+ *
+ * 函数 callback_service_confirmTrade() 需要SDK的使用者针对SDK将运行的硬件平台填充实现, 供SDK调用
+ * ---
+ * Interface of callback_service_confirmTrade() requires to be implemented by user of SDK.
+ *
+ * 
+ */
+/**
+ * @brief Reply IOT platform transaction confirm service by param through SDK.
+ *---
+ * @param [in] param: @n the param received from IOT platform.
+ * @return failed -1 success 0.
+ * @see None.
+ * @note None.
+ */
+int8_t callback_service_confirmTrade(evs_service_confirmTrade *param, void *result);
+
+/**
+ *
+ * 函数 callback_service_grounLock_ctrl() 需要SDK的使用者针对SDK将运行的硬件平台填充实现, 供SDK调用
+ * ---
+ * Interface of callback_service_grounLock_ctrl() requires to be implemented by user of SDK.
+ *
+ * 
+ */
+/**
+ * @brief Reply IOT platform smart ground locker service by param through SDK.
+ *---
+ * @param [in] param: @n the param received from IOT platform.
+ * @param [out] result: @n the result data will be written by user of SDK.
+ * @return failed -1 success 0.
+ * @see None.
+ * @note None.
+ */
+int8_t callback_service_grounLock_ctrl(evs_service_groundLock_ctrl *param, evs_service_feedback_groundLock_ctrl *result);
+
+/**
+ *
+ * 函数 callback_service_gateLock_ctrl() 需要SDK的使用者针对SDK将运行的硬件平台填充实现, 供SDK调用
+ * ---
+ * Interface of callback_service_gateLock_ctrl() requires to be implemented by user of SDK.
+ *
+ * 
+ */
+/**
+ * @brief Reply IOT platform smart gate locker service by param through SDK.
+ *---
+ * @param [in] param: @n the param received from IOT platform.
+ * @param [out] result: @n the result data will be written by user of SDK.
+ * @return failed -1 success 0.
+ * @see None.
+ * @note None.
+ */
+int8_t callback_service_gateLock_ctrl(evs_service_gateLock_ctrl *param, evs_service_feedback_gateLock_ctrl *result);
+
+/**
+ *
+ * 函数 callback_service_orderCharge() 需要SDK的使用者针对SDK将运行的硬件平台填充实现, 供SDK调用
+ * ---
+ * Interface of callback_service_orderCharge() requires to be implemented by user of SDK.
+ *
+ * 
+ */
+/**
+ * @brief Reply IOT platform order-charge strategy service by param through SDK.
+ *---
+ * @param [in] param: @n the param received from IOT platform.
+ * @param [out] result: @n the result data will be written by user of SDK.
+ * @return failed -1 success 0.
+ * @see None.
+ * @note None.
+ */
+int8_t callback_service_orderCharge(evs_service_orderCharge *param, evs_service_feedback_orderCharge *result);
 
 #endif
