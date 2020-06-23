@@ -55,29 +55,6 @@ int HAL_Firmware_Persistence_Write(char *buffer, uint32_t length);
 
 int HAL_Firmware_Persistence_Stop(void);
 
-int HAL_GetDeviceAssetNo(char device_AssetNo[IOTX_DEVICE_ASSET_LEN]);
-
-int HAL_SetDeviceAssetNo(char *device_AssetNo);
-
-int HAL_GetDeviceRegCode(char device_RegCode[IOTX_DEVICE_REGISTRATION_LEN]);
-
-int HAL_SetDeviceRegCode(char *device_RegCode);
-
-int HAL_GetDeviceName(char device_name[IOTX_DEVICE_NAME_LEN]);
-
-int HAL_SetDeviceName(char *device_name);
-
-int HAL_GetDeviceSecret(char device_secret[IOTX_DEVICE_SECRET_LEN]);
-
-int HAL_SetDeviceSecret(char *device_secret);
-
-int HAL_GetProductKey(char product_key[IOTX_PRODUCT_KEY_LEN]);
-
-int HAL_SetProductKey(char *product_key);
-
-int HAL_GetProductSecret(char product_secret[IOTX_PRODUCT_SECRET_LEN]);
-
-int HAL_SetProductSecret(char *product_secret);
 
 long HAL_UTC_Get(void);
 

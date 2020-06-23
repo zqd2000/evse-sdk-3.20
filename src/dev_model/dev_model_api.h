@@ -23,6 +23,7 @@ typedef struct {
     char product_secret[IOTX_PRODUCT_SECRET_LEN + 1];
     char device_name[IOTX_DEVICE_NAME_LEN + 1];
     char device_secret[IOTX_DEVICE_SECRET_LEN + 1];
+    char product_Registration[IOTX_DEVICE_REG_CODE_LEN + 1];
 } iotx_linkkit_dev_meta_info_t;
 
 typedef enum {

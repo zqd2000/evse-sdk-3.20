@@ -4,7 +4,7 @@ config HAL_KV
 
 config SUPPORT_TLS
     bool
-    default y
+    default n
 
 config COAP_DTLS_SUPPORT
     bool

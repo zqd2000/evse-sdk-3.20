@@ -14,43 +14,76 @@
 #include "dev_model_api.h"
 #include "wrappers.h"
 #include "cJSON.h"
+
 #ifdef ATM_ENABLED
 #include "at_api.h"
 #endif
+
 #include "protocol.h"
 #include "interface.h"
-#include "protocol_data_def.h"
 
-#define cJSON_AddNumberToArray(array, n) cJSON_AddItemToArray(array, cJSON_CreateNumber(n))
-#define cJSON_AddStringToArray(array, s) cJSON_AddItemToArray(array, cJSON_CreateString(s))
+#ifdef DYNAMIC_REGISTER
+#include "dynreg_api.h"
+#endif
 
-//#include "protocol_data_def.h"
+//#define cJSON_AddNumberToArray(array, n) cJSON_AddItemToArray(array, cJSON_CreateNumber(n))
+//#define cJSON_AddStringToArray(array, s) cJSON_AddItemToArray(array, cJSON_CreateString(s))
 
-char g_product_key[IOTX_PRODUCT_KEY_LEN + 1] = "a1j42i9aAVT";
+char g_product_key[IOTX_PRODUCT_KEY_LEN + 1] = "";
 /* setup your productSecret !!! */
-char g_product_secret[IOTX_PRODUCT_SECRET_LEN + 1] = "Pwe3oQ5g11H50rXC";
+char g_product_secret[IOTX_PRODUCT_SECRET_LEN + 1] = " ";
 /* setup your deviceName !!! */
-char g_device_name[IOTX_DEVICE_NAME_LEN + 1] = "sdkTestDevice";
+char g_device_name[IOTX_DEVICE_NAME_LEN + 1] = "";
 /* setup your deviceSecret !!! */
-char g_device_secret[IOTX_DEVICE_SECRET_LEN + 1] = "pxxr7YkE5LR9Oi0bIhvam8WPAfDTqY2E";
-
-#define EXAMPLE_TRACE(...)                                      \
+char g_device_secret[IOTX_DEVICE_SECRET_LEN + 1] = "";
+/* setup your device_reg_code !!! */
+char g_device_reg_code[IOTX_DEVICE_REG_CODE_LEN + 1] = "";
+/*
+#define PROTOCOL_TRACE(...)                                      \
     do                                                          \
     {                                                           \
         HAL_Printf("\033[1;32;40m%s.%d: ", __func__, __LINE__); \
         HAL_Printf(__VA_ARGS__);                                \
         HAL_Printf("\033[0m\r\n");                              \
-    } while (0)
-#define EXAMPLE_MASTER_DEVID (0)
-#define EXAMPLE_YIELD_TIMEOUT_MS (200)
+    } while (0)*/
+#define PROTOCOL_TRACE(...) //PROTOCOL_TRACE(...)
+
+#define EVS_YIELD_TIMEOUT_MS (200)
+
+unsigned int strtoint(char s[])
+{
+    unsigned int i;
+    unsigned int num = 0;
+    for (i = 0; s[i] >= '0' && s[i] <= '9'; i++)
+    {
+        num = 10 * num + (s[i] - '0');
+    }
+    return num;
+}
+
+void bcd2str(unsigned char bcd[], char str[], unsigned int bcd_len)
+{
+    int i = 0, k = 0;
+    char buf[32] = {0};
+
+    if (memcmp(bcd, buf, bcd_len) != 0)
+    {
+
+        for (i = 0, k = 0; i < bcd_len && k < (2 * bcd_len); k++, i++)
+        {
+            str[k] = ((bcd[i] >> 4) + '0');
+            str[++k] = (bcd[i] & 0x0f) + '0';
+        }
+    }
+}
 
 typedef struct
 {
     int master_devid;
     int cloud_connected;
     int master_initialized;
-} user_example_ctx_t;
-static user_example_ctx_t g_user_example_ctx;
+} evs_user_ctx_t;
+static evs_user_ctx_t evs_g_user_ctx;
 iotx_linkkit_dev_meta_info_t master_meta_info;
 
 /**
@@ -59,7 +92,7 @@ iotx_linkkit_dev_meta_info_t master_meta_info;
  * @param request_len 属性设置请求的payload长度
  * @return 解析成功: 0, 解析失败: <0
  */
-int32_t app_parse_property(const char *request, uint32_t request_len)
+int app_parse_property(const char *request, unsigned int request_len)
 {
     cJSON *structcnt = NULL;
 
@@ -72,9 +105,7 @@ int32_t app_parse_property(const char *request, uint32_t request_len)
     structcnt = cJSON_GetObjectItem(req, "structCnt");
     if (structcnt != NULL && cJSON_IsObject(structcnt))
     {
-        /* process property structCnt here */
-
-        EXAMPLE_TRACE("struct property id: structCnt");
+        PROTOCOL_TRACE("struct property id: structCnt");
     }
 
     cJSON_Delete(req);
@@ -85,8 +116,7 @@ int32_t app_parse_property(const char *request, uint32_t request_len)
 static int user_connected_event_handler(void)
 {
     void *callback;
-    EXAMPLE_TRACE("Cloud Connected");
-    g_user_example_ctx.cloud_connected = 1;
+    evs_g_user_ctx.cloud_connected = 1;
     callback = evs_service_callback(EVS_CONNECT_SUCC);
     if (callback)
     {
@@ -99,8 +129,7 @@ static int user_connected_event_handler(void)
 static int user_disconnected_event_handler(void)
 {
     void *callback;
-    EXAMPLE_TRACE("Cloud Disconnected");
-    g_user_example_ctx.cloud_connected = 0;
+    evs_g_user_ctx.cloud_connected = 0;
     callback = evs_service_callback(EVS_DISCONNECTED);
     if (callback)
     {
@@ -112,9 +141,7 @@ static int user_disconnected_event_handler(void)
 /* 设备初始化成功事件回调 */
 static int user_initialized(const int devid)
 {
-    EXAMPLE_TRACE("Device Initialized");
-    g_user_example_ctx.master_initialized = 1;
-
+    evs_g_user_ctx.master_initialized = 1;
     return 0;
 }
 
@@ -123,9 +150,7 @@ static int user_report_reply_event_handler(const int devid, const int msgid, con
                                            const int reply_len)
 {
     void *callback;
-    EXAMPLE_TRACE("Message Post Reply Received, Message ID: %d, Code: %d, Reply: %.*s", msgid, code,
-                  reply_len,
-                  (reply == NULL) ? ("NULL") : (reply));
+
     callback = evs_service_callback(EVS_REPORT_REPLY);
     if (callback)
     {
@@ -140,10 +165,6 @@ static int user_trigger_event_reply_event_handler(const int devid, const int msg
                                                   const int eventid_len, const char *message, const int message_len)
 {
     void *callback;
-    EXAMPLE_TRACE("Trigger Event Reply Received, Message ID: %d, Code: %d, EventID: %.*s, Message: %.*s",
-                  msgid, code,
-                  eventid_len,
-                  eventid, message_len, message);
 
     callback = evs_service_callback(EVS_TRIGGER_EVENT_REPLY);
     if (callback)
@@ -158,13 +179,1035 @@ static int user_trigger_event_reply_event_handler(const int devid, const int msg
 static int user_property_set_event_handler(const int devid, const char *request, const int request_len)
 {
     int res = 0;
-    EXAMPLE_TRACE("Property Set Received, Request: %s", request);
+    PROTOCOL_TRACE("Property Set Received, Request: %s", request);
 
     app_parse_property(request, request_len);
 
-    res = IOT_Linkkit_Report(EXAMPLE_MASTER_DEVID, ITM_MSG_POST_PROPERTY,
+    res = IOT_Linkkit_Report(evs_g_user_ctx.master_devid, ITM_MSG_POST_PROPERTY,
                              (unsigned char *)request, request_len);
-    EXAMPLE_TRACE("Post Property return: %d", res);
+    PROTOCOL_TRACE("Post Property return: %d", res);
+
+    return res;
+}
+
+/** 事件回调：接收到云端回复的时间戳 **/
+static int user_timestamp_reply_event_handler(const char *timestamp)
+{
+    PROTOCOL_TRACE("Current Timestamp: %s", timestamp);
+
+    char time_buf[11] = {0};
+    memcpy(time_buf, timestamp, sizeof(time_buf) - 1);
+
+    unsigned int time = strtoint(time_buf);
+
+    void *callback;
+    callback = evs_service_callback(EVS_TIME_SYNC);
+    if (callback)
+    {
+        ((int (*)(unsigned int))callback)(time);
+    }
+    return 0;
+}
+
+/** FOTA事件回调处理 **/
+static int user_fota_event_handler(int type, const char *version)
+{
+
+    /* 0 - new firmware exist, query the new firmware */
+    if (type == 0)
+    {
+        PROTOCOL_TRACE("New Firmware Version: %s", version);
+        void *callback;
+        callback = evs_service_callback(EVS_OTA_UPDATE);
+        if (callback)
+        {
+            ((int (*)(const char *))callback)(version);
+        }
+    }
+    return 0;
+}
+
+/** 事件回调：接收到云端错误信息 **/
+static int user_cloud_error_handler(const int code, const char *data, const char *detail)
+{
+    PROTOCOL_TRACE("code =%d ,data=%s, detail=%s", code, data, detail);
+    return 0;
+}
+
+/** 事件回调：通过动态注册获取到DeviceSecret **/
+static int dynreg_device_secret(const char *device_secret)
+{
+    PROTOCOL_TRACE("device secret: %s", device_secret);
+    return 0;
+}
+
+/** 事件回调: SDK内部运行状态打印 **/
+static int user_sdk_state_dump(int ev, const char *msg)
+{
+    void *callback;
+    PROTOCOL_TRACE("received state event, -0x%04x(%s)\n", -ev, msg);
+    callback = evs_service_callback(EVS_STATE_EVERYTHING);
+    if (callback)
+    {
+        ((int (*)(int ev, const char *msg))callback)(ev, msg);
+    }
+    return 0;
+}
+
+static int evs_service_get_config_handler(const char *request, char **response, int *response_len)
+{
+    void *callback;
+    int i = 0;
+    evs_data_dev_config service_dev_feedback_config_data;
+
+    callback = evs_service_callback(EVS_CONF_GET_SRV);
+    if (callback)
+    {
+        ((int (*)(const evs_data_dev_config *feedcak))callback)(&service_dev_feedback_config_data);
+    }
+
+    cJSON *response_root = cJSON_CreateObject();
+    cJSON *qrCodeArray;
+
+    cJSON_AddNumberToObject(response_root, "equipParamFreq", service_dev_feedback_config_data.equipParamFreq);
+    cJSON_AddNumberToObject(response_root, "gunElecFeeq", service_dev_feedback_config_data.gunElecFeeq);
+    cJSON_AddNumberToObject(response_root, "nonElecFreq", service_dev_feedback_config_data.nonElecFreq);
+    cJSON_AddNumberToObject(response_root, "faultWarnings", service_dev_feedback_config_data.faultWarnings);
+    cJSON_AddNumberToObject(response_root, "acMeterFreq", service_dev_feedback_config_data.acMeterFreq);
+    cJSON_AddNumberToObject(response_root, "dcMeterFreq", service_dev_feedback_config_data.dcMeterFreq);
+    cJSON_AddNumberToObject(response_root, "offlinChaLen", service_dev_feedback_config_data.offlinChaLen);
+    cJSON_AddNumberToObject(response_root, "grndLock", service_dev_feedback_config_data.grndLock);
+    cJSON_AddNumberToObject(response_root, "doorLock", service_dev_feedback_config_data.doorLock);
+    cJSON_AddNumberToObject(response_root, "encodeCon", service_dev_feedback_config_data.encodeCon);
+
+    cJSON_AddItemToObject(response_root, "qrCode", qrCodeArray = cJSON_CreateArray());
+    for (i = 0; i < EVS_MAX_PORT_NUM; i++)
+    {
+        //cJSON_AddStringToArray(qrCodeArray, service_dev_feedback_config_data.qrCode[i]);
+        cJSON_AddItemToArray(qrCodeArray, cJSON_CreateString(service_dev_feedback_config_data.qrCode[i]));
+    }
+
+    *response = cJSON_PrintUnformatted(response_root);
+    if (*response == NULL)
+    {
+        PROTOCOL_TRACE("Json Not Exist!");
+        return -1;
+    }
+    else
+    {
+        *response_len = strlen(*response);
+    }
+
+    cJSON_Delete(response_root);
+
+    return 0;
+}
+
+static int evs_service_update_config_handler(const char *request, char **response, int *response_len)
+{
+    void *callback;
+    cJSON *root = cJSON_Parse(request);
+    if (root == NULL || !cJSON_IsObject(root))
+    {
+        PROTOCOL_TRACE("JSON Parse Error");
+        return -1;
+    }
+
+    evs_data_dev_config service_dev_config_data;
+    int feedback_data;
+    int i = 0;
+    memset(&service_dev_config_data, 0, sizeof(service_dev_config_data));
+    cJSON *item_equipParamFreq = cJSON_GetObjectItem(root, "equipParamFreq");
+    if (item_equipParamFreq != NULL && cJSON_IsNumber(item_equipParamFreq))
+    {
+        service_dev_config_data.equipParamFreq = item_equipParamFreq->valueint;
+    }
+
+    cJSON *item_gunElecFeeq = cJSON_GetObjectItem(root, "gunElecFeeq");
+    if (item_gunElecFeeq != NULL && cJSON_IsNumber(item_gunElecFeeq))
+    {
+        service_dev_config_data.gunElecFeeq = item_gunElecFeeq->valueint;
+    }
+
+    cJSON *item_nonElecFreq = cJSON_GetObjectItem(root, "nonElecFreq");
+    if (item_nonElecFreq != NULL && cJSON_IsNumber(item_nonElecFreq))
+    {
+        service_dev_config_data.nonElecFreq = item_nonElecFreq->valueint;
+    }
+
+    cJSON *item_faultWarnings = cJSON_GetObjectItem(root, "faultWarnings");
+    if (item_faultWarnings != NULL && cJSON_IsNumber(item_faultWarnings))
+    {
+        service_dev_config_data.faultWarnings = item_faultWarnings->valueint;
+    }
+
+    cJSON *item_acMeterFreq = cJSON_GetObjectItem(root, "acMeterFreq");
+    if (item_acMeterFreq != NULL && cJSON_IsNumber(item_acMeterFreq))
+    {
+        service_dev_config_data.acMeterFreq = item_acMeterFreq->valueint;
+    }
+
+    cJSON *item_dcMeterFreq = cJSON_GetObjectItem(root, "dcMeterFreq");
+    if (item_dcMeterFreq != NULL && cJSON_IsNumber(item_dcMeterFreq))
+    {
+        service_dev_config_data.dcMeterFreq = item_dcMeterFreq->valueint;
+    }
+
+    cJSON *item_offlinChaLen = cJSON_GetObjectItem(root, "offlinChaLen");
+    if (item_offlinChaLen != NULL && cJSON_IsNumber(item_offlinChaLen))
+    {
+        service_dev_config_data.offlinChaLen = item_offlinChaLen->valueint;
+    }
+
+    cJSON *item_grndLock = cJSON_GetObjectItem(root, "grndLock");
+    if (item_grndLock != NULL && cJSON_IsNumber(item_grndLock))
+    {
+        service_dev_config_data.grndLock = item_grndLock->valueint;
+    }
+
+    cJSON *item_doorLock = cJSON_GetObjectItem(root, "doorLock");
+    if (item_doorLock != NULL && cJSON_IsNumber(item_doorLock))
+    {
+        service_dev_config_data.doorLock = item_doorLock->valueint;
+    }
+
+    cJSON *item_encodeCon = cJSON_GetObjectItem(root, "encodeCon");
+    if (item_encodeCon != NULL && cJSON_IsNumber(item_encodeCon))
+    {
+        service_dev_config_data.encodeCon = item_encodeCon->valueint;
+    }
+
+    cJSON *item_qrCode = cJSON_GetObjectItem(root, "qrCode");
+    if (item_qrCode != NULL && cJSON_IsArray(item_qrCode))
+    {
+        cJSON *item_arrayData;
+        for (i = 0; i < 4; i++)
+        {
+            item_arrayData = cJSON_GetArrayItem(item_qrCode, i);
+            memcpy(service_dev_config_data.qrCode[EVS_MAX_PORT_NUM], item_arrayData->valuestring, strlen(item_arrayData->valuestring));
+        }
+    }
+
+    callback = evs_service_callback(EVS_CONF_UPDATE_SRV);
+    if (callback)
+    {
+        ((int (*)(const evs_data_dev_config *request, int *feedcak))callback)(&service_dev_config_data, &feedback_data);
+    }
+
+    cJSON *response_root = cJSON_CreateObject();
+    cJSON_AddNumberToObject(response_root, "resCode", feedback_data);
+
+    *response = cJSON_PrintUnformatted(response_root);
+
+    if (*response == NULL)
+    {
+        PROTOCOL_TRACE("Json Not Exist!");
+        return -1;
+    }
+    else
+    {
+        *response_len = strlen(*response);
+    }
+
+    cJSON_Delete(root);
+    cJSON_Delete(response_root);
+
+    return 0;
+}
+
+static int evs_service_issue_feeModel_handler(const char *request, char **response, int *response_len)
+{
+    void *callback;
+    cJSON *root = cJSON_Parse(request);
+    if (root == NULL || !cJSON_IsObject(root))
+    {
+        PROTOCOL_TRACE("JSON Parse Error");
+        return -1;
+    }
+
+    evs_service_issue_feeModel service_feeModel_data;
+    evs_service_feedback_feeModel service_feedback_feeModel_data;
+    int i = 0;
+    memset(&service_feeModel_data, 0, sizeof(service_feeModel_data));
+    cJSON *item_eleModelId = cJSON_GetObjectItem(root, "eleModelId");
+    if (item_eleModelId != NULL && cJSON_IsString(item_eleModelId))
+    {
+        char *eleModelId = item_eleModelId->valuestring;
+        memcpy(service_feeModel_data.eleModelId, eleModelId, strlen(eleModelId));
+    }
+
+    /****服务费模型id*****/
+    cJSON *item_serModelId = cJSON_GetObjectItem(root, "serModelId");
+    if (item_serModelId != NULL && cJSON_IsString(item_serModelId))
+    {
+        char *serModelId = item_serModelId->valuestring;
+        memcpy(service_feeModel_data.serModelId, serModelId, strlen(serModelId));
+    }
+
+    cJSON *item_eleTimeNum = cJSON_GetObjectItem(root, "timeNum");
+    if (item_eleTimeNum != NULL && cJSON_IsNumber(item_eleTimeNum))
+    {
+        service_feeModel_data.TimeNum = item_eleTimeNum->valueint;
+    }
+
+    cJSON *item_eleTimeSeg = cJSON_GetObjectItem(root, "timeSeg");
+    if (item_eleTimeSeg != NULL && cJSON_IsArray(item_eleTimeSeg))
+    {
+        cJSON *item_arrayData;
+        for (i = 0; i < service_feeModel_data.TimeNum; i++)
+        {
+            item_arrayData = cJSON_GetArrayItem(item_eleTimeSeg, i);
+            memcpy(service_feeModel_data.TimeSeg[i], item_arrayData->valuestring, strlen(item_arrayData->valuestring));
+        }
+    }
+
+    cJSON *item_eleSegFlag = cJSON_GetObjectItem(root, "segFlag");
+    if (item_eleSegFlag != NULL && cJSON_IsArray(item_eleSegFlag))
+    {
+        cJSON *item_arrayData;
+        for (i = 0; i < service_feeModel_data.TimeNum; i++)
+        {
+            item_arrayData = cJSON_GetArrayItem(item_eleSegFlag, i);
+            service_feeModel_data.SegFlag[i] = item_arrayData->valueint;
+        }
+    }
+
+    cJSON *item_chargeFee = cJSON_GetObjectItem(root, "chargeFee");
+    if (item_chargeFee != NULL && cJSON_IsArray(item_chargeFee))
+    {
+        cJSON *item_arrayData;
+        for (i = 0; i < 4; i++)
+        {
+            item_arrayData = cJSON_GetArrayItem(item_chargeFee, i);
+            service_feeModel_data.chargeFee[i] = item_arrayData->valueint;
+        }
+    }
+
+    cJSON *item_serviceFee = cJSON_GetObjectItem(root, "serviceFee");
+    if (item_serviceFee != NULL && cJSON_IsArray(item_serviceFee))
+    {
+        cJSON *item_arrayData;
+        for (i = 0; i < 4; i++)
+        {
+            item_arrayData = cJSON_GetArrayItem(item_serviceFee, i);
+            service_feeModel_data.serviceFee[i] = item_arrayData->valueint;
+        }
+    }
+
+    callback = evs_service_callback(EVS_FEE_MODEL_UPDATA_SRV);
+    if (callback)
+    {
+        ((int (*)(const evs_service_issue_feeModel *request, evs_service_feedback_feeModel *feedcak))callback)(&service_feeModel_data, &service_feedback_feeModel_data);
+    }
+    cJSON *response_root = cJSON_CreateObject();
+    cJSON_AddStringToObject(response_root, "eleModelId", service_feedback_feeModel_data.eleModelId);
+    cJSON_AddStringToObject(response_root, "serModelId", service_feedback_feeModel_data.serModelId);
+    cJSON_AddNumberToObject(response_root, "result", service_feedback_feeModel_data.result);
+
+    *response = cJSON_PrintUnformatted(response_root);
+
+    if (*response == NULL)
+    {
+        PROTOCOL_TRACE("Json Not Exist!");
+        return -1;
+    }
+    else
+    {
+        *response_len = strlen(*response);
+    }
+
+    cJSON_Delete(root);
+    cJSON_Delete(response_root);
+
+    return 0;
+}
+
+static int evs_service_startCharge_handler(const char *request, char **response, int *response_len)
+{
+    void *callback;
+    cJSON *root = cJSON_Parse(request);
+    if (root == NULL || !cJSON_IsObject(root))
+    {
+        PROTOCOL_TRACE("JSON Parse Error");
+        return -1;
+    }
+    evs_service_startCharge service_charge_data;
+    evs_service_feedback_startCharge service_feedback_startCharge_data;
+    memset(&service_charge_data, 0, sizeof(service_charge_data));
+    /* Parse json */
+    cJSON *item_gunNo = cJSON_GetObjectItem(root, "gunNo");
+    if (item_gunNo != NULL && cJSON_IsNumber(item_gunNo))
+    {
+        service_charge_data.gunNo = item_gunNo->valueint;
+    }
+
+    cJSON *item_preTradeNo = cJSON_GetObjectItem(root, "preTradeNo");
+    if (item_preTradeNo != NULL && cJSON_IsString(item_preTradeNo))
+    {
+        memcpy(service_charge_data.preTradeNo, item_preTradeNo->valuestring, strlen(item_preTradeNo->valuestring));
+    }
+
+    cJSON *item_startType = cJSON_GetObjectItem(root, "startType");
+    if (item_startType != NULL && cJSON_IsNumber(item_startType))
+    {
+        service_charge_data.startType = item_startType->valueint;
+    }
+
+    cJSON *item_chargeMode = cJSON_GetObjectItem(root, "chargeMode");
+    if (item_chargeMode != NULL && cJSON_IsNumber(item_chargeMode))
+    {
+        service_charge_data.chargeMode = item_chargeMode->valueint;
+    }
+
+    cJSON *item_limitData = cJSON_GetObjectItem(root, "limitData");
+    if (item_limitData != NULL && cJSON_IsNumber(item_limitData))
+    {
+        service_charge_data.limitData = item_limitData->valueint;
+    }
+
+    cJSON *item_stopCode = cJSON_GetObjectItem(root, "stopCode");
+    if (item_stopCode != NULL && cJSON_IsNumber(item_stopCode))
+    {
+        service_charge_data.stopCode = item_stopCode->valueint;
+    }
+
+    cJSON *item_startMode = cJSON_GetObjectItem(root, "startMode");
+    if (item_startMode != NULL && cJSON_IsNumber(item_startMode))
+    {
+        service_charge_data.startMode = item_startMode->valueint;
+    }
+
+    cJSON *item_insertGunTime = cJSON_GetObjectItem(root, "insertGunTime");
+    if (item_insertGunTime != NULL && cJSON_IsNumber(item_insertGunTime))
+    {
+        service_charge_data.insertGunTime = item_insertGunTime->valueint;
+    }
+
+    callback = evs_service_callback(EVS_START_CHARGE_SRV);
+    if (callback)
+    {
+        ((int (*)(const evs_service_startCharge *request, evs_service_feedback_startCharge *feedcak))callback)(&service_charge_data, &service_feedback_startCharge_data);
+    }
+
+    cJSON *response_root = cJSON_CreateObject();
+    cJSON_AddStringToObject(response_root, "preTradeNo", service_feedback_startCharge_data.preTradeNo);
+    cJSON_AddStringToObject(response_root, "tradeNo", service_feedback_startCharge_data.tradeNo);
+    cJSON_AddNumberToObject(response_root, "gunNo", service_feedback_startCharge_data.gunNo);
+
+    *response = cJSON_PrintUnformatted(response_root);
+
+    if (*response == NULL)
+    {
+        PROTOCOL_TRACE("Json Not Exist!");
+        return -1;
+    }
+    else
+    {
+        *response_len = strlen(*response);
+    }
+
+    cJSON_Delete(root);
+    cJSON_Delete(response_root);
+
+    return 0;
+}
+
+static int evs_service_authCharge_handler(const char *request, char **response, int *response_len)
+{
+    void *callback;
+    cJSON *root = cJSON_Parse(request);
+    if (root == NULL || !cJSON_IsObject(root))
+    {
+        PROTOCOL_TRACE("JSON Parse Error");
+        return -1;
+    }
+    evs_service_authCharge service_authCharge_data;
+    evs_service_feedback_authCharge service_feedback_authCharge_data;
+
+    memset(&service_authCharge_data, 0, sizeof(service_authCharge_data));
+
+    cJSON *item_gunNo = cJSON_GetObjectItem(root, "gunNo");
+    if (item_gunNo != NULL && cJSON_IsNumber(item_gunNo))
+    {
+        service_authCharge_data.gunNo = item_gunNo->valueint;
+    }
+
+    cJSON *item_preTradeNo = cJSON_GetObjectItem(root, "preTradeNo");
+    if (item_preTradeNo != NULL && cJSON_IsString(item_preTradeNo))
+    {
+        char *tradeNo = item_preTradeNo->valuestring;
+        memcpy(service_authCharge_data.preTradeNo, tradeNo, strlen(tradeNo));
+    }
+
+    cJSON *item_tradeNo = cJSON_GetObjectItem(root, "tradeNo");
+    if (item_tradeNo != NULL && cJSON_IsString(item_tradeNo))
+    {
+        char *devTradeNo = item_tradeNo->valuestring;
+        memcpy(service_authCharge_data.tradeNo, devTradeNo, strlen(devTradeNo));
+    }
+
+    cJSON *item_vinCode = cJSON_GetObjectItem(root, "vinCode");
+    if (item_vinCode != NULL && cJSON_IsString(item_vinCode))
+    {
+        char *vinCode = item_vinCode->valuestring;
+        memcpy(service_authCharge_data.vinCode, vinCode, strlen(vinCode));
+    }
+
+    cJSON *item_oppoCode = cJSON_GetObjectItem(root, "oppoCode");
+    if (item_oppoCode != NULL && cJSON_IsString(item_oppoCode))
+    {
+        char *oppoCode = item_oppoCode->valuestring;
+        memcpy(service_authCharge_data.oppoCode, oppoCode, strlen(oppoCode));
+    }
+
+    cJSON *item_result = cJSON_GetObjectItem(root, "result");
+    if (item_result != NULL && cJSON_IsNumber(item_result))
+    {
+        service_authCharge_data.result = item_result->valueint;
+    }
+
+    cJSON *item_chargeMode = cJSON_GetObjectItem(root, "chargeMode");
+    if (item_chargeMode != NULL && cJSON_IsNumber(item_chargeMode))
+    {
+        service_authCharge_data.chargeMode = item_chargeMode->valueint;
+    }
+
+    cJSON *item_limitData = cJSON_GetObjectItem(root, "limitData");
+    if (item_limitData != NULL && cJSON_IsNumber(item_limitData))
+    {
+        service_authCharge_data.limitData = item_limitData->valueint;
+    }
+
+    cJSON *item_stopCode = cJSON_GetObjectItem(root, "stopCode");
+    if (item_stopCode != NULL && cJSON_IsNumber(item_stopCode))
+    {
+        service_authCharge_data.stopCode = item_stopCode->valueint;
+    }
+
+    cJSON *item_startMode = cJSON_GetObjectItem(root, "startMode");
+    if (item_startMode != NULL && cJSON_IsNumber(item_startMode))
+    {
+        service_authCharge_data.startMode = item_startMode->valueint;
+    }
+
+    cJSON *item_insertGunTime = cJSON_GetObjectItem(root, "insertGunTime");
+    if (item_insertGunTime != NULL && cJSON_IsNumber(item_insertGunTime))
+    {
+        service_authCharge_data.insertGunTime = item_insertGunTime->valueint;
+    }
+
+    callback = evs_service_callback(EVS_AUTH_RESULT_SRV);
+    if (callback)
+    {
+        ((int (*)(const evs_service_authCharge *request, evs_service_feedback_authCharge *feedcak))callback)(&service_authCharge_data, &service_feedback_authCharge_data);
+    }
+    cJSON *response_root = cJSON_CreateObject();
+    cJSON_AddStringToObject(response_root, "preTradeNo", service_feedback_authCharge_data.preTradeNo);
+    cJSON_AddStringToObject(response_root, "tradeNo", service_feedback_authCharge_data.tradeNo);
+    cJSON_AddNumberToObject(response_root, "gunNo", service_feedback_authCharge_data.gunNo);
+
+    *response = cJSON_PrintUnformatted(response_root);
+
+    if (*response == NULL)
+    {
+        PROTOCOL_TRACE("Json Not Exist!");
+        return -1;
+    }
+    else
+    {
+        *response_len = strlen(*response);
+    }
+
+    cJSON_Delete(root);
+    cJSON_Delete(response_root);
+
+    return 0;
+}
+
+static int evs_service_stopCharge_handler(const char *request, char **response, int *response_len)
+{
+    void *callback;
+    cJSON *root = cJSON_Parse(request);
+    if (root == NULL || !cJSON_IsObject(root))
+    {
+        PROTOCOL_TRACE("JSON Parse Error");
+        return -1;
+    }
+
+    evs_service_stopCharge service_stopCharge_data;
+    evs_service_feedback_stopCharge service_feedback_stopCharge_data;
+
+    memset(&service_stopCharge_data, 0, sizeof(service_stopCharge_data));
+
+    cJSON *item_gunNo = cJSON_GetObjectItem(root, "gunNo");
+    if (item_gunNo != NULL && cJSON_IsNumber(item_gunNo))
+    {
+        service_stopCharge_data.gunNo = item_gunNo->valueint;
+    }
+
+    cJSON *item_preTradeNo = cJSON_GetObjectItem(root, "preTradeNo");
+    if (item_preTradeNo != NULL && cJSON_IsString(item_preTradeNo))
+    {
+        char *tradeNo = item_preTradeNo->valuestring;
+        memcpy(service_stopCharge_data.preTradeNo, tradeNo, strlen(tradeNo));
+    }
+
+    cJSON *item_tradeNo = cJSON_GetObjectItem(root, "tradeNo");
+    if (item_tradeNo != NULL && cJSON_IsString(item_tradeNo))
+    {
+        char *devTradeNo = item_tradeNo->valuestring;
+        memcpy(service_stopCharge_data.tradeNo, devTradeNo, strlen(devTradeNo));
+    }
+
+    cJSON *item_stopReason = cJSON_GetObjectItem(root, "stopReason");
+    if (item_stopReason != NULL && cJSON_IsNumber(item_stopReason))
+    {
+        service_stopCharge_data.stopReason = item_stopReason->valueint;
+    }
+
+    callback = evs_service_callback(EVS_STOP_CHARGE_SRV);
+    if (callback)
+    {
+        ((int (*)(const evs_service_stopCharge *request, evs_service_feedback_stopCharge *feedcak))callback)(&service_stopCharge_data, &service_feedback_stopCharge_data);
+    }
+    cJSON *response_root = cJSON_CreateObject();
+    cJSON_AddStringToObject(response_root, "preTradeNo", service_feedback_stopCharge_data.preTradeNo);
+    cJSON_AddStringToObject(response_root, "tradeNo", service_feedback_stopCharge_data.tradeNo);
+    cJSON_AddNumberToObject(response_root, "gunNo", service_feedback_stopCharge_data.gunNo);
+
+    *response = cJSON_PrintUnformatted(response_root);
+
+    if (*response == NULL)
+    {
+        PROTOCOL_TRACE("Json Not Exist!");
+        return -1;
+    }
+    else
+    {
+        *response_len = strlen(*response);
+    }
+
+    cJSON_Delete(root);
+    cJSON_Delete(response_root);
+
+    return 0;
+}
+
+static int evs_service_confirmTrade_handler(const char *request, char **response, int *response_len)
+{
+    void *callback;
+    cJSON *root = cJSON_Parse(request);
+    if (root == NULL || !cJSON_IsObject(root))
+    {
+        PROTOCOL_TRACE("JSON Parse Error");
+        return -1;
+    }
+    evs_service_confirmTrade service_confirmTrade_data;
+
+    memset(&service_confirmTrade_data, 0, sizeof(service_confirmTrade_data));
+
+    cJSON *item_gunNo = cJSON_GetObjectItem(root, "gunNo");
+    if (item_gunNo != NULL && cJSON_IsNumber(item_gunNo))
+    {
+        service_confirmTrade_data.gunNo = item_gunNo->valueint;
+    }
+
+    cJSON *item_preTradeNo = cJSON_GetObjectItem(root, "preTradeNo");
+    if (item_preTradeNo != NULL && cJSON_IsString(item_preTradeNo))
+    {
+        char *tradeNo = item_preTradeNo->valuestring;
+        memcpy(service_confirmTrade_data.preTradeNo, tradeNo, strlen(tradeNo));
+    }
+
+    cJSON *item_tradeNo = cJSON_GetObjectItem(root, "tradeNo");
+    if (item_tradeNo != NULL && cJSON_IsString(item_tradeNo))
+    {
+        char *devTradeNo = item_tradeNo->valuestring;
+        memcpy(service_confirmTrade_data.tradeNo, devTradeNo, strlen(devTradeNo));
+    }
+
+    cJSON *item_errcode = cJSON_GetObjectItem(root, "errcode");
+    if (item_errcode != NULL && cJSON_IsNumber(item_errcode))
+    {
+        service_confirmTrade_data.errcode = item_errcode->valueint;
+    }
+    callback = evs_service_callback(EVS_ORDER_CHECK_SRV);
+    if (callback)
+    {
+        ((int (*)(const evs_service_confirmTrade *request, void *feedcak))callback)(&service_confirmTrade_data, NULL);
+    }
+    cJSON_Delete(root);
+
+    return 0;
+}
+
+static int evs_service_query_log_handler(const char *request, char **response, int *response_len)
+{
+    void *callback;
+    cJSON *root = cJSON_Parse(request);
+    if (root == NULL || !cJSON_IsObject(root))
+    {
+        PROTOCOL_TRACE("JSON Parse Error");
+        return -1;
+    }
+    evs_service_query_log service_query_log_data;
+    evs_service_feedback_query_log feedback_query_log_data;
+    char temp[16] = {0};
+
+    memset(&service_query_log_data, 0, sizeof(service_query_log_data));
+
+    cJSON *item_gunNo = cJSON_GetObjectItem(root, "gunNo");
+    if (item_gunNo != NULL && cJSON_IsNumber(item_gunNo))
+    {
+        service_query_log_data.gunNo = item_gunNo->valueint;
+    }
+
+    cJSON *item_startDate = cJSON_GetObjectItem(root, "startDate");
+    if (item_startDate != NULL && cJSON_IsString(item_startDate))
+    {
+        char *startDate = item_startDate->valuestring;
+        service_query_log_data.startDate = strtoint(startDate);
+    }
+
+    cJSON *item_stopDate = cJSON_GetObjectItem(root, "stopDate");
+    if (item_stopDate != NULL && cJSON_IsString(item_stopDate))
+    {
+        char *stopDate = item_stopDate->valuestring;
+        service_query_log_data.stopDate = strtoint(stopDate);
+    }
+
+    cJSON *item_askType = cJSON_GetObjectItem(root, "askType");
+    if (item_askType != NULL && cJSON_IsNumber(item_askType))
+    {
+        service_query_log_data.askType = item_askType->valueint;
+    }
+
+    callback = evs_service_callback(EVS_QUE_DARA_SRV);
+    if (callback)
+    {
+        ((int (*)(const evs_service_query_log *request, evs_service_feedback_query_log *feedcak))callback)(&service_query_log_data, &feedback_query_log_data);
+    }
+    cJSON *response_root = cJSON_CreateObject();
+    cJSON_AddNumberToObject(response_root, "gunNo", feedback_query_log_data.gunNo);
+
+    sprintf(temp, "%d", feedback_query_log_data.startDate);
+    cJSON_AddStringToObject(response_root, "startDate", temp);
+
+    sprintf(temp, "%d", feedback_query_log_data.stopDate);
+    cJSON_AddStringToObject(response_root, "stopDate", temp);
+
+    cJSON_AddNumberToObject(response_root, "askType", feedback_query_log_data.askType);
+    cJSON_AddNumberToObject(response_root, "succ", feedback_query_log_data.succ);
+    cJSON_AddNumberToObject(response_root, "retType", feedback_query_log_data.retType);
+    cJSON_AddStringToObject(response_root, "dataArea", feedback_query_log_data.dataArea);
+
+    *response = cJSON_PrintUnformatted(response_root);
+
+    if (*response == NULL)
+    {
+        PROTOCOL_TRACE("Json Not Exist!");
+        return -1;
+    }
+    else
+    {
+        *response_len = strlen(*response);
+    }
+
+    cJSON_Delete(root);
+    cJSON_Delete(response_root);
+
+    return 0;
+}
+
+static int evs_service_gateLock_ctrl_handler(const char *request, char **response, int *response_len)
+{
+
+    void *callback;
+    cJSON *root = cJSON_Parse(request);
+    if (root == NULL || !cJSON_IsObject(root))
+    {
+        PROTOCOL_TRACE("JSON Parse Error");
+        return -1;
+    }
+
+    evs_service_gateLock_ctrl service_gateLock_ctrl_data;
+    evs_service_feedback_gateLock_ctrl service_feedback_gateLock_ctrl_data;
+
+    memset(&service_gateLock_ctrl_data, 0, sizeof(service_gateLock_ctrl_data));
+
+    cJSON *item_lockNo = cJSON_GetObjectItem(root, "lockNo");
+    if (item_lockNo != NULL && cJSON_IsNumber(item_lockNo))
+    {
+        service_gateLock_ctrl_data.lockNo = item_lockNo->valueint;
+    }
+
+    cJSON *item_ctrlFlag = cJSON_GetObjectItem(root, "ctrlFlag");
+    if (item_ctrlFlag != NULL && cJSON_IsNumber(item_ctrlFlag))
+    {
+        service_gateLock_ctrl_data.ctrlFlag = item_ctrlFlag->valueint;
+    }
+
+    callback = evs_service_callback(EVS_GATE_LOCK_SRV);
+    if (callback)
+    {
+        ((int (*)(const evs_service_gateLock_ctrl *request, evs_service_feedback_gateLock_ctrl *feedcak))callback)(&service_gateLock_ctrl_data, &service_feedback_gateLock_ctrl_data);
+    }
+
+    cJSON *response_root = cJSON_CreateObject();
+    cJSON_AddNumberToObject(response_root, "lockNo", service_feedback_gateLock_ctrl_data.lockNo);
+    cJSON_AddNumberToObject(response_root, "result", service_feedback_gateLock_ctrl_data.result);
+
+    *response = cJSON_PrintUnformatted(response_root);
+
+    if (*response == NULL)
+    {
+        PROTOCOL_TRACE("Json Not Exist!");
+        return -1;
+    }
+    else
+    {
+        *response_len = strlen(*response);
+    }
+
+    cJSON_Delete(root);
+    cJSON_Delete(response_root);
+
+    return 0;
+}
+
+static int evs_service_groundLock_ctrl_handler(const char *request, char **response, int *response_len)
+{
+    void *callback;
+    cJSON *root = cJSON_Parse(request);
+    if (root == NULL || !cJSON_IsObject(root))
+    {
+        PROTOCOL_TRACE("JSON Parse Error");
+        return -1;
+    }
+
+    evs_service_groundLock_ctrl service_groundLock_ctrl_data;
+    evs_service_feedback_groundLock_ctrl service_feedback_groundLock_ctrl_data;
+
+    memset(&service_groundLock_ctrl_data, 0, sizeof(service_groundLock_ctrl_data));
+
+    cJSON *item_gunNo = cJSON_GetObjectItem(root, "gunNo");
+    if (item_gunNo != NULL && cJSON_IsNumber(item_gunNo))
+    {
+        service_groundLock_ctrl_data.gunNo = item_gunNo->valueint;
+    }
+
+    cJSON *item_ctrlFlag = cJSON_GetObjectItem(root, "ctrlFlag");
+    if (item_ctrlFlag != NULL && cJSON_IsNumber(item_ctrlFlag))
+    {
+        service_groundLock_ctrl_data.ctrlFlag = item_ctrlFlag->valueint;
+    }
+
+    callback = evs_service_callback(EVS_GROUND_LOCK_SRV);
+    if (callback)
+    {
+        ((int (*)(const evs_service_groundLock_ctrl *request, evs_service_feedback_groundLock_ctrl *feedcak))callback)(&service_groundLock_ctrl_data, &service_feedback_groundLock_ctrl_data);
+    }
+    cJSON *response_root = cJSON_CreateObject();
+    cJSON_AddNumberToObject(response_root, "gunNo", service_feedback_groundLock_ctrl_data.gunNo);
+    cJSON_AddNumberToObject(response_root, "reason", service_feedback_groundLock_ctrl_data.reason);
+    cJSON_AddNumberToObject(response_root, "result", service_feedback_groundLock_ctrl_data.result);
+
+    *response = cJSON_PrintUnformatted(response_root);
+
+    if (*response == NULL)
+    {
+        PROTOCOL_TRACE("Json Not Exist!");
+        return -1;
+    }
+    else
+    {
+        *response_len = strlen(*response);
+    }
+
+    cJSON_Delete(root);
+    cJSON_Delete(response_root);
+
+    return 0;
+}
+
+static int evs_service_lockCtrl_handler(const char *request, char **response, int *response_len)
+{
+    void *callback;
+    cJSON *root = cJSON_Parse(request);
+    if (root == NULL || !cJSON_IsObject(root))
+    {
+        PROTOCOL_TRACE("JSON Parse Error");
+        return -1;
+    }
+
+    evs_service_lockCtrl service_lockCtrl_data;
+    evs_service_feedback_lockCtrl service_feedback_lockCtrl_data;
+
+    memset(&service_lockCtrl_data, 0, sizeof(service_lockCtrl_data));
+
+    cJSON *item_gunNo = cJSON_GetObjectItem(root, "gunNo");
+    if (item_gunNo != NULL && cJSON_IsNumber(item_gunNo))
+    {
+        service_lockCtrl_data.gunNo = item_gunNo->valueint;
+    }
+
+    cJSON *item_lockParam = cJSON_GetObjectItem(root, "lockParam");
+    if (item_lockParam != NULL && cJSON_IsNumber(item_lockParam))
+    {
+        service_lockCtrl_data.lockParam = item_lockParam->valueint;
+    }
+
+    callback = evs_service_callback(EVS_CTRL_LOCK_SRV);
+    if (callback)
+    {
+        ((int (*)(const evs_service_lockCtrl *request, evs_service_feedback_lockCtrl *feedcak))callback)(&service_lockCtrl_data, &service_feedback_lockCtrl_data);
+    }
+    cJSON *response_root = cJSON_CreateObject();
+    cJSON_AddNumberToObject(response_root, "gunNo", service_feedback_lockCtrl_data.gunNo);
+    cJSON_AddNumberToObject(response_root, "lockStatus", service_feedback_lockCtrl_data.lockStatus);
+    cJSON_AddNumberToObject(response_root, "resCode", service_feedback_lockCtrl_data.resCode);
+
+    *response = cJSON_PrintUnformatted(response_root);
+
+    if (*response == NULL)
+    {
+        PROTOCOL_TRACE("Json Not Exist!");
+        return -1;
+    }
+    else
+    {
+        *response_len = strlen(*response);
+    }
+
+    cJSON_Delete(root);
+    cJSON_Delete(response_root);
+
+    return 0;
+}
+
+static int evs_service_dev_maintain_handler(const char *request, char **response, int *response_len)
+{
+    void *callback;
+    cJSON *root = cJSON_Parse(request);
+    if (root == NULL || !cJSON_IsObject(root))
+    {
+        PROTOCOL_TRACE("JSON Parse Error");
+        return -1;
+    }
+
+    evs_service_dev_maintain service_dev_maintain;
+    evs_service_feedback_dev_maintain service_feedback_dev_maintain;
+
+    memset(&service_dev_maintain, 0, sizeof(service_dev_maintain));
+
+    cJSON *item_ctrlType = cJSON_GetObjectItem(root, "ctrlType");
+    if (item_ctrlType != NULL && cJSON_IsNumber(item_ctrlType))
+    {
+        service_dev_maintain.ctrlType = item_ctrlType->valueint;
+    }
+
+    callback = evs_service_callback(EVS_DEV_MAINTAIN_SRV);
+    if (callback)
+    {
+        ((int (*)(const evs_service_dev_maintain *request, evs_service_feedback_dev_maintain *feedcak))callback)(&service_dev_maintain, &service_feedback_dev_maintain);
+    }
+    cJSON *response_root = cJSON_CreateObject();
+    cJSON_AddNumberToObject(response_root, "ctrlType", service_feedback_dev_maintain.ctrlType);
+    cJSON_AddNumberToObject(response_root, "reason", service_feedback_dev_maintain.reason);
+
+    *response = cJSON_PrintUnformatted(response_root);
+
+    if (*response == NULL)
+    {
+        PROTOCOL_TRACE("Json Not Exist!");
+        return -1;
+    }
+    else
+    {
+        *response_len = strlen(*response);
+    }
+
+    cJSON_Delete(root);
+    cJSON_Delete(response_root);
+
+    return 0;
+}
+
+static int evs_service_orderCharge_handler(const char *request, char **response, int *response_len)
+{
+    void *callback;
+    cJSON *root = cJSON_Parse(request);
+    if (root == NULL || !cJSON_IsObject(root))
+    {
+        PROTOCOL_TRACE("JSON Parse Error");
+        return -1;
+    }
+    evs_service_orderCharge service_oderCharge_data;
+    evs_service_feedback_orderCharge service_feedback_oderCharge_data;
+
+    memset(&service_oderCharge_data, 0, sizeof(service_oderCharge_data));
+
+    cJSON *item_arrayData;
+    unsigned char i = 0;
+    cJSON *item_preTradeNo = cJSON_GetObjectItem(root, "preTradeNo");
+    if (item_preTradeNo != NULL && cJSON_IsString(item_preTradeNo))
+    {
+        char *tradeNo = item_preTradeNo->valuestring;
+        memcpy(service_oderCharge_data.preTradeNo, tradeNo, strlen(tradeNo));
+    }
+
+    cJSON *item_num = cJSON_GetObjectItem(root, "num");
+    if (item_num != NULL && cJSON_IsNumber(item_num))
+    {
+        service_oderCharge_data.num = item_num->valueint;
+    }
+    if (service_oderCharge_data.num != 0)
+    {
+        cJSON *item_validTime = cJSON_GetObjectItem(root, "validTime");
+        if (item_validTime != NULL && cJSON_IsArray(item_validTime))
+        {
+            for (i = 0; i < service_oderCharge_data.num; i++)
+            {
+                item_arrayData = cJSON_GetArrayItem(item_validTime, i);
+                memcpy(service_oderCharge_data.validTime[i], item_arrayData->valuestring, strlen(item_arrayData->valuestring));
+            }
+        }
+
+        cJSON *item_kw = cJSON_GetObjectItem(root, "kw");
+        if (item_kw != NULL && cJSON_IsArray(item_kw))
+        {
+            for (i = 0; i < service_oderCharge_data.num; i++)
+            {
+                item_arrayData = cJSON_GetArrayItem(item_kw, i);
+                service_oderCharge_data.kw[i] = item_arrayData->valueint;
+            }
+        }
+    }
+
+    callback = evs_service_callback(EVS_ORDERLY_CHARGE_SRV);
+    if (callback)
+    {
+        ((int (*)(const evs_service_orderCharge *request, evs_service_feedback_orderCharge *feedcak))callback)(&service_oderCharge_data, &service_feedback_oderCharge_data);
+    }
+    cJSON *response_root = cJSON_CreateObject();
+    cJSON_AddStringToObject(response_root, "tradeNo", service_feedback_oderCharge_data.tradeNo);
+    cJSON_AddNumberToObject(response_root, "reason", service_feedback_oderCharge_data.reason);
+    cJSON_AddNumberToObject(response_root, "result", service_feedback_oderCharge_data.result);
+
+    *response = cJSON_PrintUnformatted(response_root);
+
+    if (*response == NULL)
+    {
+        PROTOCOL_TRACE("Json Not Exist!");
+        return -1;
+    }
+    else
+    {
+        *response_len = strlen(*response);
+    }
+
+    cJSON_Delete(root);
+    cJSON_Delete(response_root);
 
     return 0;
 }
@@ -175,675 +1218,66 @@ static int user_service_request_event_handler(const int devid, const char *servi
                                               char **response, int *response_len)
 {
     int add_result = 0;
-    void *callback;
-    cJSON *root = NULL;
+
     const char *response_fmt = "{\"Result\": %d}";
 
-    EXAMPLE_TRACE("Service Request Received, Service ID: %.*s, Payload: %s", serviceid_len, serviceid, request);
+    PROTOCOL_TRACE("Service Request Received, Service ID: %.*s, Payload: %s", serviceid_len, serviceid, request);
 
-    /* Parse Root */
-    root = cJSON_Parse(request);
-    if (root == NULL || !cJSON_IsObject(root))
-    {
-        EXAMPLE_TRACE("JSON Parse Error");
-        return -1;
-    }
     if (strlen("feeModelUpdateSrv") == serviceid_len && memcmp("feeModelUpdateSrv", serviceid, serviceid_len) == 0)
     {
-        evs_service_issue_feeModel service_feeModel_data;
-        evs_service_feedback_feeModel service_feedback_feeModel_data;
-        int i = 0;
-        /* Parse json */
-
-        cJSON *item_eleModelId = cJSON_GetObjectItem(root, "eleModelId");
-        if (item_eleModelId == NULL || !cJSON_IsString(item_eleModelId))
-        {
-            cJSON_Delete(root);
-            return -1;
-        }
-        uint8_t *eleModelId = item_eleModelId->string;
-        memcpy(service_feeModel_data.eleModelId, eleModelId, strlen(eleModelId));
-        /****服务费模型id*****/
-        cJSON *item_serModelId = cJSON_GetObjectItem(root, "serModelId");
-        if (item_serModelId == NULL || !cJSON_IsString(item_serModelId))
-        {
-            cJSON_Delete(root);
-            return -1;
-        }
-        uint8_t *serModelId = item_serModelId->string;
-        memcpy(service_feeModel_data.eleModelId, serModelId, strlen(serModelId));
-
-        cJSON *item_eleTimeNum = cJSON_GetObjectItem(root, "eleTimeNum");
-        if (item_eleTimeNum == NULL || !cJSON_IsNumber(item_eleTimeNum))
-        {
-            cJSON_Delete(root);
-            return -1;
-        }
-        service_feeModel_data.eleTimeNum = item_eleTimeNum->valueint;
-
-        cJSON *item_serTimeNum = cJSON_GetObjectItem(root, "serTimeNum");
-        if (item_serTimeNum == NULL || !cJSON_IsNumber(item_serTimeNum))
-        {
-            cJSON_Delete(root);
-            return -1;
-        }
-        service_feeModel_data.serTimeNum = item_serTimeNum->valueint;
-
-        cJSON *item_eleTimeSeg = cJSON_GetObjectItem(root, "eleTimeSeg");
-        if (item_eleTimeSeg == NULL || !cJSON_IsArray(item_eleTimeSeg))
-        {
-            cJSON_Delete(root);
-            return -1;
-        }
-        cJSON *item_arrayData;
-        for (i = 0; i < service_feeModel_data.eleTimeNum; i++)
-        {
-            item_arrayData = cJSON_GetArrayItem(item_eleTimeSeg, i);
-            memcpy(service_feeModel_data.eleTimeSeg[i], item_arrayData->string, strlen(item_arrayData->string));
-        }
-        cJSON *item_serTimeSeg = cJSON_GetObjectItem(root, "serTimeSeg");
-        if (item_serTimeSeg == NULL || !cJSON_IsArray(item_serTimeSeg))
-        {
-            cJSON_Delete(root);
-            return -1;
-        }
-        for (i = 0; i < service_feeModel_data.serTimeNum; i++)
-        {
-            item_arrayData = cJSON_GetArrayItem(item_serTimeSeg, i);
-            memcpy(service_feeModel_data.serTimeSeg[i], item_arrayData->string, strlen(item_arrayData->string));
-        }
-
-        cJSON *item_eleSegFlag = cJSON_GetObjectItem(root, "eleSegFlag");
-        if (item_eleSegFlag == NULL || !cJSON_IsArray(item_eleSegFlag))
-        {
-            cJSON_Delete(root);
-            return -1;
-        }
-        for (i = 0; i < service_feeModel_data.eleTimeNum; i++)
-        {
-            item_arrayData = cJSON_GetArrayItem(item_eleSegFlag, i);
-            service_feeModel_data.eleSegFlag[i] = item_arrayData->valueint;
-        }
-        cJSON *item_serSegFlag = cJSON_GetObjectItem(root, "serSegFlag");
-        if (item_serSegFlag == NULL || !cJSON_IsArray(item_serSegFlag))
-        {
-            cJSON_Delete(root);
-            return -1;
-        }
-        for (i = 0; i < service_feeModel_data.serTimeNum; i++)
-        {
-            item_arrayData = cJSON_GetArrayItem(item_serSegFlag, i);
-            service_feeModel_data.serSegFlag[i] = item_arrayData->valueint;
-        }
-
-        cJSON *item_chargeFee = cJSON_GetObjectItem(root, "chargeFee");
-        if (item_chargeFee == NULL || !cJSON_IsArray(item_chargeFee))
-        {
-            cJSON_Delete(root);
-            return -1;
-        }
-        for (i = 0; i < 4; i++)
-        {
-            item_arrayData = cJSON_GetArrayItem(item_chargeFee, i);
-            service_feeModel_data.chargeFee[i] = item_arrayData->valueint;
-        }
-        cJSON *item_serviceFee = cJSON_GetObjectItem(root, "serviceFee");
-        if (item_serviceFee == NULL || !cJSON_IsArray(item_serviceFee))
-        {
-            cJSON_Delete(root);
-            return -1;
-        }
-        for (i = 0; i < 4; i++)
-        {
-            item_arrayData = cJSON_GetArrayItem(item_serviceFee, i);
-            service_feeModel_data.serviceFee[i] = item_arrayData->valueint;
-        }
-        callback = evs_service_callback(EVS_FEE_MODEL_UPDATA_SRV);
-        if (callback)
-        {
-            ((int (*)(const evs_service_issue_feeModel *request, evs_service_feedback_feeModel *feedcak))callback)(&service_feeModel_data, &service_feedback_feeModel_data);
-            //((int (*)(const evs_service_query_log request ,evs_service_feedback_query_log *response)))callback)(request, &response);
-        }
-        cJSON *response_root = cJSON_CreateObject();
-        cJSON_AddStringToObject(response_root, "modelId", service_feedback_feeModel_data.eleModelId);
-        cJSON_AddStringToObject(response_root, "modelId", service_feedback_feeModel_data.serModelId);
-        cJSON_AddNumberToObject(response_root, "time", service_feedback_feeModel_data.res);
-
-        *response = cJSON_PrintUnformatted(response_root);
-        *response_len = strlen(*response);
-
-        cJSON_Delete(root);
-        cJSON_Delete(response_root);
+        evs_service_issue_feeModel_handler(request, response, response_len);
     }
     if (strlen("startChargeSrv") == serviceid_len && memcmp("startChargeSrv", serviceid, serviceid_len) == 0)
     {
-        evs_service_startCharge service_charge_data;
-        evs_service_feedback_startCharge service_feedback_startCharge_data;
-        uint8_t *tradeNo;
-        /* Parse json */
-        cJSON *item_gunNo = cJSON_GetObjectItem(root, "gunNo");
-        if (item_gunNo == NULL || !cJSON_IsNumber(item_gunNo))
-        {
-            cJSON_Delete(root);
-            return -1;
-        }
-        service_charge_data.gunNo = item_gunNo->valueint;
-
-        cJSON *item_preTradeNo = cJSON_GetObjectItem(root, "preTradeNo");
-        if (item_preTradeNo == NULL || !cJSON_IsString(item_preTradeNo))
-        {
-            cJSON_Delete(root);
-            return -1;
-        }
-        tradeNo = item_preTradeNo->string;
-        memcpy(service_charge_data.preTradeNo, tradeNo, strlen(tradeNo));
-
-        cJSON *item_startType = cJSON_GetObjectItem(root, "startType");
-        if (item_startType == NULL || !cJSON_IsNumber(item_startType))
-        {
-            cJSON_Delete(root);
-            return -1;
-        }
-        service_charge_data.startType = item_startType->valueint;
-
-        cJSON *item_chargeMode = cJSON_GetObjectItem(root, "chargeMode");
-        if (item_chargeMode == NULL || !cJSON_IsNumber(item_chargeMode))
-        {
-            cJSON_Delete(root);
-            return -1;
-        }
-        service_charge_data.chargeMode = item_chargeMode->valueint;
-
-        cJSON *item_limitData = cJSON_GetObjectItem(root, "limitData");
-        if (item_limitData == NULL || !cJSON_IsNumber(item_limitData))
-        {
-            cJSON_Delete(root);
-            return -1;
-        }
-        service_charge_data.limitData = item_limitData->valueint;
-
-        cJSON *item_stopCode = cJSON_GetObjectItem(root, "stopCode");
-        if (item_stopCode == NULL || !cJSON_IsNumber(item_stopCode))
-        {
-            cJSON_Delete(root);
-            return -1;
-        }
-        service_charge_data.stopCode = item_stopCode->valueint;
-
-        cJSON *item_startMode = cJSON_GetObjectItem(root, "startMode");
-        if (item_startMode == NULL || !cJSON_IsNumber(item_startMode))
-        {
-            cJSON_Delete(root);
-            return -1;
-        }
-        service_charge_data.startMode = item_startMode->valueint;
-
-        cJSON *item_auxiVolt = cJSON_GetObjectItem(root, "auxiVolt");
-        if (item_auxiVolt == NULL || !cJSON_IsNumber(item_auxiVolt))
-        {
-            cJSON_Delete(root);
-            return -1;
-        }
-        service_charge_data.auxiVolt = item_auxiVolt->valueint;
-
-        cJSON *item_insertGunTime = cJSON_GetObjectItem(root, "insertGunTime");
-        if (item_insertGunTime == NULL || !cJSON_IsNumber(item_insertGunTime))
-        {
-            cJSON_Delete(root);
-            return -1;
-        }
-        service_charge_data.insertGunTime = item_insertGunTime->valueint;
-
-        callback = evs_service_callback(EVS_START_CHARGE_SRV);
-        if (callback)
-        {
-            ((int (*)(const evs_service_startCharge *request, evs_service_feedback_startCharge *feedcak))callback)(&service_charge_data, &service_feedback_startCharge_data);
-        }
-        cJSON *response_root = cJSON_CreateObject();
-        cJSON_AddStringToObject(response_root, "preTradeNo", service_feedback_startCharge_data.preTradeNo);
-        cJSON_AddStringToObject(response_root, "tradeNo", service_feedback_startCharge_data.tradeNo);
-        cJSON_AddNumberToObject(response_root, "gunNo", service_feedback_startCharge_data.gunNo);
-
-        *response = cJSON_PrintUnformatted(response_root);
-        *response_len = strlen(*response);
-        cJSON_Delete(root);
-        cJSON_Delete(response_root);
+        evs_service_startCharge_handler(request, response, response_len);
     }
 
     if (strlen("authResultSrv") == serviceid_len && memcmp("authResultSrv", serviceid, serviceid_len) == 0)
     {
-        evs_service_authCharge service_authCharge_data;
-        evs_service_feedback_authCharge service_feedback_authCharge_data;
-        cJSON *item_gunNo = cJSON_GetObjectItem(root, "gunNo");
-        if (item_gunNo == NULL || !cJSON_IsNumber(item_gunNo))
-        {
-            cJSON_Delete(root);
-            return -1;
-        }
-        service_authCharge_data.gunNo = item_gunNo->valueint;
-
-        cJSON *item_preTradeNo = cJSON_GetObjectItem(root, "preTradeNo");
-        if (item_preTradeNo == NULL || !cJSON_IsString(item_preTradeNo))
-        {
-            cJSON_Delete(root);
-            return -1;
-        }
-        uint8_t *tradeNo = item_preTradeNo->string;
-        memcpy(service_authCharge_data.preTradeNo, tradeNo, strlen(tradeNo));
-
-        cJSON *item_tradeNo = cJSON_GetObjectItem(root, "tradeNo");
-        if (item_tradeNo == NULL || !cJSON_IsString(item_tradeNo))
-        {
-            cJSON_Delete(root);
-            return -1;
-        }
-        uint8_t *devTradeNo = item_tradeNo->string;
-        memcpy(service_authCharge_data.tradeNo, devTradeNo, strlen(devTradeNo));
-
-        cJSON *item_vinCode = cJSON_GetObjectItem(root, "vinCode");
-        if (item_vinCode == NULL || !cJSON_IsString(item_vinCode))
-        {
-            cJSON_Delete(root);
-            return -1;
-        }
-        uint8_t *vinCode = item_vinCode->string;
-        memcpy(service_authCharge_data.vinCode, vinCode, strlen(vinCode));
-
-        cJSON *item_oppoCode = cJSON_GetObjectItem(root, "oppoCode");
-        if (item_oppoCode == NULL || !cJSON_IsString(item_oppoCode))
-        {
-            cJSON_Delete(root);
-            return -1;
-        }
-        uint8_t *oppoCode = item_oppoCode->string;
-        memcpy(service_authCharge_data.oppoCode, oppoCode, strlen(oppoCode));
-
-        cJSON *item_result = cJSON_GetObjectItem(root, "result");
-        if (item_result == NULL || !cJSON_IsNumber(item_result))
-        {
-            cJSON_Delete(root);
-            return -1;
-        }
-        service_authCharge_data.result = item_result->valueint;
-
-        cJSON *item_chargeMode = cJSON_GetObjectItem(root, "chargeMode");
-        if (item_chargeMode == NULL || !cJSON_IsNumber(item_chargeMode))
-        {
-            cJSON_Delete(root);
-            return -1;
-        }
-        service_authCharge_data.chargeMode = item_chargeMode->valueint;
-
-        cJSON *item_limitData = cJSON_GetObjectItem(root, "limitData");
-        if (item_limitData == NULL || !cJSON_IsNumber(item_limitData))
-        {
-            cJSON_Delete(root);
-            return -1;
-        }
-        service_authCharge_data.limitData = item_limitData->valueint;
-
-        cJSON *item_stopCode = cJSON_GetObjectItem(root, "stopCode");
-        if (item_stopCode == NULL || !cJSON_IsNumber(item_stopCode))
-        {
-            cJSON_Delete(root);
-            return -1;
-        }
-        service_authCharge_data.stopCode = item_stopCode->valueint;
-
-        cJSON *item_startMode = cJSON_GetObjectItem(root, "startMode");
-        if (item_startMode == NULL || !cJSON_IsNumber(item_startMode))
-        {
-            cJSON_Delete(root);
-            return -1;
-        }
-        service_authCharge_data.startMode = item_startMode->valueint;
-
-        cJSON *item_insertGunTime = cJSON_GetObjectItem(root, "insertGunTime");
-        if (item_insertGunTime == NULL || !cJSON_IsNumber(item_insertGunTime))
-        {
-            cJSON_Delete(root);
-            return -1;
-        }
-        service_authCharge_data.insertGunTime = item_insertGunTime->valueint;
-
-        callback = evs_service_callback(EVS_AUTH_RESULT_SRV);
-        if (callback)
-        {
-            ((int (*)(const evs_service_authCharge *request, evs_service_feedback_authCharge *feedcak))callback)(&service_authCharge_data, &service_feedback_authCharge_data);
-        }
-        cJSON *response_root = cJSON_CreateObject();
-        cJSON_AddStringToObject(response_root, "preTradeNo", service_feedback_authCharge_data.preTradeNo);
-        cJSON_AddStringToObject(response_root, "tradeNo", service_feedback_authCharge_data.tradeNo);
-        cJSON_AddNumberToObject(response_root, "gunNo", service_feedback_authCharge_data.gunNo);
-
-        *response = cJSON_PrintUnformatted(response_root);
-        *response_len = strlen(*response);
-        cJSON_Delete(root);
-        cJSON_Delete(response_root);
+        evs_service_authCharge_handler(request, response, response_len);
     }
 
     if (strlen("stopChargeSrv") == serviceid_len && memcmp("stopChargeSrv", serviceid, serviceid_len) == 0)
     {
-        evs_service_stopCharge service_stopCharge_data;
-        evs_service_feedback_stopCharge service_feedback_stopCharge_data;
-
-        cJSON *item_gunNo = cJSON_GetObjectItem(root, "gunNo");
-        if (item_gunNo == NULL || !cJSON_IsNumber(item_gunNo))
-        {
-            cJSON_Delete(root);
-            return -1;
-        }
-        service_stopCharge_data.gunNo = item_gunNo->valueint;
-
-        cJSON *item_preTradeNo = cJSON_GetObjectItem(root, "preTradeNo");
-        if (item_preTradeNo == NULL || !cJSON_IsString(item_preTradeNo))
-        {
-            cJSON_Delete(root);
-            return -1;
-        }
-        uint8_t *tradeNo = item_preTradeNo->string;
-        memcpy(service_stopCharge_data.preTradeNo, tradeNo, strlen(tradeNo));
-
-        cJSON *item_tradeNo = cJSON_GetObjectItem(root, "tradeNo");
-        if (item_tradeNo == NULL || !cJSON_IsString(item_tradeNo))
-        {
-            cJSON_Delete(root);
-            return -1;
-        }
-        uint8_t *devTradeNo = item_tradeNo->string;
-        memcpy(service_stopCharge_data.tradeNo, devTradeNo, strlen(devTradeNo));
-
-        cJSON *item_stopReason = cJSON_GetObjectItem(root, "stopReason");
-        if (item_stopReason == NULL || !cJSON_IsNumber(item_stopReason))
-        {
-            cJSON_Delete(root);
-            return -1;
-        }
-        service_stopCharge_data.stopReason = item_stopReason->valueint;
-
-        callback = evs_service_callback(EVS_STOP_CHARGE_SRV);
-        if (callback)
-        {
-            ((int (*)(const evs_service_stopCharge *request, evs_service_feedback_stopCharge *feedcak))callback)(&service_stopCharge_data, &service_feedback_stopCharge_data);
-        }
-        cJSON *response_root = cJSON_CreateObject();
-        cJSON_AddStringToObject(response_root, "preTradeNo", service_feedback_stopCharge_data.preTradeNo);
-        cJSON_AddStringToObject(response_root, "tradeNo", service_feedback_stopCharge_data.tradeNo);
-        cJSON_AddNumberToObject(response_root, "gunNo", service_feedback_stopCharge_data.gunNo);
-
-        *response = cJSON_PrintUnformatted(response_root);
-        *response_len = strlen(*response);
-        cJSON_Delete(root);
-        cJSON_Delete(response_root);
+        evs_service_stopCharge_handler(request, response, response_len);
     }
 
     if (strlen("orderCheckSrv") == serviceid_len && memcmp("orderCheckSrv", serviceid, serviceid_len) == 0)
     {
-        evs_service_confirmTrade service_confirmTrade_data;
-
-        cJSON *item_gunNo = cJSON_GetObjectItem(root, "gunNo");
-        if (item_gunNo == NULL || !cJSON_IsNumber(item_gunNo))
-        {
-            cJSON_Delete(root);
-            return -1;
-        }
-        service_confirmTrade_data.gunNo = item_gunNo->valueint;
-
-        cJSON *item_preTradeNo = cJSON_GetObjectItem(root, "preTradeNo");
-        if (item_preTradeNo == NULL || !cJSON_IsString(item_preTradeNo))
-        {
-            cJSON_Delete(root);
-            return -1;
-        }
-        uint8_t *tradeNo = item_preTradeNo->string;
-        memcpy(service_confirmTrade_data.preTradeNo, tradeNo, strlen(tradeNo));
-
-        cJSON *item_tradeNo = cJSON_GetObjectItem(root, "tradeNo");
-        if (item_tradeNo == NULL || !cJSON_IsString(item_tradeNo))
-        {
-            cJSON_Delete(root);
-            return -1;
-        }
-        uint8_t *devTradeNo = item_tradeNo->string;
-        memcpy(service_confirmTrade_data.tradeNo, devTradeNo, strlen(devTradeNo));
-
-        cJSON *item_errcode = cJSON_GetObjectItem(root, "errcode");
-        if (item_errcode == NULL || !cJSON_IsNumber(item_errcode))
-        {
-            cJSON_Delete(root);
-            return -1;
-        }
-        service_confirmTrade_data.errcode = item_errcode->valueint;
-
-        cJSON_Delete(root);
+        evs_service_confirmTrade_handler(request, response, response_len);
     }
     if (strlen("queDataSrv") == serviceid_len && memcmp("queDataSrv", serviceid, serviceid_len) == 0)
     {
-        evs_service_query_log service_query_log_data;
-        cJSON *item_gunNo = cJSON_GetObjectItem(root, "gunNo");
-        if (item_gunNo == NULL || !cJSON_IsNumber(item_gunNo))
-        {
-            cJSON_Delete(root);
-            return -1;
-        }
-        service_query_log_data.gunNo = item_gunNo->valueint;
-
-        cJSON *item_startDate = cJSON_GetObjectItem(root, "startDate");
-        if (item_startDate == NULL || !cJSON_IsString(item_startDate))
-        {
-            cJSON_Delete(root);
-            return -1;
-        }
-        uint8_t *startDate = item_startDate->string;
-        memcpy(service_query_log_data.startDate, startDate, strlen(startDate));
-
-        cJSON *item_stopDate = cJSON_GetObjectItem(root, "stopDate");
-        if (item_stopDate == NULL || !cJSON_IsString(item_stopDate))
-        {
-            cJSON_Delete(root);
-            return -1;
-        }
-        uint8_t *stopDate = item_stopDate->string;
-        memcpy(service_query_log_data.stopDate, stopDate, strlen(stopDate));
-
-        cJSON *item_askType = cJSON_GetObjectItem(root, "askType");
-        if (item_askType == NULL || !cJSON_IsNumber(item_askType))
-        {
-            cJSON_Delete(root);
-            return -1;
-        }
-        service_query_log_data.askType = item_askType->valueint;
+        evs_service_query_log_handler(request, response, response_len);
     }
     if (strlen("gateLockSrv") == serviceid_len && memcmp("gateLockSrv", serviceid, serviceid_len) == 0)
     {
-        evs_service_gateLock_ctrl service_gateLock_ctrl_data;
-        evs_service_feedback_gateLock_ctrl service_feedback_gateLock_ctrl_data;
-        cJSON *item_lockNo = cJSON_GetObjectItem(root, "lockNo");
-        if (item_lockNo == NULL || !cJSON_IsNumber(item_lockNo))
-        {
-            cJSON_Delete(root);
-            return -1;
-        }
-        service_gateLock_ctrl_data.lockNo = item_lockNo->valueint;
-
-        cJSON *item_ctrlFlag = cJSON_GetObjectItem(root, "ctrlFlag");
-        if (item_ctrlFlag == NULL || !cJSON_IsNumber(item_ctrlFlag))
-        {
-            cJSON_Delete(root);
-            return -1;
-        }
-        service_gateLock_ctrl_data.ctrlFlag = item_ctrlFlag->valueint;
-
-        callback = evs_service_callback(EVS_GATE_LOCK_SRV);
-        if (callback)
-        {
-            ((int (*)(const evs_service_gateLock_ctrl *request, evs_service_feedback_gateLock_ctrl *feedcak))callback)(&service_gateLock_ctrl_data, &service_feedback_gateLock_ctrl_data);
-        }
-        cJSON *response_root = cJSON_CreateObject();
-        cJSON_AddNumberToObject(response_root, "lockNo", service_feedback_gateLock_ctrl_data.lockNo);
-        cJSON_AddNumberToObject(response_root, "result", service_feedback_gateLock_ctrl_data.result);
-
-        *response = cJSON_PrintUnformatted(response_root);
-        *response_len = strlen(*response);
-        cJSON_Delete(root);
-        cJSON_Delete(response_root);
+        evs_service_gateLock_ctrl_handler(request, response, response_len);
     }
     if (strlen("groundLockSrv") == serviceid_len && memcmp("groundLockSrv", serviceid, serviceid_len) == 0)
     {
-        evs_service_groundLock_ctrl service_groundLock_ctrl_data;
-        evs_service_feedback_groundLock_ctrl service_feedback_groundLock_ctrl_data;
-
-        cJSON *item_gunNo = cJSON_GetObjectItem(root, "gunNo");
-        if (item_gunNo == NULL || !cJSON_IsNumber(item_gunNo))
-        {
-            cJSON_Delete(root);
-            return -1;
-        }
-        service_groundLock_ctrl_data.gunNo = item_gunNo->valueint;
-
-        cJSON *item_ctrlFlag = cJSON_GetObjectItem(root, "ctrlFlag");
-        if (item_ctrlFlag == NULL || !cJSON_IsNumber(item_ctrlFlag))
-        {
-            cJSON_Delete(root);
-            return -1;
-        }
-        service_groundLock_ctrl_data.ctrlFlag = item_ctrlFlag->valueint;
-
-        callback = evs_service_callback(EVS_GROUND_LOCK_SRV);
-        if (callback)
-        {
-            ((int (*)(const evs_service_groundLock_ctrl *request, evs_service_feedback_groundLock_ctrl *feedcak))callback)(&service_groundLock_ctrl_data, &service_feedback_groundLock_ctrl_data);
-        }
-        cJSON *response_root = cJSON_CreateObject();
-        cJSON_AddNumberToObject(response_root, "gunNo", service_feedback_groundLock_ctrl_data.gunNo);
-        cJSON_AddNumberToObject(response_root, "reason", service_feedback_groundLock_ctrl_data.reason);
-        cJSON_AddNumberToObject(response_root, "result", service_feedback_groundLock_ctrl_data.result);
-
-        *response = cJSON_PrintUnformatted(response_root);
-        *response_len = strlen(*response);
-        cJSON_Delete(root);
-        cJSON_Delete(response_root);
+        evs_service_groundLock_ctrl_handler(request, response, response_len);
     }
     if (strlen("ctrlLockSrv") == serviceid_len && memcmp("ctrlLockSrv", serviceid, serviceid_len) == 0)
     {
-        evs_service_lockCtrl service_lockCtrl_data;
-        evs_service_feedback_lockCtrl service_feedback_lockCtrl_data;
-
-        cJSON *item_gunNo = cJSON_GetObjectItem(root, "gunNo");
-        if (item_gunNo == NULL || !cJSON_IsNumber(item_gunNo))
-        {
-            cJSON_Delete(root);
-            return -1;
-        }
-        service_lockCtrl_data.gunNo = item_gunNo->valueint;
-
-        cJSON *item_lockParam = cJSON_GetObjectItem(root, "lockParam");
-        if (item_lockParam == NULL || !cJSON_IsNumber(item_lockParam))
-        {
-            cJSON_Delete(root);
-            return -1;
-        }
-        service_lockCtrl_data.lockParam = item_lockParam->valueint;
-
-        callback = evs_service_callback(EVS_CTRL_LOCK_SRV);
-        if (callback)
-        {
-            ((int (*)(const evs_service_lockCtrl *request, evs_service_feedback_lockCtrl *feedcak))callback)(&service_lockCtrl_data, &service_feedback_lockCtrl_data);
-        }
-        cJSON *response_root = cJSON_CreateObject();
-        cJSON_AddNumberToObject(response_root, "gunNo", service_feedback_lockCtrl_data.gunNo);
-        cJSON_AddNumberToObject(response_root, "lockStatus", service_feedback_lockCtrl_data.lockStatus);
-        cJSON_AddNumberToObject(response_root, "resCode", service_feedback_lockCtrl_data.resCode);
-
-        *response = cJSON_PrintUnformatted(response_root);
-        *response_len = strlen(*response);
-        cJSON_Delete(root);
-        cJSON_Delete(response_root);
+        evs_service_lockCtrl_handler(request, response, response_len);
     }
     if (strlen("devMaintainSrv") == serviceid_len && memcmp("devMaintainSrv", serviceid, serviceid_len) == 0)
     {
-        evs_service_devCtrl service_devCtrl_data;
-        evs_service_feedback_devCtrl service_feedback_devCtrl_data;
-
-        cJSON *item_ctrlType = cJSON_GetObjectItem(root, "ctrlType");
-        if (item_ctrlType == NULL || !cJSON_IsNumber(item_ctrlType))
-        {
-            cJSON_Delete(root);
-            return -1;
-        }
-        service_devCtrl_data.ctrlType = item_ctrlType->valueint;
-
-        callback = evs_service_callback(EVS_DEV_MAINTAIN_SRV);
-        if (callback)
-        {
-            ((int (*)(const evs_service_devCtrl *request, evs_service_feedback_devCtrl *feedcak))callback)(&service_devCtrl_data, &service_feedback_devCtrl_data);
-        }
-        cJSON *response_root = cJSON_CreateObject();
-        cJSON_AddNumberToObject(response_root, "ctrlType", service_feedback_devCtrl_data.ctrlType);
-        cJSON_AddNumberToObject(response_root, "reason", service_feedback_devCtrl_data.reason);
-
-        *response = cJSON_PrintUnformatted(response_root);
-        *response_len = strlen(*response);
-        cJSON_Delete(root);
-        cJSON_Delete(response_root);
+        evs_service_dev_maintain_handler(request, response, response_len);
     }
     if (strlen("orderlyChargeSrv") == serviceid_len && memcmp("orderlyChargeSrv", serviceid, serviceid_len) == 0)
     {
-        evs_service_orderCharge service_oderCharge_data;
-        evs_service_feedback_orderCharge service_feedback_oderCharge_data;
-        cJSON *item_arrayData;
-        uint8_t i = 0, arrayNum;
-        cJSON *item_preTradeNo = cJSON_GetObjectItem(root, "preTradeNo");
-        if (item_preTradeNo == NULL || !cJSON_IsString(item_preTradeNo))
-        {
-            cJSON_Delete(root);
-            return -1;
-        }
-        uint8_t *tradeNo = item_preTradeNo->string;
-        memcpy(service_oderCharge_data.preTradeNo, tradeNo, strlen(tradeNo));
-
-        cJSON *item_validTime = cJSON_GetObjectItem(root, "validTime");
-        if (item_validTime == NULL || !cJSON_IsArray(item_validTime))
-        {
-            cJSON_Delete(root);
-            return -1;
-        }
-        arrayNum = cJSON_GetArraySize(item_validTime);
-        for (i = 0; i < arrayNum; i++)
-        {
-            item_arrayData = cJSON_GetArrayItem(item_validTime, i);
-            memcpy(service_oderCharge_data.validTime[i], item_arrayData->string, strlen(item_arrayData->string));
-        }
-
-        cJSON *item_kw = cJSON_GetObjectItem(root, "kw");
-        if (item_kw == NULL || !cJSON_IsArray(item_kw))
-        {
-            cJSON_Delete(root);
-            return -1;
-        }
-        arrayNum = cJSON_GetArraySize(item_kw);
-        for (i = 0; i < arrayNum; i++)
-        {
-            item_arrayData = cJSON_GetArrayItem(item_kw, i);
-            service_oderCharge_data.kw[i] = item_arrayData->valueint;
-        }
-
-        callback = evs_service_callback(EVS_ORDERLY_CHARGE_SRV);
-        if (callback)
-        {
-            ((int (*)(const evs_service_orderCharge *request, evs_service_feedback_orderCharge *feedcak))callback)(&service_oderCharge_data, &service_feedback_oderCharge_data);
-        }
-        cJSON *response_root = cJSON_CreateObject();
-        cJSON_AddStringToObject(response_root, "tradeNo", service_feedback_oderCharge_data.tradeNo);
-        cJSON_AddNumberToObject(response_root, "reason", service_feedback_oderCharge_data.reason);
-        cJSON_AddNumberToObject(response_root, "result", service_feedback_oderCharge_data.result);
-
-        *response = cJSON_PrintUnformatted(response_root);
-        *response_len = strlen(*response);
-        cJSON_Delete(root);
-        cJSON_Delete(response_root);
+        evs_service_orderCharge_handler(request, response, response_len);
     }
-
+    if (strlen("confUpdateSrv") == serviceid_len && memcmp("confUpdateSrv", serviceid, serviceid_len) == 0)
+    {
+        evs_service_update_config_handler(request, response, response_len);
+    }
+    if (strlen("getConfSrv") == serviceid_len && memcmp("getConfSrv", serviceid, serviceid_len) == 0)
+    {
+        evs_service_get_config_handler(request, response, response_len);
+    }
     if (*response == NULL)
     {
         *response_len = strlen(response_fmt) + 10 + 1;
@@ -856,62 +1290,10 @@ static int user_service_request_event_handler(const int devid, const char *servi
     return 0;
 }
 
-/** 事件回调：接收到云端回复的时间戳 **/
-static int user_timestamp_reply_event_handler(const char *timestamp)
+static int send_property_dcPile(evs_property_dcPile *data)
 {
-    EXAMPLE_TRACE("Current Timestamp: %s", timestamp);
-
-    return 0;
-}
-
-/** FOTA事件回调处理 **/
-static int user_fota_event_handler(int type, const char *version)
-{
-    char buffer[128] = {0};
-    int buffer_length = 128;
-
-    /* 0 - new firmware exist, query the new firmware */
-    if (type == 0)
-    {
-        EXAMPLE_TRACE("New Firmware Version: %s", version);
-
-        IOT_Linkkit_Query(EXAMPLE_MASTER_DEVID, ITM_MSG_QUERY_FOTA_DATA, (unsigned char *)buffer, buffer_length);
-    }
-
-    return 0;
-}
-
-/** 事件回调：接收到云端错误信息 **/
-static int user_cloud_error_handler(const int code, const char *data, const char *detail)
-{
-    EXAMPLE_TRACE("code =%d ,data=%s, detail=%s", code, data, detail);
-    return 0;
-}
-
-/** 事件回调：通过动态注册获取到DeviceSecret **/
-static int dynreg_device_secret(const char *device_secret)
-{
-    EXAMPLE_TRACE("device secret: %s", device_secret);
-    return 0;
-}
-
-/** 事件回调: SDK内部运行状态打印 **/
-static int user_sdk_state_dump(int ev, const char *msg)
-{
-    void *callback;
-    printf("received state event, -0x%04x(%s)\n", -ev, msg);
-    callback = evs_service_callback(EVS_STATE_EVERYTHING);
-    if (callback)
-    {
-        ((int (*)(int ev, const char *msg))callback)(ev, msg);
-    }
-    return 0;
-}
-
-static int32_t send_property_dcPile(evs_property_dcPile *data)
-{
-    uint32_t res = 0;
-    uint8_t *payload;
+    int res = 0;
+    char *payload;
     cJSON *root, *body;
 
     root = cJSON_CreateObject();
@@ -919,7 +1301,7 @@ static int32_t send_property_dcPile(evs_property_dcPile *data)
     cJSON_AddNumberToObject(body, "netType", data->netType);
     cJSON_AddNumberToObject(body, "sigVal", data->sigVal);
 
-    cJSON_AddNumberToObject(body, "netID", data->netID);
+    cJSON_AddNumberToObject(body, "netId", data->netId);
 
     cJSON_AddNumberToObject(body, "acVolA", data->acVolA);
     cJSON_AddNumberToObject(body, "acCurA", data->acCurA);
@@ -934,17 +1316,23 @@ static int32_t send_property_dcPile(evs_property_dcPile *data)
     cJSON_AddNumberToObject(body, "inletTemp", data->inletTemp);
     cJSON_AddNumberToObject(body, "outletTemp", data->outletTemp);
 
-    cJSON_AddStringToObject(body, "modelId", data->modelId);
+    cJSON_AddStringToObject(body, "eleModelId", data->eleModelId);
+    cJSON_AddStringToObject(body, "serModelId", data->serModelId);
 
     payload = cJSON_PrintUnformatted(root);
 
-    res = IOT_Linkkit_Report(EXAMPLE_MASTER_DEVID, ITM_MSG_POST_PROPERTY,
-                             (uint8_t *)payload, strlen(payload));
-    if (root)
+    res = IOT_Linkkit_Report(evs_g_user_ctx.master_devid, ITM_MSG_POST_PROPERTY, (unsigned char *)payload, strlen(payload));
+    if (root != NULL)
+    {
         cJSON_Delete(root);
-    HAL_Free(payload);
+    }
 
-    EXAMPLE_TRACE("Post Property Message ID: %d", res);
+    if (payload != NULL)
+    {
+        HAL_Free(payload);
+    }
+
+    PROTOCOL_TRACE("Post Property Message ID: %d", res);
     if (res < 0)
     {
         return -1;
@@ -952,10 +1340,10 @@ static int32_t send_property_dcPile(evs_property_dcPile *data)
     return res;
 }
 
-static int32_t send_property_acPile(evs_property_acPile *data)
+static int send_property_acPile(evs_property_acPile *data)
 {
-    uint32_t res = 0;
-    uint8_t *payload;
+    int res = 0;
+    char *payload;
     cJSON *root, *body;
 
     root = cJSON_CreateObject();
@@ -963,7 +1351,7 @@ static int32_t send_property_acPile(evs_property_acPile *data)
 
     cJSON_AddNumberToObject(body, "netType", data->netType);
     cJSON_AddNumberToObject(body, "sigVal", data->sigVal);
-    cJSON_AddNumberToObject(body, "netID", data->netID);
+    cJSON_AddNumberToObject(body, "netId", data->netId);
 
     cJSON_AddNumberToObject(body, "acVolA", data->acVolA);
     cJSON_AddNumberToObject(body, "acCurA", data->acCurA);
@@ -981,13 +1369,18 @@ static int32_t send_property_acPile(evs_property_acPile *data)
 
     payload = cJSON_PrintUnformatted(root);
 
-    res = IOT_Linkkit_Report(EXAMPLE_MASTER_DEVID, ITM_MSG_POST_PROPERTY,
-                             (uint8_t *)payload, strlen(payload));
-    if (root)
+    res = IOT_Linkkit_Report(evs_g_user_ctx.master_devid, ITM_MSG_POST_PROPERTY, (unsigned char *)payload, strlen(payload));
+    if (root != NULL)
+    {
         cJSON_Delete(root);
-    HAL_Free(payload);
+    }
 
-    EXAMPLE_TRACE("Post Property Message ID: %d", res);
+    if (payload != NULL)
+    {
+        HAL_Free(payload);
+    }
+
+    PROTOCOL_TRACE("Post Property Message ID: %d", res);
     if (res < 0)
     {
         return -1;
@@ -996,10 +1389,10 @@ static int32_t send_property_acPile(evs_property_acPile *data)
 }
 
 //交流非充电过程实时监测属性
-static int32_t send_property_ac_nonwork(evs_property_ac_nonWork *data)
+static int send_property_ac_nonwork(evs_property_ac_nonWork *data)
 {
-    int32_t res = 0;
-    uint8_t *payload;
+    int res = 0;
+    char *payload;
     cJSON *root, *body;
 
     root = cJSON_CreateObject();
@@ -1008,6 +1401,7 @@ static int32_t send_property_ac_nonwork(evs_property_ac_nonWork *data)
     cJSON_AddNumberToObject(body, "workStatus", data->workStatus);
 
     cJSON_AddNumberToObject(body, "conStatus", data->conStatus);
+    cJSON_AddNumberToObject(body, "outRelayStatus", data->outRelayStatus);
     cJSON_AddNumberToObject(body, "eLockStatus", data->eLockStatus);
     cJSON_AddNumberToObject(body, "gunTemp", data->gunTemp);
 
@@ -1021,13 +1415,18 @@ static int32_t send_property_ac_nonwork(evs_property_ac_nonWork *data)
     cJSON_AddNumberToObject(body, "acCurC", data->acCurC);
 
     payload = cJSON_PrintUnformatted(root);
-    res = IOT_Linkkit_Report(EXAMPLE_MASTER_DEVID, ITM_MSG_POST_PROPERTY,
-                             (uint8_t *)payload, strlen(payload));
-    if (root)
+    res = IOT_Linkkit_Report(evs_g_user_ctx.master_devid, ITM_MSG_POST_PROPERTY, (unsigned char *)payload, strlen(payload));
+    if (root != NULL)
+    {
         cJSON_Delete(root);
-    HAL_Free(payload);
+    }
 
-    EXAMPLE_TRACE("Post Property Message ID: %d", res);
+    if (payload != NULL)
+    {
+        HAL_Free(payload);
+    }
+
+    PROTOCOL_TRACE("Post Property Message ID: %d", res);
     if (res < 0)
     {
         return -1;
@@ -1036,10 +1435,10 @@ static int32_t send_property_ac_nonwork(evs_property_ac_nonWork *data)
 }
 
 //交流充电过程实时监测属性
-static int32_t send_property_ac_work(evs_property_ac_work *data)
+static int send_property_ac_work(evs_property_ac_work *data)
 {
-    int32_t res = 0;
-    uint8_t *payload;
+    int res = 0;
+    char *payload;
     cJSON *root, *body;
 
     root = cJSON_CreateObject();
@@ -1077,13 +1476,18 @@ static int32_t send_property_ac_work(evs_property_ac_work *data)
     cJSON_AddNumberToObject(body, "totalPowerCost", data->totalPowerCost);
     cJSON_AddNumberToObject(body, "totalServCost", data->totalServCost);
     payload = cJSON_PrintUnformatted(root);
-    res = IOT_Linkkit_Report(EXAMPLE_MASTER_DEVID, ITM_MSG_POST_PROPERTY,
-                             (uint8_t *)payload, strlen(payload));
-    if (root)
+    res = IOT_Linkkit_Report(evs_g_user_ctx.master_devid, ITM_MSG_POST_PROPERTY, (unsigned char *)payload, strlen(payload));
+    if (root != NULL)
+    {
         cJSON_Delete(root);
-    HAL_Free(payload);
+    }
 
-    EXAMPLE_TRACE("Post Property Message ID: %d", res);
+    if (payload != NULL)
+    {
+        HAL_Free(payload);
+    }
+
+    PROTOCOL_TRACE("Post Property Message ID: %d", res);
     if (res < 0)
     {
         return -1;
@@ -1092,10 +1496,10 @@ static int32_t send_property_ac_work(evs_property_ac_work *data)
 }
 
 //直流充电过程BMS实时监测属性
-static int32_t send_property_bms(evs_property_BMS *data)
+static int send_property_bms(evs_property_BMS *data)
 {
-    int32_t res = 0;
-    uint8_t *payload;
+    int res = 0;
+    char *payload;
     cJSON *root, *body;
 
     root = cJSON_CreateObject();
@@ -1122,13 +1526,18 @@ static int32_t send_property_bms(evs_property_BMS *data)
     cJSON_AddNumberToObject(body, "batCurVol", data->batCurVol);
 
     payload = cJSON_PrintUnformatted(root);
-    res = IOT_Linkkit_Report(EXAMPLE_MASTER_DEVID, ITM_MSG_POST_PROPERTY,
-                             (uint8_t *)payload, strlen(payload));
-    if (root)
+    res = IOT_Linkkit_Report(evs_g_user_ctx.master_devid, ITM_MSG_POST_PROPERTY, (unsigned char *)payload, strlen(payload));
+    if (root != NULL)
+    {
         cJSON_Delete(root);
-    HAL_Free(payload);
+    }
 
-    EXAMPLE_TRACE("Post Property Message ID: %d", res);
+    if (payload != NULL)
+    {
+        HAL_Free(payload);
+    }
+
+    PROTOCOL_TRACE("Post Property Message ID: %d", res);
     if (res < 0)
     {
         return -1;
@@ -1137,10 +1546,10 @@ static int32_t send_property_bms(evs_property_BMS *data)
 }
 
 //直流非充电过程实时监测属性
-static int32_t send_property_dc_nonwork(evs_property_dc_nonWork *data)
+static int send_property_dc_nonwork(evs_property_dc_nonWork *data)
 {
-    int32_t res = 0;
-    uint8_t *payload;
+    int res = 0;
+    char *payload;
     cJSON *root, *body;
 
     root = cJSON_CreateObject();
@@ -1156,20 +1565,25 @@ static int32_t send_property_dc_nonwork(evs_property_dc_nonWork *data)
     cJSON_AddNumberToObject(body, "DCPlusFuseStatus", data->DCPlusFuseStatus);
     cJSON_AddNumberToObject(body, "DCMinusFuseStatus", data->DCMinusFuseStatus);
 
-    cJSON_AddNumberToObject(body, "gunTemp1", data->conTemp1);
-    cJSON_AddNumberToObject(body, "gunTemp2", data->conTemp2);
+    cJSON_AddNumberToObject(body, "conTemp1", data->conTemp1);
+    cJSON_AddNumberToObject(body, "conTemp2", data->conTemp2);
 
     cJSON_AddNumberToObject(body, "dcVol", data->dcVol);
     cJSON_AddNumberToObject(body, "dcCur", data->dcCur);
 
     payload = cJSON_PrintUnformatted(root);
-    res = IOT_Linkkit_Report(EXAMPLE_MASTER_DEVID, ITM_MSG_POST_PROPERTY,
-                             (uint8_t *)payload, strlen(payload));
-    if (root)
+    res = IOT_Linkkit_Report(evs_g_user_ctx.master_devid, ITM_MSG_POST_PROPERTY, (unsigned char *)payload, strlen(payload));
+    if (root != NULL)
+    {
         cJSON_Delete(root);
-    HAL_Free(payload);
+    }
 
-    EXAMPLE_TRACE("Post Property Message ID: %d", res);
+    if (payload != NULL)
+    {
+        HAL_Free(payload);
+    }
+
+    PROTOCOL_TRACE("Post Property Message ID: %d", res);
     if (res < 0)
     {
         return -1;
@@ -1178,10 +1592,10 @@ static int32_t send_property_dc_nonwork(evs_property_dc_nonWork *data)
 }
 
 //直流充电过程实时监测属性
-static int32_t send_property_dc_work(evs_property_dc_work *data)
+static int send_property_dc_work(evs_property_dc_work *data)
 {
-    int32_t res = 0;
-    uint8_t *payload;
+    int res = 0;
+    char *payload;
     cJSON *root, *body;
 
     root = cJSON_CreateObject();
@@ -1212,12 +1626,13 @@ static int32_t send_property_dc_work(evs_property_dc_work *data)
     cJSON_AddNumberToObject(body, "socVal", data->socVal);
 
     cJSON_AddNumberToObject(body, "needVol", data->needVol);
-
     cJSON_AddNumberToObject(body, "needCur", data->needCur);
-    cJSON_AddNumberToObject(body, "chargeMode", data->chargeMode);
-    cJSON_AddNumberToObject(body, "bmsVol", data->bmsVol);
 
+    cJSON_AddNumberToObject(body, "chargeMode", data->chargeMode);
+
+    cJSON_AddNumberToObject(body, "bmsVol", data->bmsVol);
     cJSON_AddNumberToObject(body, "bmsCur", data->bmsCur);
+
     cJSON_AddNumberToObject(body, "SingleMHV", data->SingleMHV);
     cJSON_AddNumberToObject(body, "remainT", data->remainT);
 
@@ -1233,14 +1648,21 @@ static int32_t send_property_dc_work(evs_property_dc_work *data)
     cJSON_AddNumberToObject(body, "totalCost", data->totalCost);
     cJSON_AddNumberToObject(body, "totalPowerCost", data->totalPowerCost);
     cJSON_AddNumberToObject(body, "totalServCost", data->totalServCost);
-    payload = cJSON_PrintUnformatted(root);
-    res = IOT_Linkkit_Report(EXAMPLE_MASTER_DEVID, ITM_MSG_POST_PROPERTY,
-                             (uint8_t *)payload, strlen(payload));
-    if (root)
-        cJSON_Delete(root);
-    HAL_Free(payload);
 
-    EXAMPLE_TRACE("Post Property Message ID: %d", res);
+    payload = cJSON_PrintUnformatted(root);
+
+    res = IOT_Linkkit_Report(evs_g_user_ctx.master_devid, ITM_MSG_POST_PROPERTY, (unsigned char *)payload, strlen(payload));
+    if (root != NULL)
+    {
+        cJSON_Delete(root);
+    }
+
+    if (payload != NULL)
+    {
+        HAL_Free(payload);
+    }
+
+    PROTOCOL_TRACE("Post Property Message ID: %d", res);
     if (res < 0)
     {
         return -1;
@@ -1249,34 +1671,48 @@ static int32_t send_property_dc_work(evs_property_dc_work *data)
 }
 
 //直流充电设备交流输入电表底值监测属性表
-static int32_t send_property_dc_input_meter(evs_property_dc_input_meter *data)
+static int send_property_dc_input_meter(evs_property_dc_input_meter *data)
 {
-    int32_t res = 0;
-    uint8_t *payload, meterAddr[13] = {0}, meter[6] = {0};
-    cJSON *root, *body, *inMeterArray, *outMeterArray;
-    uint8_t i = 0, j = 0, k = 0;
-    uint8_t meterCnt = 0;
+    int res = 0;
+    char *payload, Temp[16] = {0};
+    cJSON *root, *body;
 
     root = cJSON_CreateObject();
     cJSON_AddItemToObject(root, "dcSysMeterIty", body = cJSON_CreateObject());
     cJSON_AddNumberToObject(body, "gunNo", data->gunNo);
+
     cJSON_AddStringToObject(body, "acqTime", data->acqTime);
-    cJSON_AddStringToObject(body, "mailAddr", data->mailAddr);
-    cJSON_AddStringToObject(body, "meterNo", data->meterNo);
-    cJSON_AddStringToObject(body, "assetID", data->assetID);
-    cJSON_AddStringToObject(body, "sumMeter", data->sumMeter);
-    cJSON_AddStringToObject(body, "ApElect", data->ApElect);
-    cJSON_AddStringToObject(body, "BpElect", data->BpElect);
-    cJSON_AddStringToObject(body, "CpElect", data->CpElect);
+
+    bcd2str(data->mailAddr, Temp, sizeof(data->mailAddr));
+    cJSON_AddStringToObject(body, "mailAddr", Temp);
+
+    bcd2str(data->meterNo, Temp, sizeof(data->meterNo));
+    cJSON_AddStringToObject(body, "meterNo", Temp);
+    cJSON_AddStringToObject(body, "assetId", data->assetId);
+
+    sprintf(Temp, "%d", data->sumMeter);
+    cJSON_AddStringToObject(body, "sumMeter", Temp);
+    sprintf(Temp, "%d", data->ApElect);
+    cJSON_AddStringToObject(body, "ApElect", Temp);
+    sprintf(Temp, "%d", data->BpElect);
+    cJSON_AddStringToObject(body, "BpElect", Temp);
+    sprintf(Temp, "%d", data->CpElect);
+    cJSON_AddStringToObject(body, "CpElect", Temp);
 
     payload = cJSON_PrintUnformatted(root);
-    res = IOT_Linkkit_Report(EXAMPLE_MASTER_DEVID, ITM_MSG_POST_PROPERTY,
-                             (uint8_t *)payload, strlen(payload));
-    if (root)
-        cJSON_Delete(root);
-    HAL_Free(payload);
 
-    EXAMPLE_TRACE("Post Property Message ID: %d", res);
+    res = IOT_Linkkit_Report(evs_g_user_ctx.master_devid, ITM_MSG_POST_PROPERTY, (unsigned char *)payload, strlen(payload));
+    if (root != NULL)
+    {
+        cJSON_Delete(root);
+    }
+
+    if (payload != NULL)
+    {
+        HAL_Free(payload);
+    }
+
+    PROTOCOL_TRACE("Post Property Message ID: %d", res);
     if (res < 0)
     {
         return -1;
@@ -1285,33 +1721,46 @@ static int32_t send_property_dc_input_meter(evs_property_dc_input_meter *data)
 }
 
 //充电设备输出电表底值监测属性表
-static int32_t send_property_dc_outmeter(evs_property_meter *data)
+static int send_property_dc_outmeter(evs_property_meter *data)
 {
-    int32_t res = 0;
-    uint8_t *payload, meterAddr[13] = {0}, meter[6] = {0};
-    cJSON *root, *body, *inMeterArray, *outMeterArray;
-    uint8_t i = 0, j = 0, k = 0;
-    uint8_t meterCnt = 0;
+    int res = 0;
+    char *payload, Temp[16] = {0};
+    cJSON *root, *body;
 
     root = cJSON_CreateObject();
     cJSON_AddItemToObject(root, "dcOutMeterIty", body = cJSON_CreateObject());
     cJSON_AddNumberToObject(body, "gunNo", data->gunNo);
+
     cJSON_AddStringToObject(body, "acqTime", data->acqTime);
-    cJSON_AddStringToObject(body, "mailAddr", data->mailAddr);
-    cJSON_AddStringToObject(body, "meterNo", data->meterNo);
-    cJSON_AddStringToObject(body, "assetID", data->assetID);
-    cJSON_AddStringToObject(body, "sumMeter", data->sumMeter);
+
+    bcd2str(data->mailAddr, Temp, sizeof(data->mailAddr));
+    cJSON_AddStringToObject(body, "mailAddr", Temp);
+
+    bcd2str(data->meterNo, Temp, sizeof(data->meterNo));
+    cJSON_AddStringToObject(body, "meterNo", Temp);
+
+    cJSON_AddStringToObject(body, "assetId", data->assetId);
+
+    sprintf(Temp, "%d", data->sumMeter);
+    cJSON_AddStringToObject(body, "sumMeter", Temp);
+
     cJSON_AddStringToObject(body, "lastTrade", data->lastTrade);
-    cJSON_AddStringToObject(body, "power", data->power);
+    cJSON_AddNumberToObject(body, "power", data->elec);
 
     payload = cJSON_PrintUnformatted(root);
-    res = IOT_Linkkit_Report(EXAMPLE_MASTER_DEVID, ITM_MSG_POST_PROPERTY,
-                             (uint8_t *)payload, strlen(payload));
-    if (root)
-        cJSON_Delete(root);
-    HAL_Free(payload);
 
-    EXAMPLE_TRACE("Post Property Message ID: %d", res);
+    res = IOT_Linkkit_Report(evs_g_user_ctx.master_devid, ITM_MSG_POST_PROPERTY, (unsigned char *)payload, strlen(payload));
+    if (root != NULL)
+    {
+        cJSON_Delete(root);
+    }
+
+    if (payload != NULL)
+    {
+        HAL_Free(payload);
+    }
+
+    PROTOCOL_TRACE("Post Property Message ID: %d", res);
     if (res < 0)
     {
         return -1;
@@ -1320,33 +1769,45 @@ static int32_t send_property_dc_outmeter(evs_property_meter *data)
 }
 
 //充电设备输出电表底值监测属性表
-static int32_t send_property_ac_outmeter(evs_property_meter *data)
+static int send_property_ac_outmeter(evs_property_meter *data)
 {
-    int32_t res = 0;
-    uint8_t *payload, meterAddr[13] = {0}, meter[6] = {0};
-    cJSON *root, *body, *inMeterArray, *outMeterArray;
-    uint8_t i = 0, j = 0, k = 0;
-    uint8_t meterCnt = 0;
+    int res = 0;
+    char *payload, Temp[16] = {0};
+    cJSON *root, *body;
 
     root = cJSON_CreateObject();
     cJSON_AddItemToObject(root, "acOutMeterIty", body = cJSON_CreateObject());
     cJSON_AddNumberToObject(body, "gunNo", data->gunNo);
+
     cJSON_AddStringToObject(body, "acqTime", data->acqTime);
-    cJSON_AddStringToObject(body, "mailAddr", data->mailAddr);
-    cJSON_AddStringToObject(body, "meterNo", data->meterNo);
-    cJSON_AddStringToObject(body, "assetID", data->assetID);
-    cJSON_AddStringToObject(body, "sumMeter", data->sumMeter);
+
+    bcd2str(data->mailAddr, Temp, sizeof(data->mailAddr));
+    cJSON_AddStringToObject(body, "mailAddr", Temp);
+
+    bcd2str(data->meterNo, Temp, sizeof(data->meterNo));
+    cJSON_AddStringToObject(body, "meterNo", Temp);
+
+    cJSON_AddStringToObject(body, "assetId", data->assetId);
+
+    sprintf(Temp, "%d", data->sumMeter);
+    cJSON_AddStringToObject(body, "sumMeter", Temp);
+
     cJSON_AddStringToObject(body, "lastTrade", data->lastTrade);
-    cJSON_AddStringToObject(body, "power", data->power);
+    cJSON_AddNumberToObject(body, "power", data->elec);
 
     payload = cJSON_PrintUnformatted(root);
-    res = IOT_Linkkit_Report(EXAMPLE_MASTER_DEVID, ITM_MSG_POST_PROPERTY,
-                             (uint8_t *)payload, strlen(payload));
-    if (root)
+    res = IOT_Linkkit_Report(evs_g_user_ctx.master_devid, ITM_MSG_POST_PROPERTY, (unsigned char *)payload, strlen(payload));
+    if (root != NULL)
+    {
         cJSON_Delete(root);
-    HAL_Free(payload);
+    }
 
-    EXAMPLE_TRACE("Post Property Message ID: %d", res);
+    if (payload != NULL)
+    {
+        HAL_Free(payload);
+    }
+
+    PROTOCOL_TRACE("Post Property Message ID: %d", res);
     if (res < 0)
     {
         return -1;
@@ -1354,20 +1815,19 @@ static int32_t send_property_ac_outmeter(evs_property_meter *data)
     return res;
 }
 
-static int32_t send_event_firware_info(evs_event_fireware_info *data)
+static int send_event_firware_info(evs_event_fireware_info *data)
 {
-    int32_t res = 0;
-    uint8_t *payload, meterAddr[13] = {0}, meter[6] = {0};
+    int res = 0;
+    char *payload, meterAddr[13] = {0}, meter[EVS_MAX_METER_ADDR_LEN] = {0};
     cJSON *root, *inMeterArray, *outMeterArray;
-    uint8_t i = 0, j = 0, k = 0;
-    uint8_t meterCnt = 0;
+    unsigned char i = 0, j = 0, k = 0;
 
     root = cJSON_CreateObject();
     cJSON_AddStringToObject(root, "simNo", data->simNo);
-    cJSON_AddStringToObject(root, "modelId", data->modelId);
+    cJSON_AddStringToObject(root, "eleModelId", data->eleModelId);
     cJSON_AddStringToObject(root, "stakeModel", data->stakeModel);
     cJSON_AddStringToObject(root, "devSn", data->devSn);
-    cJSON_AddStringToObject(root, "modelId", data->modelId);
+    cJSON_AddStringToObject(root, "serModelId", data->serModelId);
     cJSON_AddStringToObject(root, "stakeModel", data->stakeModel);
 
     cJSON_AddStringToObject(root, "simMac", data->simMac);
@@ -1394,41 +1854,49 @@ static int32_t send_event_firware_info(evs_event_fireware_info *data)
     cJSON_AddNumberToObject(root, "isGroundLock", data->isGroundLock);
 
     cJSON_AddItemToObject(root, "inMeter", inMeterArray = cJSON_CreateArray());
-    for (i = 0; i < 2; i++)
+    for (i = 0; i < EVS_MAX_INPUT_METER_NUM; i++)
     {
-        if (memcmp(data->inMeter[i], meter, 6) != 0)
+        if (memcmp(data->inMeter[i], meter, EVS_MAX_METER_ADDR_LEN) != 0)
         {
-            for (j = 0, k = 0; j < 6, k < 12; k++, j++)
+            for (j = 0, k = 0; j < EVS_MAX_METER_ADDR_LEN; k++, j++)
             {
                 meterAddr[k] = ((data->inMeter[i][j] >> 4) + '0');
                 meterAddr[++k] = (data->inMeter[i][j] & 0x0f) + '0';
             }
-            cJSON_AddStringToArray(inMeterArray, meterAddr);
+            //cJSON_AddStringToArray(inMeterArray, meterAddr);
+            cJSON_AddItemToArray(inMeterArray, cJSON_CreateString(meterAddr));
         }
     }
 
     cJSON_AddItemToObject(root, "outMeter", outMeterArray = cJSON_CreateArray());
-    for (i = 0; i < 4; i++)
+    for (i = 0; i < EVS_MAX_PORT_NUM; i++)
     {
-        if (memcmp(data->outMeter[i], meter, 6) != 0)
+        if (memcmp(data->outMeter[i], meter, EVS_MAX_METER_ADDR_LEN) != 0)
         {
-            for (j = 0, k = 0; j < 6, k < 12; k++, j++)
+            for (j = 0, k = 0; j < EVS_MAX_METER_ADDR_LEN; k++, j++)
             {
                 meterAddr[k] = ((data->outMeter[i][j] >> 4) + '0');
                 meterAddr[++k] = (data->outMeter[i][j] & 0x0f) + '0';
             }
-            cJSON_AddStringToArray(outMeterArray, meterAddr);
+            //cJSON_AddStringToArray(outMeterArray, meterAddr);
+            cJSON_AddItemToArray(outMeterArray, cJSON_CreateString(meterAddr));
         }
     }
 
     payload = cJSON_PrintUnformatted(root);
-    res = IOT_Linkkit_TriggerEvent(EXAMPLE_MASTER_DEVID, "firmwareEvt", strlen("firmwareEvt"), payload, strlen(payload));
+    res = IOT_Linkkit_TriggerEvent(evs_g_user_ctx.master_devid, "firmwareEvt", strlen("firmwareEvt"), (char *)payload, strlen(payload));
 
-    if (root)
+    if (root != NULL)
+    {
         cJSON_Delete(root);
-    HAL_Free(payload);
+    }
 
-    EXAMPLE_TRACE("Post Event Message ID: %d", res);
+    if (payload != NULL)
+    {
+        HAL_Free(payload);
+    }
+
+    PROTOCOL_TRACE("Post Event Message ID: %d", res);
     if (res < 0)
     {
         return -1;
@@ -1436,10 +1904,10 @@ static int32_t send_event_firware_info(evs_event_fireware_info *data)
     return res;
 }
 
-static int32_t send_event_ask_feeModel(evs_event_ask_feeModel *data)
+static int send_event_ask_feeModel(evs_event_ask_feeModel *data)
 {
-    int32_t res = 0;
-    uint8_t *payload = NULL;
+    int res = 0;
+    char *payload = NULL;
 
     cJSON *root = cJSON_CreateObject();
     cJSON_AddNumberToObject(root, "gunNo", data->gunNo);
@@ -1448,13 +1916,19 @@ static int32_t send_event_ask_feeModel(evs_event_ask_feeModel *data)
 
     payload = cJSON_PrintUnformatted(root);
 
-    res = IOT_Linkkit_TriggerEvent(EXAMPLE_MASTER_DEVID, "askFeeModelEvt", strlen("askFeeModelEvt"), payload, strlen(payload));
+    res = IOT_Linkkit_TriggerEvent(evs_g_user_ctx.master_devid, "askFeeModelEvt", strlen("askFeeModelEvt"), (char *)payload, strlen(payload));
 
-    if (root)
+    if (root != NULL)
+    {
         cJSON_Delete(root);
-    HAL_Free(payload);
+    }
 
-    EXAMPLE_TRACE("Post Event Message ID: %d", res);
+    if (payload != NULL)
+    {
+        HAL_Free(payload);
+    }
+
+    PROTOCOL_TRACE("Post Event Message ID: %d", res);
     if (res < 0)
     {
         return -1;
@@ -1462,10 +1936,10 @@ static int32_t send_event_ask_feeModel(evs_event_ask_feeModel *data)
     return res;
 }
 
-static int32_t send_event_start_result(evs_event_startResult *data)
+static int send_event_start_result(evs_event_startResult *data)
 {
-    int32_t res = 0;
-    uint8_t *payload = NULL;
+    int res = 0;
+    char *payload = NULL;
 
     cJSON *root = cJSON_CreateObject();
     cJSON_AddNumberToObject(root, "gunNo", data->gunNo);
@@ -1475,13 +1949,21 @@ static int32_t send_event_start_result(evs_event_startResult *data)
     cJSON_AddStringToObject(root, "tradeNo", data->tradeNo);
     cJSON_AddStringToObject(root, "vinCode", data->vinCode);
 
-    res = IOT_Linkkit_TriggerEvent(EXAMPLE_MASTER_DEVID, "startChaResEvt", strlen("startChaResEvt"), payload, strlen(payload));
+    payload = cJSON_PrintUnformatted(root);
 
-    if (root)
+    res = IOT_Linkkit_TriggerEvent(evs_g_user_ctx.master_devid, "startChaResEvt", strlen("startChaResEvt"), (char *)payload, strlen(payload));
+
+    if (root != NULL)
+    {
         cJSON_Delete(root);
-    HAL_Free(payload);
+    }
 
-    EXAMPLE_TRACE("Post Event Message ID: %d", res);
+    if (payload != NULL)
+    {
+        HAL_Free(payload);
+    }
+
+    PROTOCOL_TRACE("Post Event Message ID: %d", res);
     if (res < 0)
     {
         return -1;
@@ -1489,10 +1971,10 @@ static int32_t send_event_start_result(evs_event_startResult *data)
     return res;
 }
 
-static int32_t send_event_auth_start(evs_event_startCharge *data)
+static int send_event_auth_start(evs_event_startCharge *data)
 {
-    int32_t res = 0;
-    uint8_t *payload = NULL;
+    int res = 0;
+    char *payload = NULL;
 
     cJSON *root = cJSON_CreateObject();
     cJSON_AddNumberToObject(root, "gunNo", data->gunNo);
@@ -1508,15 +1990,22 @@ static int32_t send_event_auth_start(evs_event_startCharge *data)
     cJSON_AddNumberToObject(root, "chargeTimes", data->chargeTimes);
 
     cJSON_AddNumberToObject(root, "batteryVol", data->batteryVol);
-    cJSON_AddNumberToObject(root, "auxiVolt", data->auxiVolt);
 
-    res = IOT_Linkkit_TriggerEvent(EXAMPLE_MASTER_DEVID, "startChargeAuthEvt", strlen("startChargeAuthEvt"), payload, strlen(payload));
+    payload = cJSON_PrintUnformatted(root);
 
-    if (root)
+    res = IOT_Linkkit_TriggerEvent(evs_g_user_ctx.master_devid, "startChargeAuthEvt", strlen("startChargeAuthEvt"), (char *)payload, strlen(payload));
+
+    if (root != NULL)
+    {
         cJSON_Delete(root);
-    HAL_Free(payload);
+    }
 
-    EXAMPLE_TRACE("Post Event Message ID: %d", res);
+    if (payload != NULL)
+    {
+        HAL_Free(payload);
+    }
+
+    PROTOCOL_TRACE("Post Event Message ID: %d", res);
     if (res < 0)
     {
         return -1;
@@ -1524,10 +2013,10 @@ static int32_t send_event_auth_start(evs_event_startCharge *data)
     return res;
 }
 
-static int32_t send_event_stopCharge(evs_event_stopCharge *data)
+static int send_event_stopCharge(evs_event_stopCharge *data)
 {
-    int32_t res = 0;
-    uint8_t *payload = NULL;
+    int res = 0;
+    char *payload = NULL;
 
     cJSON *root = cJSON_CreateObject();
     cJSON_AddNumberToObject(root, "gunNo", data->gunNo);
@@ -1537,13 +2026,21 @@ static int32_t send_event_stopCharge(evs_event_stopCharge *data)
     cJSON_AddStringToObject(root, "tradeNo", data->tradeNo);
     cJSON_AddNumberToObject(root, "stopFailReson", data->stopFailReson);
 
-    res = IOT_Linkkit_TriggerEvent(EXAMPLE_MASTER_DEVID, "stopChaResEvt", strlen("stopChaResEvt"), payload, strlen(payload));
+    payload = cJSON_PrintUnformatted(root);
 
-    if (root)
+    res = IOT_Linkkit_TriggerEvent(evs_g_user_ctx.master_devid, "stopChaResEvt", strlen("stopChaResEvt"), (char *)payload, strlen(payload));
+
+    if (root != NULL)
+    {
         cJSON_Delete(root);
-    HAL_Free(payload);
+    }
 
-    EXAMPLE_TRACE("Post Event Message ID: %d", res);
+    if (payload != NULL)
+    {
+        HAL_Free(payload);
+    }
+
+    PROTOCOL_TRACE("Post Event Message ID: %d", res);
     if (res < 0)
     {
         return -1;
@@ -1551,29 +2048,37 @@ static int32_t send_event_stopCharge(evs_event_stopCharge *data)
     return res;
 }
 
-static int32_t send_event_groundLock_change(evs_event_groundLock_change *data)
+static int send_event_groundLock_change(evs_event_groundLock_change *data)
 {
-    int32_t res = 0;
-    uint8_t *payload = NULL;
+    int res = 0;
+    char *payload = NULL;
 
     cJSON *root = cJSON_CreateObject();
     cJSON_AddNumberToObject(root, "gunNo", data->gunNo);
     cJSON_AddNumberToObject(root, "lockState", data->lockState);
     cJSON_AddNumberToObject(root, "powerType", data->powerType);
-    cJSON_AddStringToObject(root, "cellState", data->cellState);
-    cJSON_AddStringToObject(root, "lockerState", data->lockerState);
+    cJSON_AddNumberToObject(root, "cellState", data->cellState);
+    cJSON_AddNumberToObject(root, "lockerState", data->lockerState);
     cJSON_AddNumberToObject(root, "lockerForced", data->lockerForced);
     cJSON_AddNumberToObject(root, "lowPower", data->lowPower);
     cJSON_AddNumberToObject(root, "soc", data->soc);
-    cJSON_AddStringToObject(root, "openCnt", data->openCnt);
+    cJSON_AddNumberToObject(root, "openCnt", data->openCnt);
 
-    res = IOT_Linkkit_TriggerEvent(EXAMPLE_MASTER_DEVID, "groundLockEvt", strlen("groundLockEvt"), payload, strlen(payload));
+    payload = cJSON_PrintUnformatted(root);
 
-    if (root)
+    res = IOT_Linkkit_TriggerEvent(evs_g_user_ctx.master_devid, "groundLockEvt", strlen("groundLockEvt"), (char *)payload, strlen(payload));
+
+    if (root != NULL)
+    {
         cJSON_Delete(root);
-    HAL_Free(payload);
+    }
 
-    EXAMPLE_TRACE("Post Event Message ID: %d", res);
+    if (payload != NULL)
+    {
+        HAL_Free(payload);
+    }
+
+    PROTOCOL_TRACE("Post Event Message ID: %d", res);
     if (res < 0)
     {
         return -1;
@@ -1581,22 +2086,30 @@ static int32_t send_event_groundLock_change(evs_event_groundLock_change *data)
     return res;
 }
 
-static int32_t send_event_gateLock_change(evs_event_gateLock_change *data)
+static int send_event_gateLock_change(evs_event_gateLock_change *data)
 {
-    int32_t res = 0;
-    uint8_t *payload = NULL;
+    int res = 0;
+    char *payload = NULL;
 
     cJSON *root = cJSON_CreateObject();
     cJSON_AddNumberToObject(root, "lockNo", data->lockNo);
     cJSON_AddNumberToObject(root, "lockState", data->lockState);
 
-    res = IOT_Linkkit_TriggerEvent(EXAMPLE_MASTER_DEVID, "smartLockEvent", strlen("smartLockEvent"), payload, strlen(payload));
+    payload = cJSON_PrintUnformatted(root);
 
-    if (root)
+    res = IOT_Linkkit_TriggerEvent(evs_g_user_ctx.master_devid, "smartLockEvent", strlen("smartLockEvent"), (char *)payload, strlen(payload));
+
+    if (root != NULL)
+    {
         cJSON_Delete(root);
-    HAL_Free(payload);
+    }
 
-    EXAMPLE_TRACE("Post Event Message ID: %d", res);
+    if (payload != NULL)
+    {
+        HAL_Free(payload);
+    }
+
+    PROTOCOL_TRACE("Post Event Message ID: %d", res);
     if (res < 0)
     {
         return -1;
@@ -1604,10 +2117,10 @@ static int32_t send_event_gateLock_change(evs_event_gateLock_change *data)
     return res;
 }
 
-static int32_t send_event_tradeInfo(evs_event_tradeInfo *data)
+static int send_event_tradeInfo(evs_event_tradeInfo *data)
 {
-    int32_t res = 0;
-    uint8_t *payload = NULL;
+    int res = 0;
+    char *payload = NULL, time[16] = {0}, sumPower[16] = {0};
 
     cJSON *root = cJSON_CreateObject();
     cJSON_AddNumberToObject(root, "gunNo", data->gunNo);
@@ -1617,11 +2130,28 @@ static int32_t send_event_tradeInfo(evs_event_tradeInfo *data)
     cJSON_AddStringToObject(root, "vinCode", data->vinCode);
 
     cJSON_AddNumberToObject(root, "timeDivType", data->timeDivType);
+
+    sprintf(time, "%d", data->chargeStartTime);
+    cJSON_AddStringToObject(root, "chargeStartTime", time);
+    sprintf(time, "%d", data->chargeEndTime);
+    cJSON_AddStringToObject(root, "chargeEndTime", time);
+
+    cJSON_AddNumberToObject(root, "startSoc", data->startSoc);
+    cJSON_AddNumberToObject(root, "endSoc", data->endSoc);
+    cJSON_AddNumberToObject(root, "reason", data->reason);
+
     cJSON_AddNumberToObject(root, "totalElect", data->totalElect);
+
+    cJSON_AddStringToObject(root, "eleModelId", data->eleModelId);
+    cJSON_AddStringToObject(root, "serModelId", data->serModelId);
+
+    sprintf(sumPower, "%d", data->sumStart);
+    cJSON_AddStringToObject(root, "sumStart", sumPower);
+    sprintf(sumPower, "%d", data->sumEnd);
+    cJSON_AddStringToObject(root, "sumEnd", sumPower);
 
     cJSON_AddNumberToObject(root, "sharpElect", data->sharpElect);
     cJSON_AddNumberToObject(root, "peakElect", data->peakElect);
-
     cJSON_AddNumberToObject(root, "flatElect", data->flatElect);
     cJSON_AddNumberToObject(root, "valleyElect", data->valleyElect);
 
@@ -1629,24 +2159,30 @@ static int32_t send_event_tradeInfo(evs_event_tradeInfo *data)
     cJSON_AddNumberToObject(root, "totalServCost", data->totalServCost);
 
     cJSON_AddNumberToObject(root, "sharpPowerCost", data->sharpPowerCost);
-
     cJSON_AddNumberToObject(root, "peakPowerCost", data->peakPowerCost);
     cJSON_AddNumberToObject(root, "flatPowerCost", data->flatPowerCost);
-
     cJSON_AddNumberToObject(root, "valleyPowerCost", data->valleyPowerCost);
-    cJSON_AddNumberToObject(root, "sharpServCost", data->sharpServCost);
 
+    cJSON_AddNumberToObject(root, "sharpServCost", data->sharpServCost);
     cJSON_AddNumberToObject(root, "peakServCost", data->peakServCost);
     cJSON_AddNumberToObject(root, "flatServCost", data->flatServCost);
-    cJSON_AddNumberToObject(root, "flatServCost", data->valleyServCost);
+    cJSON_AddNumberToObject(root, "valleyServCost", data->valleyServCost);
 
-    res = IOT_Linkkit_TriggerEvent(EXAMPLE_MASTER_DEVID, "orderUpdateEvt", strlen("orderUpdateEvt"), payload, strlen(payload));
+    payload = cJSON_PrintUnformatted(root);
 
-    if (root)
+    res = IOT_Linkkit_TriggerEvent(evs_g_user_ctx.master_devid, "orderUpdateEvt", strlen("orderUpdateEvt"), (char *)payload, strlen(payload));
+
+    if (root != NULL)
+    {
         cJSON_Delete(root);
-    HAL_Free(payload);
+    }
 
-    EXAMPLE_TRACE("Post Event Message ID: %d", res);
+    if (payload != NULL)
+    {
+        HAL_Free(payload);
+    }
+
+    PROTOCOL_TRACE("Post Event Message ID: %d", res);
     if (res < 0)
     {
         return -1;
@@ -1654,12 +2190,12 @@ static int32_t send_event_tradeInfo(evs_event_tradeInfo *data)
     return res;
 }
 
-static int32_t send_event_alarm(evs_event_alarm *data)
+static int send_event_alarm(evs_event_alarm *data)
 {
-    int32_t res = 0;
-    uint8_t *payload;
+    int res = 0;
+    char *payload;
     cJSON *root, *faultArray, *warnArray;
-    uint8_t i = 0;
+    unsigned char i = 0;
 
     root = cJSON_CreateObject();
     cJSON_AddNumberToObject(root, "gunNo", data->gunNo);
@@ -1668,21 +2204,31 @@ static int32_t send_event_alarm(evs_event_alarm *data)
 
     cJSON_AddItemToObject(root, "faultValue", faultArray = cJSON_CreateArray());
     for (i = 0; i < data->faultSum; i++)
-        cJSON_AddNumberToArray(faultArray, data->faultValue[i]);
-
+    {
+        //cJSON_AddNumberToArray(faultArray, data->faultValue[i]);
+        cJSON_AddItemToArray(faultArray, cJSON_CreateNumber(data->faultValue[i]));
+    }
     cJSON_AddItemToObject(root, "warnValue", warnArray = cJSON_CreateArray());
     for (i = 0; i < data->warnSum; i++)
-        cJSON_AddNumberToArray(warnArray, data->warnValue[i]);
-
+    {
+        //cJSON_AddNumberToArray(warnArray, data->warnValue[i]);
+        cJSON_AddItemToArray(warnArray, cJSON_CreateNumber(data->warnValue[i]));
+    }
     payload = cJSON_PrintUnformatted(root);
 
-    res = IOT_Linkkit_TriggerEvent(EXAMPLE_MASTER_DEVID, "totalFaultEvt", strlen("totalFaultEvt"), payload, strlen(payload));
+    res = IOT_Linkkit_TriggerEvent(evs_g_user_ctx.master_devid, "totalFaultEvt", strlen("totalFaultEvt"), (char *)payload, strlen(payload));
 
-    if (root)
+    if (root != NULL)
+    {
         cJSON_Delete(root);
-    HAL_Free(payload);
+    }
 
-    EXAMPLE_TRACE("Post Event Message ID: %d", res);
+    if (payload != NULL)
+    {
+        HAL_Free(payload);
+    }
+
+    PROTOCOL_TRACE("Post Event Message ID: %d", res);
     if (res < 0)
     {
         return -1;
@@ -1690,33 +2236,49 @@ static int32_t send_event_alarm(evs_event_alarm *data)
     return res;
 }
 
-static int32_t send_event_acPile_change(evs_event_pile_stutus_change *data)
+static int send_event_ask_dev_config(void)
 {
-    int32_t res = 0;
-    uint8_t *payload, *time[16] = {0};
-    cJSON *root, *valArray;
-    uint8_t i = 0;
+    int res = 0;
+    char payload[6] = "{}";
 
-    sprintf(time, "%d", data->time);
+    res = IOT_Linkkit_TriggerEvent(evs_g_user_ctx.master_devid, "askConfigEvt", strlen("askConfigEvt"), (char *)payload, strlen(payload));
+
+    PROTOCOL_TRACE("Post Event Message ID: %d", res);
+    if (res < 0)
+    {
+        return -1;
+    }
+    return res;
+}
+
+static int send_event_acPile_change(evs_event_pile_stutus_change *data)
+{
+    int res = 0;
+    char *payload, time[16] = {0};
+    cJSON *root;
+
+    sprintf(time, "%d", data->yxOccurTime);
 
     root = cJSON_CreateObject();
     cJSON_AddNumberToObject(root, "gunNo", data->gunNo);
-    cJSON_AddStringToObject(root, "time", time);
-    cJSON_AddNumberToObject(root, "Sum", data->Sum);
-
-    cJSON_AddItemToObject(root, "val", valArray = cJSON_CreateArray());
-    //for (i = 0; i < data->Sum; i++)
-    //cJSON_AddStringToArray(valArray, data->val[i]);
+    cJSON_AddStringToObject(root, "yxOccurTime", time);
+    cJSON_AddNumberToObject(root, "connCheckStatus", data->connCheckStatus);
 
     payload = cJSON_PrintUnformatted(root);
 
-    res = IOT_Linkkit_TriggerEvent(EXAMPLE_MASTER_DEVID, "acStChEvt", strlen("acStChEvt"), payload, strlen(payload));
+    res = IOT_Linkkit_TriggerEvent(evs_g_user_ctx.master_devid, "acStChEvt", strlen("acStChEvt"), (char *)payload, strlen(payload));
 
-    if (root)
+    if (root != NULL)
+    {
         cJSON_Delete(root);
-    HAL_Free(payload);
+    }
 
-    EXAMPLE_TRACE("Post Event Message ID: %d", res);
+    if (payload != NULL)
+    {
+        HAL_Free(payload);
+    }
+
+    PROTOCOL_TRACE("Post Event Message ID: %d", res);
     if (res < 0)
     {
         return -1;
@@ -1724,33 +2286,35 @@ static int32_t send_event_acPile_change(evs_event_pile_stutus_change *data)
     return res;
 }
 
-static int32_t send_event_dcPile_change(evs_event_pile_stutus_change *data)
+static int send_event_dcPile_change(evs_event_pile_stutus_change *data)
 {
-    int32_t res = 0;
-    uint8_t *payload, *time[16] = {0};
-    cJSON *root, *valArray;
-    uint8_t i = 0;
+    int res = 0;
+    char *payload, time[16] = {0};
+    cJSON *root;
+    //unsigned char i = 0;
 
-    sprintf(time, "%d", data->time);
+    sprintf(time, "%d", data->yxOccurTime);
 
     root = cJSON_CreateObject();
     cJSON_AddNumberToObject(root, "gunNo", data->gunNo);
-    cJSON_AddStringToObject(root, "time", time);
-    cJSON_AddNumberToObject(root, "Sum", data->Sum);
-
-    cJSON_AddItemToObject(root, "val", valArray = cJSON_CreateArray());
-    for (i = 0; i < data->Sum; i++)
-        cJSON_AddStringToArray(valArray, data->val[i]);
+    cJSON_AddStringToObject(root, "yxOccurTime", time);
+    cJSON_AddNumberToObject(root, "connCheckStatus", data->connCheckStatus);
 
     payload = cJSON_PrintUnformatted(root);
 
-    res = IOT_Linkkit_TriggerEvent(EXAMPLE_MASTER_DEVID, "dcStChEvt", strlen("acStChEvt"), payload, strlen(payload));
+    res = IOT_Linkkit_TriggerEvent(evs_g_user_ctx.master_devid, "dcStChEvt", strlen("acStChEvt"), (char *)payload, strlen(payload));
 
-    if (root)
+    if (root != NULL)
+    {
         cJSON_Delete(root);
-    HAL_Free(payload);
+    }
 
-    EXAMPLE_TRACE("Post Event Message ID: %d", res);
+    if (payload != NULL)
+    {
+        HAL_Free(payload);
+    }
+
+    PROTOCOL_TRACE("Post Event Message ID: %d", res);
     if (res < 0)
     {
         return -1;
@@ -1758,75 +2322,144 @@ static int32_t send_event_dcPile_change(evs_event_pile_stutus_change *data)
     return res;
 }
 
-/*
-函数名称 int evs_linkkit_new(const int evs_is_ready)
-函数功能：当设备就绪后（可以读取到设备的设备证书信息和设备注册码），创建于阿里云平台通信的LINKKIT套件
-输入参数：evs_is_ready 
-1：设备准备就绪   
-0: 设备未准备就绪
-返回值:
-0                                 设备执行成功
-EVS_IS_NOT_READY           设备未准备就绪
-EVS_GET_REG_CODE_FAULT     获取设备注册码失败
-EVS_SET_CERT_FAULT         设置设备证书失败 
-*/
-int evs_linkkit_new(const int evs_is_ready)
+int evs_linkkit_time_sync(void)
+{
+    int ret = 0;
+
+    ret = IOT_Linkkit_Query(evs_g_user_ctx.master_devid, ITM_MSG_QUERY_TIMESTAMP, NULL, 0);
+    if (ret)
+    {
+        PROTOCOL_TRACE("Linkkit Qurey time stamp fail %d ", ret);
+        return 1;
+    }
+
+    return 0;
+}
+
+int evs_linkkit_fota(unsigned char *buffer, int buffer_length)
+{
+    int ret = 0;
+
+    ret = IOT_Linkkit_Query(evs_g_user_ctx.master_devid, ITM_MSG_QUERY_FOTA_DATA, buffer, buffer_length);
+    if (ret)
+    {
+        PROTOCOL_TRACE("Linkkit Qurey time stamp fail %d ", ret);
+        return 1;
+    }
+
+    return 0;
+}
+
+int evs_linkkit_new(const int evs_is_ready, const int is_device_uid)
 {
 
-    //iotx_linkkit_dev_meta_info_t master_meta_info;
+#ifdef DYNAMIC_REGISTER
+    int DeviceSecretLength = 0;
+    int regCodeLenth = 0;
+    iotx_http_region_types_t region = IOTX_HTTP_REGION_CUSTOM;
+    int res = 0;
+    iotx_dev_meta_info_t dev_reg_meta;
+    char reg_code[IOTX_DEVICE_REG_CODE_LEN + 1] = "";
+    char device_uid[IOTX_DEVICE_ASSET_LEN + 1] = "";
+#endif
+
+    void *callback;
     int dynamic_register = 0, post_reply_need = 0;
-    memset(&g_user_example_ctx, 0, sizeof(user_example_ctx_t));
+    evs_device_meta evs_dev_meta;
+    memset(&evs_g_user_ctx, 0, sizeof(evs_g_user_ctx));
+    int ret = 0;
 
 #ifdef ATM_ENABLED
     if (IOT_ATM_Init() < 0)
     {
-        EXAMPLE_TRACE("IOT_ATM_Init failed!\n");
+        PROTOCOL_TRACE("IOT_ATM_Init failed!\n");
         return -1;
     }
 #endif
-    /*
-    //如果设备没有就绪直接返回
-    if(evs_is_ready == 0)
+
+#ifdef DYNAMIC_REGISTER
+    memset(&dev_reg_meta, 0, sizeof(dev_reg_meta));
+    memset(&evs_dev_meta, 0, sizeof(evs_dev_meta));
+    callback = evs_service_callback(EVS_CERT_GET);
+    if (callback)
     {
-        return EVS_IS_NOT_READY;
+        ret = ((int (*)(evs_device_meta * meta)) callback)(&evs_dev_meta);
     }
-    //获取设备证书
-    if(evs_get_cert()==0)
+    //PROTOCOL_TRACE("evs_dev_meta.device_secret is %s\n", evs_dev_meta.device_secret);
+    //PROTOCOL_TRACE("evs_dev_meta.device_name is %s\n", evs_dev_meta.device_name);
+    //PROTOCOL_TRACE("evs_dev_meta.product_key is %s\n", evs_dev_meta.product_key);
+
+    DeviceSecretLength = strlen(evs_dev_meta.device_secret);
+    //HAL_Printf("DeviceSecretLength is %d\n", DeviceSecretLength);
+    //如果没有证书
+    if ((DeviceSecretLength <= 5) || (DeviceSecretLength > IOTX_DEVICE_SECRET_LEN) || (ret < 0))
     {
-        //拷贝三元组到SDK
-        memset(&master_meta_info, 0, sizeof(iotx_linkkit_dev_meta_info_t));
-        memcpy(master_meta_info.product_key, g_product_key, strlen(g_product_key));
-        memcpy(master_meta_info.product_secret, g_product_secret, strlen(g_product_secret));
-        memcpy(master_meta_info.device_name, g_device_name, strlen(g_device_name));
-        memcpy(master_meta_info.device_secret, g_device_secret, strlen(g_device_secret));
-    }
-    else
-    {
-        //获取设备注册码进行动态注册
-        if(evs_get_reg_code()==0)
+        if (is_device_uid != 0)
         {
-            //1.去平台进行注册，得到证书
-            //………………
-            //2.设置设备证书
-            if(evs_set_cert()!=0)
+            callback = evs_service_callback(EVS_DEVICE_UID_GET);
+            if (callback)
             {
-                return EVS_SET_CERT_FAULT;
+                regCodeLenth = ((int (*)(char *device_uid))callback)(device_uid);
+                memcpy(dev_reg_meta.device_asset, device_uid, sizeof(device_uid));
             }
+            IOT_Get_Regcode(region, &dev_reg_meta);
+            //PROTOCOL_TRACE("IOT_Get_Regcode dev_reg_meta.device_reg_code is %s\n",dev_reg_meta.device_reg_code);
+            regCodeLenth = strlen(dev_reg_meta.device_reg_code);
         }
         else
         {
-            return EVS_GET_REG_CODE_FAULT;
-        }
-        
-    }
-*/
-    memset(&master_meta_info, 0, sizeof(iotx_linkkit_dev_meta_info_t));
-    memcpy(master_meta_info.product_key, g_product_key, strlen(g_product_key));
-    memcpy(master_meta_info.product_secret, g_product_secret, strlen(g_product_secret));
-    memcpy(master_meta_info.device_name, g_device_name, strlen(g_device_name));
-    memcpy(master_meta_info.device_secret, g_device_secret, strlen(g_device_secret));
+            callback = evs_service_callback(EVS_DEVICE_REG_CODE_GET);
+            if (callback)
+            {
 
-    IOT_SetLogLevel(IOT_LOG_DEBUG);
+                regCodeLenth = ((int (*)(char *device_reg_code))callback)(reg_code);
+                memcpy(dev_reg_meta.device_reg_code, reg_code, sizeof(reg_code));
+            }
+        }
+        //regCodeLenth = HAL_GetDeviceRegCode(g_device_reg_code);
+        //判断注册码，如果没有注册码，则在此循环
+        //PROTOCOL_TRACE("dev_reg_meta.device_reg_code length is %d\n",regCodeLenth);
+        //PROTOCOL_TRACE("dev_reg_meta.device_reg_code is %s\n",dev_reg_meta.device_reg_code);
+        if ((regCodeLenth < 5) || (regCodeLenth > IOTX_DEVICE_REG_CODE_LEN))
+        {
+            HAL_Printf("Get RegCode failed\n");
+            return -1;
+        }
+        res = IOT_Dynamic_Register(region, &dev_reg_meta);
+        if (res < 0)
+        {
+            HAL_Printf("IOT_Dynamic_Register failed\n");
+            return -2;
+        }
+        //HAL_Printf("\nProduct Key: %s\n", dev_reg_meta.product_key);
+        memcpy(evs_dev_meta.product_key, dev_reg_meta.product_key, strlen(dev_reg_meta.product_key));
+        //HAL_Printf("\nDevice Name: %s\n", dev_reg_meta.device_name);
+        memcpy(evs_dev_meta.device_name, dev_reg_meta.device_name, strlen(dev_reg_meta.device_name));
+        //HAL_Printf("\nDevice Secret: %s\n", dev_reg_meta.device_secret);
+        memcpy(evs_dev_meta.device_secret, dev_reg_meta.device_secret, strlen(dev_reg_meta.device_secret));
+        callback = evs_service_callback(EVS_CERT_SET);
+        if (callback)
+        {
+            ((int (*)(const evs_device_meta meta))callback)(evs_dev_meta);
+        }
+    }
+#endif
+    callback = evs_service_callback(EVS_CERT_GET);
+    if (callback)
+    {
+        if (((int (*)(evs_device_meta *))callback)(&evs_dev_meta) != 0)
+        {
+            HAL_Printf("Get cert failed\n");
+            return -3;
+        }
+    }
+
+    memset(&master_meta_info, 0, sizeof(iotx_linkkit_dev_meta_info_t));
+    memcpy(master_meta_info.product_key, evs_dev_meta.product_key, strlen(evs_dev_meta.product_key));
+    memcpy(master_meta_info.device_name, evs_dev_meta.device_name, strlen(evs_dev_meta.device_name));
+    memcpy(master_meta_info.device_secret, evs_dev_meta.device_secret, strlen(evs_dev_meta.device_secret));
+
+    IOT_SetLogLevel(IOT_LOG_ERROR);
 
     /* 注册回调函数 */
     IOT_RegisterCallback(ITE_STATE_EVERYTHING, user_sdk_state_dump);
@@ -1852,44 +2485,35 @@ int evs_linkkit_new(const int evs_is_ready)
 
     return 0;
 }
+
 int evs_linkkit_free()
 {
-    IOT_Linkkit_Close(g_user_example_ctx.master_devid);
+    IOT_Linkkit_Close(evs_g_user_ctx.master_devid);
     IOT_SetLogLevel(IOT_LOG_NONE);
     return 0;
 }
 
-/*
-函数名称 int evs_mainloop()
-输入参数：无
-返回值:
-EVS_LINKKIT_OPEN_FAULT           设备linkkit打开失败
-EVS_LINKKIT_OPEN_WAIT            设备linkkit打开重试等待
-EVS_LINKKIT_CONNECT_FAULT        设备linkkit连接失败  
-EVS_LINKKIT_CONNECT_WAIT         设备linkkit连接重试等待  
-*/
 int evs_mainloop()
 {
 
     static int main_loop_step = 0;
     static int evs_linkkit_open_cnt = 0;
     static int evs_linkkit_connect_cnt = 0;
-    static int cnt = 0;
     int res = 0;
     switch (main_loop_step)
     {
     case EVS_LINKKIT_OPEN:
-        if ((evs_linkkit_open_cnt % 200) == 0)
+        if ((evs_linkkit_open_cnt % 2000) == 0)
         {
-            g_user_example_ctx.master_devid = IOT_Linkkit_Open(IOTX_LINKKIT_DEV_TYPE_MASTER, &master_meta_info);
-            if (g_user_example_ctx.master_devid >= 0)
+            evs_g_user_ctx.master_devid = IOT_Linkkit_Open(IOTX_LINKKIT_DEV_TYPE_MASTER, &master_meta_info);
+            if (evs_g_user_ctx.master_devid >= 0)
             {
                 main_loop_step++;
                 evs_linkkit_open_cnt = 0;
             }
             else
             {
-                EXAMPLE_TRACE("IOT_Linkkit_Open failed! retry after %d ms\n", 2000);
+                PROTOCOL_TRACE("IOT_Linkkit_Open failed! retry after %d ms\n", 2000);
                 return EVS_LINKKIT_OPEN_FAULT;
             }
         }
@@ -1899,9 +2523,9 @@ int evs_mainloop()
             return EVS_LINKKIT_OPEN_WAIT;
         }
     case EVS_LINKKIT_CONNECT:
-        if ((evs_linkkit_connect_cnt % 500) == 0)
+        if ((evs_linkkit_connect_cnt % 2000) == 0)
         {
-            res = IOT_Linkkit_Connect(g_user_example_ctx.master_devid);
+            res = IOT_Linkkit_Connect(evs_g_user_ctx.master_devid);
             if (res >= 0)
             {
                 main_loop_step++;
@@ -1909,7 +2533,7 @@ int evs_mainloop()
             }
             else
             {
-                EXAMPLE_TRACE("IOT_Linkkit_Connect failed! retry after %d ms\n", 5000);
+                PROTOCOL_TRACE("IOT_Linkkit_Connect failed! retry after %d ms\n", 5000);
                 return EVS_LINKKIT_CONNECT_FAULT;
             }
         }
@@ -1919,56 +2543,13 @@ int evs_mainloop()
             return EVS_LINKKIT_CONNECT_WAIT;
         }
     case EVS_LINKKIT_POLL:
-        IOT_Linkkit_Yield(EXAMPLE_YIELD_TIMEOUT_MS);
-#if 0
-        /* Post Proprety Example */
-        if ((cnt % 200) == 0) {
-            user_post_property(); 
-        }
-
-        /* Post Event Example */
-        if ((cnt % 100) == 0) {
-            user_post_event(); 
-        }
-        cnt++;
-#endif
+        IOT_Linkkit_Yield(EVS_YIELD_TIMEOUT_MS);
         break;
     default:
         break;
     }
+    return 0;
 }
-
-/*服务回调函数*/
-// void protocol_service_callback(evs_service_type_t type, void *service_data)
-// {
-
-//     void *callback;
-//     int output1 = 0, output2 = 0;
-//     switch (type)
-//     {
-//     case EVS_GATA_LOCK_SRV /* constant-expression */:
-//         /* code */
-//         callback = evs_service_callback(EVS_GATA_LOCK_SRV);
-//         if (callback)
-//         {
-//             ((int (*)(const int, int *))callback)(5, &output1);
-//         }
-//         printf("evs_service_callback EVS_GATA_LOCK_SRV %d\n", output1);
-//         break;
-//     case EVS_CHARGE_START_SRV /* constant-expression */:
-//         /* code */
-//         callback = evs_service_callback(EVS_GATA_LOCK_SRV);
-//         if (callback)
-//         {
-//             ((int (*)(const int, int *))callback)(10, &output2);
-//         }
-//         printf("evs_service_callback EVS_CHARGE_START_SRV %d\n", output2);
-//         break;
-
-//     default:
-//         break;
-//     }
-// }
 
 /**
  * @brief Send pile event data to SDK.
@@ -1980,15 +2561,13 @@ int evs_mainloop()
  * @note None.
  */
 
-int8_t evs_send_event(evs_cmd_event_enum event_type, void *param)
+void evs_send_event(evs_cmd_event_enum event_type, void *param)
 {
     switch (event_type)
     {
     case EVS_CMD_EVENT_FIREWARE_INFO:
-    {
         send_event_firware_info((evs_event_fireware_info *)param);
         break;
-    }
 
     case EVS_CMD_EVENT_ASK_FEEMODEL:
         send_event_ask_feeModel((evs_event_ask_feeModel *)param);
@@ -2030,7 +2609,10 @@ int8_t evs_send_event(evs_cmd_event_enum event_type, void *param)
         send_event_gateLock_change((evs_event_gateLock_change *)param);
         /* code */
         break;
-
+    case EVS_CMD_EVENT_ASK_DEV_CONFIG:
+        send_event_ask_dev_config();
+        /* code */
+        break;
     default:
         break;
     }
@@ -2054,7 +2636,7 @@ int8_t evs_send_event(evs_cmd_event_enum event_type, void *param)
  * @note None.
  */
 
-int8_t evs_send_property(evs_cmd_property_enum property_type, void *param)
+void evs_send_property(evs_cmd_property_enum property_type, void *param)
 {
     switch (property_type)
     {

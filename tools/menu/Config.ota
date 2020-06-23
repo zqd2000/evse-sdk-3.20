@@ -6,3 +6,4 @@ config OTA_ENABLED
     select INFRA_HTTPC
     select INFRA_MD5
     select INFRA_SHA256
+    default y

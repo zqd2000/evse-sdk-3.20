@@ -1,6 +1,6 @@
 config DYNAMIC_REGISTER
     bool "FEATURE_DYNAMIC_REGISTER"
-    default n
+    default y
     select INFRA_STRING
     select INFRA_SHA256
     select SUPPORT_TLS

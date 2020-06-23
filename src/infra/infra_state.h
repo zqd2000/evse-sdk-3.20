@@ -78,6 +78,9 @@ extern "C" {
 /* User input parameters contain unacceptable value */
 /* 用户传递给API的参数中含有其它不合理的取值 */
 #define STATE_USER_INPUT_INVALID                    (STATE_USER_INPUT_BASE - 0x0013)
+/* User input parameters contain unacceptable deviceRegistration */
+/* 用户传递给API的参数中含有不合法的设备注册码(deviceRegistration) */
+#define STATE_USER_INPUT_DR                         (STATE_USER_INPUT_BASE - 0x0014)
 /* User Input: 0x0100 ~ 0x01FF */
 
 /* System: 0x0200 ~ 0x02FF */

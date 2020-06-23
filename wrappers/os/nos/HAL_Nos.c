@@ -114,67 +114,6 @@ int HAL_Snprintf(char *str, const int len, const char *fmt, ...)
     return rc;
 }
 
-
-int HAL_GetDeviceAssetNo(char device_AssetNo[IOTX_DEVICE_ASSET_LEN])
-{
-    return 0;
-}
-
-int HAL_SetDeviceAssetNo(char *device_AssetNo)
-{
-    return 0;
-}
-
-int HAL_GetDeviceRegCode(char device_RegCode[IOTX_DEVICE_REGISTRATION_LEN])
-{
-    return 0;
-}
-
-int HAL_SetDeviceRegCode(char *device_RegCode)
-{
-    return 0;
-}
-
-int HAL_GetDeviceName(char device_name[IOTX_DEVICE_NAME_LEN])
-{
-    return 0;
-}
-
-int HAL_SetDeviceName(char *device_name)
-{
-    return 0;
-}
-
-int HAL_GetDeviceSecret(char device_secret[IOTX_DEVICE_SECRET_LEN])
-{
-    return 0;
-}
-
-int HAL_SetDeviceSecret(char *device_secret)
-{
-    return 0;
-}
-
-int HAL_GetProductKey(char product_key[IOTX_PRODUCT_KEY_LEN])
-{
-    return 0;
-}
-
-int HAL_SetProductKey(char *product_key)
-{
-    return 0;
-}
-
-int HAL_GetProductSecret(char product_secret[IOTX_PRODUCT_SECRET_LEN])
-{
-    return 0;
-}
-
-int HAL_SetProductSecret(char *product_secret)
-{
-    return 0;
-}
-
 long HAL_UTC_Get(void)
 {
     return 0;

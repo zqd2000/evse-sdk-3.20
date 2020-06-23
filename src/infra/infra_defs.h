@@ -8,12 +8,12 @@ extern "C"
 {
 #endif
 
-#define IOTX_SDK_REVISION "20200512.infra-restore-http-domain"
+#define IOTX_SDK_REVISION "20200603.ota-fix-wrong-device-secret-issue-in-ota-demo"
 #define IOTX_SDK_VERSION "3.2.0"
 #define IOTX_ALINK_VERSION "20"
 #define IOTX_PRODUCT_KEY_LEN (20)
 #define IOTX_DEVICE_ASSET_LEN (20)
-#define IOTX_DEVICE_REGISTRATION_LEN (64)
+#define IOTX_DEVICE_REG_CODE_LEN (64)
 #define IOTX_DEVICE_NAME_LEN (32)
 #define IOTX_DEVICE_SECRET_LEN (64)
 #define IOTX_MODULE_LEN (64)
@@ -306,8 +306,9 @@ extern "C"
         char device_name[IOTX_DEVICE_NAME_LEN + 1];
         char device_secret[IOTX_DEVICE_SECRET_LEN + 1];
         char module[IOTX_MODULE_LEN + 1];
+        char device_asset[IOTX_DEVICE_ASSET_LEN+1];
+        char device_reg_code[IOTX_DEVICE_REG_CODE_LEN+1];
     } iotx_dev_meta_info_t;
-
     typedef struct
     {
         const char *topic;

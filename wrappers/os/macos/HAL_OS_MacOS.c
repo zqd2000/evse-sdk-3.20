@@ -30,24 +30,6 @@
 #include "wrappers_defs.h"
 #include "wrappers_os.h"
 
-#ifdef DYNAMIC_REGISTER
-    char _product_key[IOTX_PRODUCT_KEY_LEN + 1]       = "a1ZETBPbycq";
-    char _product_secret[IOTX_PRODUCT_SECRET_LEN + 1] = "L68wCVXYUaNg1Ey9";
-    char _device_name[IOTX_DEVICE_NAME_LEN + 1]       = "example1";
-    char _device_secret[IOTX_DEVICE_SECRET_LEN + 1]   = "";
-#else
-    #ifdef DEVICE_MODEL_ENABLED
-        char _product_key[IOTX_PRODUCT_KEY_LEN + 1]       = "a1RIsMLz2BJ";
-        char _product_secret[IOTX_PRODUCT_SECRET_LEN + 1] = "fSAF0hle6xL0oRWd";
-        char _device_name[IOTX_DEVICE_NAME_LEN + 1]       = "example1";
-        char _device_secret[IOTX_DEVICE_SECRET_LEN + 1]   = "RDXf67itLqZCwdMCRrw0N5FHbv5D7jrE";
-    #else
-        char _product_key[IOTX_PRODUCT_KEY_LEN + 1]       = "a1MZxOdcBnO";
-        char _product_secret[IOTX_PRODUCT_SECRET_LEN + 1] = "h4I4dneEFp7EImTv";
-        char _device_name[IOTX_DEVICE_NAME_LEN + 1]       = "test_01";
-        char _device_secret[IOTX_DEVICE_SECRET_LEN + 1]   = "t9GmMf2jb3LgWfXBaZD2r3aJrfVWBv56";
-    #endif
-#endif
 
 void *HAL_MutexCreate(void)
 {
@@ -500,67 +482,6 @@ int HAL_Kv_Get(const char *key, void *buffer, int *buffer_len)
 }
 
 int HAL_Kv_Del(const char *key)
-{
-    return 0;
-}
-
-
-int HAL_GetDeviceAssetNo(char device_AssetNo[IOTX_DEVICE_ASSET_LEN])
-{
-    return 0;
-}
-
-int HAL_SetDeviceAssetNo(char *device_AssetNo)
-{
-    return 0;
-}
-
-int HAL_GetDeviceRegCode(char device_RegCode[IOTX_DEVICE_REGISTRATION_LEN])
-{
-    return 0;
-}
-
-int HAL_SetDeviceRegCode(char *device_RegCode)
-{
-    return 0;
-}
-
-int HAL_GetDeviceName(char device_name[IOTX_DEVICE_NAME_LEN])
-{
-    return 0;
-}
-
-int HAL_SetDeviceName(char *device_name)
-{
-    return 0;
-}
-
-int HAL_GetDeviceSecret(char device_secret[IOTX_DEVICE_SECRET_LEN])
-{
-    return 0;
-}
-
-int HAL_SetDeviceSecret(char *device_secret)
-{
-    return 0;
-}
-
-int HAL_GetProductKey(char product_key[IOTX_PRODUCT_KEY_LEN])
-{
-    return 0;
-}
-
-int HAL_SetProductKey(char *product_key)
-{
-    return 0;
-}
-
-int HAL_GetProductSecret(char product_secret[IOTX_PRODUCT_SECRET_LEN])
-{
-    return 0;
-}
-
-int HAL_SetProductSecret(char *product_secret)
 {
     return 0;
 }
