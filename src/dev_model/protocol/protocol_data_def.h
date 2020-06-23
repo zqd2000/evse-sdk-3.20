@@ -35,7 +35,7 @@ typedef struct
 	char device_name[IOTX_DEVICE_NAME_LEN + 1];
 	char device_secret[IOTX_DEVICE_SECRET_LEN + 1];
 	char device_reg_code[IOTX_DEVICE_REG_CODE_LEN + 1];
-	char device_uid[IOTX_DEVICE_REG_CODE_LEN + 1];
+	char device_uid[IOTX_DEVICE_UID_LEN + 1];
 } evs_device_meta;
 
 typedef enum

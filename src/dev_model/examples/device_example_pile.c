@@ -9,7 +9,7 @@ char _product_key[IOTX_PRODUCT_KEY_LEN + 1] = "";
 char _device_name[IOTX_DEVICE_NAME_LEN + 1] = "";
 char _device_secret[IOTX_DEVICE_SECRET_LEN + 1] = "";
 char _device_reg_code[IOTX_DEVICE_REG_CODE_LEN + 1] = "";
-char _device_uid[IOTX_DEVICE_ASSET_LEN + 1] = "1587416872968745";
+char _device_uid[IOTX_DEVICE_UID_LEN + 1] = "1587416872968745";
 
 #define DEVICE_EXAMPLE_TRACE(...)                               \
 	do                                                          \
@@ -149,8 +149,8 @@ static int evs_device_uid_get(char *device_uid)
 	//在这里实现注册码的读取操作，读取成功返回注册码长度，如果注册码为NULL或读取失败返回-1
 
 	int len = strlen(_device_uid);
-	memset(device_uid, 0x0, IOTX_DEVICE_ASSET_LEN);
-	strncpy(device_uid, _device_uid, IOTX_DEVICE_ASSET_LEN);
+	memset(device_uid, 0x0, IOTX_DEVICE_UID_LEN);
+	strncpy(device_uid, _device_uid, IOTX_DEVICE_UID_LEN);
 	device_uid[len] = '\0';
 	return strlen(_device_uid);
 }

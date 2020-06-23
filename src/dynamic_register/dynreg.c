@@ -605,7 +605,7 @@ int32_t _http_get_regcode(iotx_http_region_types_t region, iotx_dev_meta_info_t 
     char *custom_register_response = NULL;
     const char *deviceCode = "1";
 
-    if (strlen(deviceCode) > IOTX_DEVICE_ASSET_LEN)
+    if (strlen(deviceCode) > IOTX_DEVICE_UID_LEN)
     {
         return STATE_USER_INPUT_DR;
     }

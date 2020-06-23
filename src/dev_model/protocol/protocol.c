@@ -2360,7 +2360,7 @@ int evs_linkkit_new(const int evs_is_ready, const int is_device_uid)
     int res = 0;
     iotx_dev_meta_info_t dev_reg_meta;
     char reg_code[IOTX_DEVICE_REG_CODE_LEN + 1] = "";
-    char device_uid[IOTX_DEVICE_ASSET_LEN + 1] = "";
+    char device_uid[IOTX_DEVICE_UID_LEN + 1] = "";
 #endif
 
     void *callback;
