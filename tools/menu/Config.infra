@@ -12,6 +12,14 @@ config PLATFORM_HAS_STDINT
 
         Switching to "n" leads to SDK use self-defined data-type in src/infra/infra_types.h
 
+config PLATFORM_IS_DEBUG
+    bool "PLATFORM_IS_DEBUG"
+    default y
+    help
+        Tell if you use debug platform
+
+        Switching to "n" leads to SDK use release platform
+
 config PLATFORM_HAS_DYNMEM
     bool "PLATFORM_HAS_DYNMEM"
     default y

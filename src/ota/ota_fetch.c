@@ -42,7 +42,7 @@ void *ofc_Init(char *url, int offset)
         /* check protocol, http or https, and assign default port*/
         if ((strlen("http") == protocol_len) && (memcmp("http", url, protocol_len) == 0)) {
             OTA_LOG_INFO("protocol: http");
-            port = 80;
+            port = 11889;//80;
         } else if ((strlen("https") == protocol_len) && (memcmp("https", url, protocol_len) == 0)) {
             OTA_LOG_INFO("protocol: https");
 #ifdef SUPPORT_TLS
@@ -62,7 +62,7 @@ void *ofc_Init(char *url, int offset)
     } else {
         OTA_LOG_INFO("protocol: http");
         protocol_end = url;
-        port = 80;
+        port = 11889;//80;
     }
 
     /* check port, if exist, override port */

@@ -3,7 +3,7 @@
  */
 
 #include <stdlib.h>
-
+#if defined(PLATFORM_IS_DEBUG)
 const char *iotx_ca_crt = \
 {
     \
@@ -29,3 +29,30 @@ const char *iotx_ca_crt = \
     "HMUfpIBvFSDJ3gyICh3WZlXi/EjJKSZp4A==\r\n" \
     "-----END CERTIFICATE-----"
 };
+#else
+const char *iotx_ca_crt = \
+{
+    \
+    "-----BEGIN CERTIFICATE-----\r\n"
+    "MIIDNTCCAh0CFFGhMctUDrA/FfvShIH3r4DzJQ8sMA0GCSqGSIb3DQEBCwUAMFYx\r\n" \
+    "CzAJBgNVBAYTAkNOMREwDwYDVQQIDAhaaGVKaWFuZzERMA8GA1UEBwwISGFuZ1po\r\n" \
+    "b3UxDDAKBgNVBAoMA0lvVDETMBEGA1UEAwwKYWxpeXVuLmNvbTAgFw0yMDA1MjAw\r\n" \
+    "ODUzMjRaGA8yMDgwMDUwNTA4NTMyNFowVjELMAkGA1UEBhMCQ04xETAPBgNVBAgM\r\n" \
+    "CFpoZUppYW5nMREwDwYDVQQHDAhIYW5nWmhvdTEMMAoGA1UECgwDSW9UMRMwEQYD\r\n" \
+    "VQQDDAphbGl5dW4uY29tMIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEA\r\n" \
+    "unSTVZb3FVarrMpy76f+hX7Z05E5l0sL7ukOjYZLgx8kt3RYjnPxIB23wp5kPtNV\r\n" \
+    "/cEHN1dihctqNDMcjXjDXTbf1oFdDWN/0vc8Mz+4hOHiefc+5TRAlmYQ97DN5dKu\r\n" \
+    "8jTndVNNrfoSLdFYpIhufhhWYKM0nb95lVx0YMhbPJAwQbNIhdG2QioFp+oicnjt\r\n" \
+    "A/G8ISNw2oDSAYz0QcUE4Hn1ZsWWHO6VaLwRP+m258cwPKcTmwv+n+kp76b2ZKIj\r\n" \
+    "vtkX1mswdI/geDfMN8rYg6jY9VGgUbd9peLw93EzMQ2QkFPcdsVtJsru8WoU68lr\r\n" \
+    "UASV+JfCmgTSIDnTvOQiCQIDAQABMA0GCSqGSIb3DQEBCwUAA4IBAQCalM0n/3pP\r\n" \
+    "qBbQF3YwFqpb3BGAXxk6I8Zk1S2xRXErzbddPWC+f90OMvav6+jpnmvtlQMzFqMn\r\n" \
+    "lGULjwau++G4hcO0gv7zusJf4Gm1M++xPghnrWHvY1DYXbuqoSOVgcY3AE9I/o+X\r\n" \
+    "r2rS4Bo47Yy28hWjyg9M9TCG5Fl77qKqgGuZAQKZTrYNlrC5M1wFgYPtg68wh1yq\r\n" \
+    "pQrLKRrhkKQ91a29/xYLBf1ztNYPzvNOMZViwtiRM/OLV9bqVnfj4nufG0kUmVAA\r\n" \
+    "pMQxvKMTOIvrIqQg1HNrqqKBzW12J3/PZXJyFLtlnWq3n5GDwKjEOlabZRT5vNIa\r\n" \
+    "6FQmo3jbuzIu\r\n" \
+    "-----END CERTIFICATE-----"
+    
+};
+#endif

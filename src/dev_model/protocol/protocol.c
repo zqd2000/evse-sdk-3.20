@@ -270,7 +270,7 @@ static int evs_service_get_config_handler(const char *request, char **response, 
     cJSON *qrCodeArray;
 
     cJSON_AddNumberToObject(response_root, "equipParamFreq", service_dev_feedback_config_data.equipParamFreq);
-    cJSON_AddNumberToObject(response_root, "gunElecFeeq", service_dev_feedback_config_data.gunElecFeeq);
+    cJSON_AddNumberToObject(response_root, "gunElecFreq", service_dev_feedback_config_data.gunElecFreq);
     cJSON_AddNumberToObject(response_root, "nonElecFreq", service_dev_feedback_config_data.nonElecFreq);
     cJSON_AddNumberToObject(response_root, "faultWarnings", service_dev_feedback_config_data.faultWarnings);
     cJSON_AddNumberToObject(response_root, "acMeterFreq", service_dev_feedback_config_data.acMeterFreq);
@@ -278,7 +278,6 @@ static int evs_service_get_config_handler(const char *request, char **response, 
     cJSON_AddNumberToObject(response_root, "offlinChaLen", service_dev_feedback_config_data.offlinChaLen);
     cJSON_AddNumberToObject(response_root, "grndLock", service_dev_feedback_config_data.grndLock);
     cJSON_AddNumberToObject(response_root, "doorLock", service_dev_feedback_config_data.doorLock);
-    cJSON_AddNumberToObject(response_root, "encodeCon", service_dev_feedback_config_data.encodeCon);
 
     cJSON_AddItemToObject(response_root, "qrCode", qrCodeArray = cJSON_CreateArray());
     for (i = 0; i < EVS_MAX_PORT_NUM; i++)
@@ -323,10 +322,10 @@ static int evs_service_update_config_handler(const char *request, char **respons
         service_dev_config_data.equipParamFreq = item_equipParamFreq->valueint;
     }
 
-    cJSON *item_gunElecFeeq = cJSON_GetObjectItem(root, "gunElecFeeq");
+    cJSON *item_gunElecFeeq = cJSON_GetObjectItem(root, "gunElecFreq");
     if (item_gunElecFeeq != NULL && cJSON_IsNumber(item_gunElecFeeq))
     {
-        service_dev_config_data.gunElecFeeq = item_gunElecFeeq->valueint;
+        service_dev_config_data.gunElecFreq = item_gunElecFeeq->valueint;
     }
 
     cJSON *item_nonElecFreq = cJSON_GetObjectItem(root, "nonElecFreq");
@@ -371,20 +370,15 @@ static int evs_service_update_config_handler(const char *request, char **respons
         service_dev_config_data.doorLock = item_doorLock->valueint;
     }
 
-    cJSON *item_encodeCon = cJSON_GetObjectItem(root, "encodeCon");
-    if (item_encodeCon != NULL && cJSON_IsNumber(item_encodeCon))
-    {
-        service_dev_config_data.encodeCon = item_encodeCon->valueint;
-    }
-
     cJSON *item_qrCode = cJSON_GetObjectItem(root, "qrCode");
     if (item_qrCode != NULL && cJSON_IsArray(item_qrCode))
     {
         cJSON *item_arrayData;
-        for (i = 0; i < 4; i++)
+        int qrcode_num = cJSON_GetArraySize(item_qrCode);
+        for (i = 0; i < qrcode_num; i++)
         {
             item_arrayData = cJSON_GetArrayItem(item_qrCode, i);
-            memcpy(service_dev_config_data.qrCode[EVS_MAX_PORT_NUM], item_arrayData->valuestring, strlen(item_arrayData->valuestring));
+            memcpy(service_dev_config_data.qrCode[i], item_arrayData->valuestring, strlen(item_arrayData->valuestring));
         }
     }
 
@@ -395,7 +389,14 @@ static int evs_service_update_config_handler(const char *request, char **respons
     }
 
     cJSON *response_root = cJSON_CreateObject();
-    cJSON_AddNumberToObject(response_root, "resCode", feedback_data);
+    if ((feedback_data != 10) && (feedback_data != 11)) //必须处理返回值，并返回结果，负责默认回复失败
+    {
+        cJSON_AddNumberToObject(response_root, "resCode", 11);
+    }
+    else
+    {
+        cJSON_AddNumberToObject(response_root, "resCode", feedback_data);
+    }
 
     *response = cJSON_PrintUnformatted(response_root);
 
@@ -1147,8 +1148,6 @@ static int evs_service_orderCharge_handler(const char *request, char **response,
 
     memset(&service_oderCharge_data, 0, sizeof(service_oderCharge_data));
 
-    cJSON *item_arrayData;
-    unsigned char i = 0;
     cJSON *item_preTradeNo = cJSON_GetObjectItem(root, "preTradeNo");
     if (item_preTradeNo != NULL && cJSON_IsString(item_preTradeNo))
     {
@@ -1156,30 +1155,36 @@ static int evs_service_orderCharge_handler(const char *request, char **response,
         memcpy(service_oderCharge_data.preTradeNo, tradeNo, strlen(tradeNo));
     }
 
-    cJSON *item_num = cJSON_GetObjectItem(root, "num");
-    if (item_num != NULL && cJSON_IsNumber(item_num))
+    cJSON *item_validTime = cJSON_GetObjectItem(root, "validTime");
+    if (item_validTime != NULL && cJSON_IsArray(item_validTime))
     {
-        service_oderCharge_data.num = item_num->valueint;
-    }
-    if (service_oderCharge_data.num != 0)
-    {
-        cJSON *item_validTime = cJSON_GetObjectItem(root, "validTime");
-        if (item_validTime != NULL && cJSON_IsArray(item_validTime))
+        int item_num = cJSON_GetArraySize(item_validTime);
+        if ((item_num > 0))
         {
+            if (item_num <= EVS_MAX_SEG_LEN)
+            {
+                service_oderCharge_data.num = item_num;
+            }
+            else
+            {
+                service_oderCharge_data.num = EVS_MAX_SEG_LEN;
+            }
+            cJSON *item_arrayData;
+            int i = 0;
             for (i = 0; i < service_oderCharge_data.num; i++)
             {
                 item_arrayData = cJSON_GetArrayItem(item_validTime, i);
                 memcpy(service_oderCharge_data.validTime[i], item_arrayData->valuestring, strlen(item_arrayData->valuestring));
             }
-        }
 
-        cJSON *item_kw = cJSON_GetObjectItem(root, "kw");
-        if (item_kw != NULL && cJSON_IsArray(item_kw))
-        {
-            for (i = 0; i < service_oderCharge_data.num; i++)
+            cJSON *item_kw = cJSON_GetObjectItem(root, "kw");
+            if (item_kw != NULL && cJSON_IsArray(item_kw))
             {
-                item_arrayData = cJSON_GetArrayItem(item_kw, i);
-                service_oderCharge_data.kw[i] = item_arrayData->valueint;
+                for (i = 0; i < service_oderCharge_data.num; i++)
+                {
+                    item_arrayData = cJSON_GetArrayItem(item_kw, i);
+                    service_oderCharge_data.kw[i] = item_arrayData->valueint;
+                }
             }
         }
     }
@@ -1190,7 +1195,7 @@ static int evs_service_orderCharge_handler(const char *request, char **response,
         ((int (*)(const evs_service_orderCharge *request, evs_service_feedback_orderCharge *feedcak))callback)(&service_oderCharge_data, &service_feedback_oderCharge_data);
     }
     cJSON *response_root = cJSON_CreateObject();
-    cJSON_AddStringToObject(response_root, "tradeNo", service_feedback_oderCharge_data.tradeNo);
+    cJSON_AddStringToObject(response_root, "preTradeNo", service_feedback_oderCharge_data.preTradeNo);
     cJSON_AddNumberToObject(response_root, "reason", service_feedback_oderCharge_data.reason);
     cJSON_AddNumberToObject(response_root, "result", service_feedback_oderCharge_data.result);
 
@@ -1266,7 +1271,11 @@ static int user_service_request_event_handler(const int devid, const char *servi
     {
         evs_service_dev_maintain_handler(request, response, response_len);
     }
-    if (strlen("orderlyChargeSrv") == serviceid_len && memcmp("orderlyChargeSrv", serviceid, serviceid_len) == 0)
+    if (strlen("acOrderlyChargeSrv") == serviceid_len && memcmp("acOrderlyChargeSrv", serviceid, serviceid_len) == 0)
+    {
+        evs_service_orderCharge_handler(request, response, response_len);
+    }
+    if (strlen("dcOrderlyChargeSrv") == serviceid_len && memcmp("dcOrderlyChargeSrv", serviceid, serviceid_len) == 0)
     {
         evs_service_orderCharge_handler(request, response, response_len);
     }
@@ -2363,6 +2372,10 @@ int evs_linkkit_new(const int evs_is_ready, const int is_device_uid)
     char device_uid[IOTX_DEVICE_UID_LEN + 1] = "";
 #endif
 
+    
+#if !defined(PLATFORM_IS_DEBUG)
+    int custom_port = 18883; 
+#endif    
     void *callback;
     int dynamic_register = 0, post_reply_need = 0;
     evs_device_meta evs_dev_meta;
@@ -2483,6 +2496,10 @@ int evs_linkkit_new(const int evs_is_ready, const int is_device_uid)
     post_reply_need = 1;
     IOT_Ioctl(IOTX_IOCTL_RECV_EVENT_REPLY, (void *)&post_reply_need);
 
+#if !defined(PLATFORM_IS_DEBUG)
+    IOT_Ioctl(IOTX_IOCTL_SET_MQTT_DOMAIN, (void*)"10.111.186.1");
+    IOT_Ioctl(IOTX_IOCTL_SET_MQTT_PORT, (void *)&custom_port);
+#endif
     return 0;
 }
 

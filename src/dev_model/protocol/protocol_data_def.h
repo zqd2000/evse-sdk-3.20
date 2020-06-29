@@ -8,65 +8,64 @@
 #include "infra_defs.h"
 
 /*******************************用户可配置项***************************************/
-#define EVS_MAX_PORT_NUM (4)		//充电接口数量
-#define EVS_MAX_INPUT_METER_NUM (2) //直流充电桩输入电表数量
+#define EVS_MAX_PORT_NUM (1)		//充电接口数量
+#define EVS_MAX_INPUT_METER_NUM (1) //直流充电桩输入电表数量
 #define EVS_MAX_ALARM_LEN (5)		//最大故障告警数
+#define EVS_MAX_DATA_LEN (128)		//响应数据区域长度
 /*********************************************************************************/
-
-#define EVS_MAX_TRADE_LEN (38 + 1)
-#define EVS_MAX_CAR_VIN_LEN (17 + 1)
-#define EVS_MAX_MAC_ADDR_LEN (32 + 1)
-#define EVS_MAX_MODEL_ID_LEN (16 + 1)
-
-#define EVS_MAX_DATA_LEN (512)
-#define EVS_MAX_QRCODE_LEN (40)
-#define EVS_MAX_ICCID_LEN (24)
-#define EVS_MAX_PILE_TYPE_LEN (20)
-#define EVS_MAX_DEV_SN_LEN (16 + 1)
-#define EVS_MAX_MODEL_DEVSEG (48)
-#define EVS_MAX_METER_ADDR_LEN (6)
-#define EVS_MAX_METER_ASSET_LEN (32 + 1)
-#define EVS_MAX_TIMESTAMP_LEN (15 + 1)
+#define EVS_MAX_SEG_LEN (10)			 //最大功率调节时段数
+#define EVS_MAX_TRADE_LEN (40 + 1)		 //最大订单号长度：设备唯一标识（充电桩资产码：24位）+充电接口标识（2 位）+ 序列号(12 位)
+#define EVS_MAX_CAR_VIN_LEN (17 + 1)	 //最大车辆唯一识别码长度
+#define EVS_MAX_MAC_ADDR_LEN (32 + 1)	 //设备mac地址长度
+#define EVS_MAX_MODEL_ID_LEN (16 + 1)	 //最大计费模型id长度
+#define EVS_MAX_QRCODE_LEN (120)		 //二维码长度
+#define EVS_MAX_ICCID_LEN (24)			 //sim卡iccid长度
+#define EVS_MAX_PILE_TYPE_LEN (20)		 //桩类型长度
+#define EVS_MAX_DEV_SN_LEN (16 + 1)		 //厂商出厂编码
+#define EVS_MAX_MODEL_DEVSEG (14)		 //最大计费模型时段数
+#define EVS_MAX_METER_ADDR_LEN (6)		 //电表地址长度
+#define EVS_MAX_METER_ASSET_LEN (32 + 1) //电表资产码长度
+#define EVS_MAX_TIMESTAMP_LEN (15 + 1)	 //时间戳长度
 
 typedef struct
 {
-	char product_key[IOTX_PRODUCT_KEY_LEN + 1];
-	char product_secret[IOTX_PRODUCT_SECRET_LEN + 1];
-	char device_name[IOTX_DEVICE_NAME_LEN + 1];
-	char device_secret[IOTX_DEVICE_SECRET_LEN + 1];
-	char device_reg_code[IOTX_DEVICE_REG_CODE_LEN + 1];
-	char device_uid[IOTX_DEVICE_UID_LEN + 1];
+	char product_key[IOTX_PRODUCT_KEY_LEN + 1];			//设备品类标识字符串
+	char product_secret[IOTX_PRODUCT_SECRET_LEN + 1];	//设备品类密钥
+	char device_name[IOTX_DEVICE_NAME_LEN + 1];			//某台设备的标识字符串:未注册前为设备出厂编号（16位长度），注册后为设备在物联管理平台的资产码（24位长度）
+	char device_secret[IOTX_DEVICE_SECRET_LEN + 1];		//某台设备的设备密钥
+	char device_reg_code[IOTX_DEVICE_REG_CODE_LEN + 1]; //某台设备的设备注册码
+	char device_uid[IOTX_DEVICE_UID_LEN + 1];			//某台设备的出厂编号
 } evs_device_meta;
 
 typedef enum
 {
-	EVS_CMD_EVENT_FIREWARE_INFO = 10,
-	EVS_CMD_EVENT_ASK_FEEMODEL = 11,
-	EVS_CMD_EVENT_STARTCHARGE = 12,
-	EVS_CMD_EVENT_STARTRESULT = 13,
-	EVS_CMD_EVENT_STOPCHARGE = 14,
-	EVS_CMD_EVENT_TRADEINFO = 15,
-	EVS_CMD_EVENT_ALARM = 16,
-	EVS_CMD_EVENT_ACPILE_CHANGE = 17,
-	EVS_CMD_EVENT_DCPILE_CHANGE = 18,
-	EVS_CMD_EVENT_GROUNDLOCK_CHANGE = 19,
-	EVS_CMD_EVENT_GATELOCK_CHANGE = 20,
-	EVS_CMD_EVENT_ASK_DEV_CONFIG = 21,
+	EVS_CMD_EVENT_FIREWARE_INFO = 0,
+	EVS_CMD_EVENT_ASK_FEEMODEL,
+	EVS_CMD_EVENT_STARTCHARGE,
+	EVS_CMD_EVENT_STARTRESULT,
+	EVS_CMD_EVENT_STOPCHARGE,
+	EVS_CMD_EVENT_TRADEINFO,
+	EVS_CMD_EVENT_ALARM,
+	EVS_CMD_EVENT_ACPILE_CHANGE,
+	EVS_CMD_EVENT_DCPILE_CHANGE,
+	EVS_CMD_EVENT_GROUNDLOCK_CHANGE,
+	EVS_CMD_EVENT_GATELOCK_CHANGE,
+	EVS_CMD_EVENT_ASK_DEV_CONFIG,
 
 } evs_cmd_event_enum;
 
 typedef enum
 {
-	EVS_CMD_PROPERTY_DCPILE = 10,
-	EVS_CMD_PROPERTY_ACPILE = 11,
-	EVS_CMD_PROPERTY_AC_WORK = 12,
-	EVS_CMD_PROPERTY_AC_NONWORK = 13,
-	EVS_CMD_PROPERTY_DC_WORK = 14,
-	EVS_CMD_PROPERTY_DC_NONWORK = 15,
-	EVS_CMD_PROPERTY_DC_OUTMETER = 16,
-	EVS_CMD_PROPERTY_AC_OUTMETER = 17,
-	EVS_CMD_PROPERTY_BMS = 18,
-	EVS_CMD_PROPERTY_DC_INPUT_METER = 19,
+	EVS_CMD_PROPERTY_DCPILE = 0,
+	EVS_CMD_PROPERTY_ACPILE,
+	EVS_CMD_PROPERTY_AC_WORK,
+	EVS_CMD_PROPERTY_AC_NONWORK,
+	EVS_CMD_PROPERTY_DC_WORK,
+	EVS_CMD_PROPERTY_DC_NONWORK,
+	EVS_CMD_PROPERTY_DC_OUTMETER,
+	EVS_CMD_PROPERTY_AC_OUTMETER,
+	EVS_CMD_PROPERTY_BMS,
+	EVS_CMD_PROPERTY_DC_INPUT_METER,
 } evs_cmd_property_enum;
 
 //固件信息上报事件参数
@@ -103,7 +102,7 @@ typedef struct
 typedef struct
 {
 	unsigned int equipParamFreq;					   // 1		充电设备实时监测属性上报频率
-	unsigned int gunElecFeeq;						   // 2		充电枪充电中实时监测属性上报频率
+	unsigned int gunElecFreq;						   // 2		充电枪充电中实时监测属性上报频率
 	unsigned int nonElecFreq;						   // 2		充电枪非充电中实时监测属性上报频率
 	unsigned int faultWarnings;						   // 3		故障告警全信息上传频率
 	unsigned int acMeterFreq;						   // 4		充电设备交流电表底值监测属性上报频率
@@ -112,7 +111,7 @@ typedef struct
 	unsigned int grndLock;							   // 7		地锁监测上送频率
 	unsigned int doorLock;							   // 8		网门锁监测上送频率
 	unsigned int encodeCon;							   // 9		报文加密
-	char qrCode[EVS_MAX_PORT_NUM][EVS_MAX_QRCODE_LEN]; // 10		二维码数据
+	char qrCode[EVS_MAX_PORT_NUM][EVS_MAX_QRCODE_LEN]; // 10	二维码数据
 } evs_data_dev_config;
 
 //设备日志查询服务下发参数
@@ -458,10 +457,10 @@ typedef struct
 
 typedef struct
 {
-	char preTradeNo[EVS_MAX_TRADE_LEN]; // 1	订单流水号
-	unsigned char num;					// 2	策略配置时间段数量
-	unsigned char validTime[5][4];		// 3	策略生效时间//字符串数组。时间格式采用HHMM，24小时制。策略范围24小时内最多五段 例如 ：[time1,time2,time3…]。
-	unsigned char kw[5];				// 4	策略配置功率//整型数组。功率精确到0.1KW[kw1,kw2,kw3…]
+	char preTradeNo[EVS_MAX_TRADE_LEN];			 // 1	订单流水号
+	unsigned char num;							 // 2	策略配置时间段数量
+	unsigned char validTime[EVS_MAX_SEG_LEN][5]; // 3	策略生效时间//字符串数组。时间格式采用HHMM，24小时制。策略范围24小时内最多五段 例如 ：[time1,time2,time3…]。
+	unsigned short kw[EVS_MAX_SEG_LEN];			 // 4	策略配置功率//整型数组。功率精确到0.1KW[kw1,kw2,kw3…]
 
 } evs_service_orderCharge;
 
@@ -469,7 +468,7 @@ typedef struct
 
 typedef struct
 {
-	char tradeNo[EVS_MAX_TRADE_LEN]; // 1	订单流水号
+	char preTradeNo[EVS_MAX_TRADE_LEN]; // 1	订单流水号
 	unsigned char result;			 // 2	返回结果
 	unsigned char reason;			 // 3	失败原因
 } evs_service_feedback_orderCharge;
@@ -507,7 +506,7 @@ typedef struct
 typedef struct
 {
 	unsigned char gunNo;				// 1	充电枪编号
-	unsigned char workStatus;			// 3	工资状态
+	unsigned char workStatus;			// 3	工作状态
 	unsigned char conStatus;			// 4	连接确认开关状态
 	unsigned char outRelayStatus;		// 5	输出继电器状态
 	unsigned char eLockStatus;			// 6	充电接口电子锁状态

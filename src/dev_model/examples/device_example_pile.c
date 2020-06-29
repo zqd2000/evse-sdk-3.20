@@ -2,12 +2,12 @@
 #include "protocol.h"
 #include "wrappers.h"
 
-//char _product_key[IOTX_PRODUCT_KEY_LEN + 1] = "a1uWsrMCCVx";
-//char _device_name[IOTX_DEVICE_NAME_LEN + 1] = "sdk_test_zhangqiang";
-//char _device_secret[IOTX_DEVICE_SECRET_LEN + 1] = "YNyWcqbL272QS9Zls2MQ3VGMF3lv2Gc9";
-char _product_key[IOTX_PRODUCT_KEY_LEN + 1] = "";
-char _device_name[IOTX_DEVICE_NAME_LEN + 1] = "";
-char _device_secret[IOTX_DEVICE_SECRET_LEN + 1] = "";
+char _product_key[IOTX_PRODUCT_KEY_LEN + 1] = "a1X3BP5v0vn";
+char _device_name[IOTX_DEVICE_NAME_LEN + 1] = "EvseSdkTestDevice";
+char _device_secret[IOTX_DEVICE_SECRET_LEN + 1] = "38be4ad34bd079b4f765f71a3a30fc4e";
+//char _product_key[IOTX_PRODUCT_KEY_LEN + 1] = "";
+//char _device_name[IOTX_DEVICE_NAME_LEN + 1] = "";
+//char _device_secret[IOTX_DEVICE_SECRET_LEN + 1] = "";
 char _device_reg_code[IOTX_DEVICE_REG_CODE_LEN + 1] = "";
 char _device_uid[IOTX_DEVICE_UID_LEN + 1] = "1587416872968745";
 
@@ -585,7 +585,7 @@ int main()
 	如果设备可以进行注册码输入则调用，使用注册码换证书
 	res = evs_linkkit_new(0,0);
 	*/
-	res = evs_linkkit_new(0, 1);
+	res = evs_linkkit_new(0, 0);
 	if (res < 0)
 	{
 		return -1;

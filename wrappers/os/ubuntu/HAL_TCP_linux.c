@@ -54,7 +54,32 @@ uintptr_t HAL_TCP_Establish(const char *host, uint16_t port)
     uint8_t dns_retry = 0;
 
     memset(&hints, 0, sizeof(hints));
-
+    char *port_start = strstr(host, ":");
+    if(NULL != port_start) 
+    {
+          char ip_addr[255] = {0};
+          struct in_addr in_addr = {0};
+          memcpy(ip_addr, host, port_start - host);
+          int testIp= inet_aton(ip_addr, &in_addr);
+          if(0 != testIp){
+                printf("hello done, ipaddr is %s \n", ip_addr);
+                fd = socket(AF_INET, SOCK_STREAM, 0);
+                struct   sockaddr_in   my_addr;
+                memset(&my_addr, 0, sizeof(my_addr));
+                my_addr.sin_family = AF_INET;
+                my_addr.sin_port = htons(port);
+                my_addr.sin_addr.s_addr = inet_addr(ip_addr);
+                
+                bzero(&(my_addr.sin_zero),   8); 
+                if ( 0 == connect(fd, (struct sockaddr *)&my_addr, sizeof(struct sockaddr))) {
+                          printf("conneted\n");
+                } else {
+                          printf("conneted failed\n");
+                          return -1;
+                }
+                return (uintptr_t)fd;
+           } 
+    } 
     printf("establish tcp connection with server(host='%s', port=[%u])\n", host, port);
 
     hints.ai_family = AF_INET; /* only IPv4 */

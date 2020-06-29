@@ -291,12 +291,21 @@ static int _fetch_custom_reg_http_resp(char *request_payload, char *response_pay
 {
     int res = 0;
     const char *domain = NULL;
+    
+#if defined(PLATFORM_IS_DEBUG)
     const char *url_format = "http://%s/asset-web-serv-v5.3.0/registerService/getCertificateInfo";
+#else
+    const char *url_format = "http://%s/asset-web-api/registerService/getCertificateInfo";
+#endif
     char *url = NULL;
     int url_len = 0;
     const char *pub_key = NULL;
     void *http_handle = NULL;
+#if defined(PLATFORM_IS_DEBUG)
     int port = 19843;
+#else
+    int port = 11901;
+#endif
     iotx_http_method_t method = IOTX_HTTP_POST;
     int timeout_ms = 10000;
     char *header = "Accept: text/xml,text/javascript,text/html,application/json\r\n"
@@ -394,12 +403,21 @@ static int _fetch_get_reg_code_http_resp(char *request_payload, char *response_p
 {
     int res = 0;
     const char *domain = NULL;
+#if defined(PLATFORM_IS_DEBUG)
     const char *url_format = "http://%s/asset-web-serv-v5.3.0/registerService/getRegisterCode";
+#else
+    const char *url_format = "http://%s/asset-web-api/registerService/getRegisterCode";
+#endif
+    
     char *url = NULL;
     int url_len = 0;
     const char *pub_key = NULL;
     void *http_handle = NULL;
+#if defined(PLATFORM_IS_DEBUG)
     int port = 19843;
+#else
+    int port = 11901;
+#endif
     iotx_http_method_t method = IOTX_HTTP_POST;
     int timeout_ms = 10000;
     char *header = "Accept: text/xml,text/javascript,text/html,application/json\r\n"

@@ -256,7 +256,7 @@ int utils_net_read(utils_network_pt pNetwork, char *buffer, uint32_t len, uint32
 {
     int ret = 0;
 #if defined(SUPPORT_TLS)
-    if (is_cert_host_addr == 0)
+    if ((is_cert_host_addr == 0)&&(NULL != pNetwork->ca_crt))
     {
         ret = read_ssl(pNetwork, buffer, len, timeout_ms);
     }
@@ -275,7 +275,7 @@ int utils_net_write(utils_network_pt pNetwork, const char *buffer, uint32_t len,
 {
     int ret = 0;
 #if defined(SUPPORT_TLS)
-    if (is_cert_host_addr == 0)
+    if ((is_cert_host_addr == 0)&&(NULL != pNetwork->ca_crt))
     {
         ret = write_ssl(pNetwork, buffer, len, timeout_ms);
     }
@@ -294,7 +294,7 @@ int iotx_net_disconnect(utils_network_pt pNetwork)
 {
     int ret = 0;
 #if defined(SUPPORT_TLS)
-    if (is_cert_host_addr == 0)
+    if ((is_cert_host_addr == 0)&&(NULL != pNetwork->ca_crt))
     {
         ret = disconnect_ssl(pNetwork);
     }
@@ -313,7 +313,7 @@ int iotx_net_connect(utils_network_pt pNetwork)
 {
     int ret = 0;
 #if defined(SUPPORT_TLS)
-    if (is_cert_host_addr == 0)
+    if ((is_cert_host_addr == 0)&&(NULL != pNetwork->ca_crt))
     {
         ret = connect_ssl(pNetwork);
     }
@@ -339,6 +339,8 @@ int iotx_net_init(utils_network_pt pNetwork, const char *host, uint16_t port, co
     pNetwork->port = port;
     //pNetwork->ca_crt = ca_crt;
 
+    
+#if defined(SUPPORT_TLS)
     if (memcmp(pNetwork->pHostAddress, CERT_HOST_ADDRESS, strlen(pNetwork->pHostAddress)))
     {
         pNetwork->ca_crt = ca_crt;
@@ -351,7 +353,9 @@ int iotx_net_init(utils_network_pt pNetwork, const char *host, uint16_t port, co
         printf("\n\n\n========TCP==================================\n\n\n\n");
         is_cert_host_addr = 1;
     }
-
+#else
+    pNetwork->ca_crt = ca_crt;
+#endif
     if (NULL == ca_crt)
     {
         pNetwork->ca_crt_len = 0;
