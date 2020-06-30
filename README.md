@@ -290,6 +290,30 @@ evs_sdk_state_dump.61: EVS--- received state event, -0x0927(cloud request msgid:
 > }
 ```
 
+## <a name="用 make.settings 文件裁剪 C-SDK 详解">用 make.settings 文件裁剪 C-SDK 详解</a>
+
+> 对evse-sdk-3.20版本, 可以用 `make menuconfig` 命令或者 `config.bat` 脚本, 分别在Linux/Windows主机上图形化的配置SDK
+
+![E2648181-3FAB-425c-A4F5-1696AAF3ED74](E:\share\iot\evse-sdk-3.20\E2648181-3FAB-425c-A4F5-1696AAF3ED74.png)
+
+在上面的界面中
+
++ 按下空格键可以选中或者失效某个功能, 使用小键盘的上下键来在不同功能之间选择
++ 如果想知道每个选项的具体含义, 先用方向键将高亮光条移到那个选项上, 再按键盘上的 **"h"按键**, 将出现帮助文本, 对选项进行详细说明。
+
+注意: 不建议手动编辑 `make.settings` 文件改动配置, 一切配置都需通过上面的图形界面进行
+---
+
+#### <a name="PLAT_IS_DEBUG">PLAT_IS_DEBUG</a>
+
++ 如果设备在开发调试过程中使能改配置，设备接入公网调试环境，在程序进入生产流程后关闭该配置项，设备通过物联卡接入国网生产环境
+
+#### <a name="直连充电设备makemenu典型配置如下图所示">直连充电设备makemenu典型配置如下图所示</a>
+
+![E2648181-3FAB-425c-A4F5-1696AAF3ED74](E:\share\iot\evse-sdk-3.20\E2648181-3FAB-425c-A4F5-1696AAF3ED74.png)
+
+#### 阿里SDK原生资料=========
+
 ###### 阿里云原生SDK数据
 
 # 用户手册
