@@ -249,7 +249,7 @@ int callback_service_startCharge(evs_service_startCharge *param, evs_service_fee
 
 在阿里云平台在线调试输入如下参数
 
-![image-20200630140950556](tmp\image-20200630140950556.png)
+![image-20200630140950556]( https://raw.githubusercontent.com/zqd2000/evse-sdk-3.20/master/tmp/image-20200630140950556.png )
 
 此时在设备端可以看到如下日志
 
