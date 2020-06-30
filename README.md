@@ -294,7 +294,7 @@ evs_sdk_state_dump.61: EVS--- received state event, -0x0927(cloud request msgid:
 
 > 对evse-sdk-3.20版本, 可以用 `make menuconfig` 命令或者 `config.bat` 脚本, 分别在Linux/Windows主机上图形化的配置SDK
 
-![E2648181-3FAB-425c-A4F5-1696AAF3ED74](E:\share\iot\evse-sdk-3.20\E2648181-3FAB-425c-A4F5-1696AAF3ED74.png)
+![E2648181-3FAB-425c-A4F5-1696AAF3ED74]( https://raw.githubusercontent.com/zqd2000/evse-sdk-3.20/master/tmp/E2648181-3FAB-425c-A4F5-1696AAF3ED74.png )
 
 在上面的界面中
 
@@ -310,7 +310,7 @@ evs_sdk_state_dump.61: EVS--- received state event, -0x0927(cloud request msgid:
 
 #### <a name="直连充电设备makemenu典型配置如下图所示">直连充电设备makemenu典型配置如下图所示</a>
 
-![E2648181-3FAB-425c-A4F5-1696AAF3ED74](E:\share\iot\evse-sdk-3.20\E2648181-3FAB-425c-A4F5-1696AAF3ED74.png)
+![E2648181-3FAB-425c-A4F5-1696AAF3ED74]( https://raw.githubusercontent.com/zqd2000/evse-sdk-3.20/master/tmp/E2648181-3FAB-425c-A4F5-1696AAF3ED74.png )
 
 #### 阿里SDK原生资料=========
 
