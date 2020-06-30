@@ -5,9 +5,6 @@
 char _product_key[IOTX_PRODUCT_KEY_LEN + 1] = "a1X3BP5v0vn";
 char _device_name[IOTX_DEVICE_NAME_LEN + 1] = "EvseSdkTestDevice";
 char _device_secret[IOTX_DEVICE_SECRET_LEN + 1] = "38be4ad34bd079b4f765f71a3a30fc4e";
-//char _product_key[IOTX_PRODUCT_KEY_LEN + 1] = "";
-//char _device_name[IOTX_DEVICE_NAME_LEN + 1] = "";
-//char _device_secret[IOTX_DEVICE_SECRET_LEN + 1] = "";
 char _device_reg_code[IOTX_DEVICE_REG_CODE_LEN + 1] = "";
 char _device_uid[IOTX_DEVICE_UID_LEN + 1] = "1587416872968745";
 
@@ -105,7 +102,7 @@ static int evs_device_cert_get(evs_device_meta *meta)
 	meta->product_key[len] = '\0';
 
 	len = strlen(_device_name);
-	if (len < 5)
+	if (len < 2)
 	{
 		DEVICE_EXAMPLE_TRACE("_device_name length is %d", len);
 		return -1;

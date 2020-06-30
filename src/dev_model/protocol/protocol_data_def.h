@@ -18,7 +18,7 @@
 #define EVS_MAX_CAR_VIN_LEN (17 + 1)	 //最大车辆唯一识别码长度
 #define EVS_MAX_MAC_ADDR_LEN (32 + 1)	 //设备mac地址长度
 #define EVS_MAX_MODEL_ID_LEN (16 + 1)	 //最大计费模型id长度
-#define EVS_MAX_QRCODE_LEN (120)		 //二维码长度
+#define EVS_MAX_QRCODE_LEN (256)		 //二维码长度
 #define EVS_MAX_ICCID_LEN (24)			 //sim卡iccid长度
 #define EVS_MAX_PILE_TYPE_LEN (20)		 //桩类型长度
 #define EVS_MAX_DEV_SN_LEN (16 + 1)		 //厂商出厂编码

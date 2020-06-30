@@ -38,15 +38,18 @@ char g_device_name[IOTX_DEVICE_NAME_LEN + 1] = "";
 char g_device_secret[IOTX_DEVICE_SECRET_LEN + 1] = "";
 /* setup your device_reg_code !!! */
 char g_device_reg_code[IOTX_DEVICE_REG_CODE_LEN + 1] = "";
-/*
-#define PROTOCOL_TRACE(...)                                      \
+
+#if defined(PLATFORM_IS_DEBUG)
+#define PROTOCOL_TRACE(...)                                     \
     do                                                          \
     {                                                           \
         HAL_Printf("\033[1;32;40m%s.%d: ", __func__, __LINE__); \
         HAL_Printf(__VA_ARGS__);                                \
         HAL_Printf("\033[0m\r\n");                              \
-    } while (0)*/
-#define PROTOCOL_TRACE(...) //PROTOCOL_TRACE(...)
+    } while (0)
+#else
+#define PROTOCOL_TRACE(...)
+#endif
 
 #define EVS_YIELD_TIMEOUT_MS (200)
 
@@ -375,10 +378,19 @@ static int evs_service_update_config_handler(const char *request, char **respons
     {
         cJSON *item_arrayData;
         int qrcode_num = cJSON_GetArraySize(item_qrCode);
-        for (i = 0; i < qrcode_num; i++)
+        qrcode_num = (qrcode_num <= EVS_MAX_PORT_NUM) ? qrcode_num : EVS_MAX_PORT_NUM;
+        int qrcode_len = strlen(item_arrayData->valuestring) + 1;
+        if (qrcode_len < EVS_MAX_QRCODE_LEN)
         {
-            item_arrayData = cJSON_GetArrayItem(item_qrCode, i);
-            memcpy(service_dev_config_data.qrCode[i], item_arrayData->valuestring, strlen(item_arrayData->valuestring));
+            for (i = 0; i < qrcode_num; i++)
+            {
+                item_arrayData = cJSON_GetArrayItem(item_qrCode, i);
+                memcpy(service_dev_config_data.qrCode[i], item_arrayData->valuestring, qrcode_len);
+            }
+        }
+        else
+        {
+            PROTOCOL_TRACE("QrCode buffer is too small!!!");
         }
     }
 
@@ -451,47 +463,49 @@ static int evs_service_issue_feeModel_handler(const char *request, char **respon
         service_feeModel_data.TimeNum = item_eleTimeNum->valueint;
     }
 
-    cJSON *item_eleTimeSeg = cJSON_GetObjectItem(root, "timeSeg");
-    if (item_eleTimeSeg != NULL && cJSON_IsArray(item_eleTimeSeg))
+    cJSON *item_TimeSeg = cJSON_GetObjectItem(root, "timeSeg");
+    cJSON *array_timeSeg = NULL;
+    if (item_TimeSeg != NULL && cJSON_IsArray(item_TimeSeg))
     {
-        cJSON *item_arrayData;
+
         for (i = 0; i < service_feeModel_data.TimeNum; i++)
         {
-            item_arrayData = cJSON_GetArrayItem(item_eleTimeSeg, i);
-            memcpy(service_feeModel_data.TimeSeg[i], item_arrayData->valuestring, strlen(item_arrayData->valuestring));
+            array_timeSeg = cJSON_GetArrayItem(item_TimeSeg, i);
+            memcpy(service_feeModel_data.TimeSeg[i], array_timeSeg->valuestring, strlen(array_timeSeg->valuestring));
         }
     }
 
-    cJSON *item_eleSegFlag = cJSON_GetObjectItem(root, "segFlag");
-    if (item_eleSegFlag != NULL && cJSON_IsArray(item_eleSegFlag))
+    cJSON *item_SegFlag = cJSON_GetObjectItem(root, "segFlag");
+    cJSON *arrary_segFlag = NULL;
+    if (item_SegFlag != NULL && cJSON_IsArray(item_SegFlag))
     {
-        cJSON *item_arrayData;
+
         for (i = 0; i < service_feeModel_data.TimeNum; i++)
         {
-            item_arrayData = cJSON_GetArrayItem(item_eleSegFlag, i);
-            service_feeModel_data.SegFlag[i] = item_arrayData->valueint;
+            arrary_segFlag = cJSON_GetArrayItem(item_SegFlag, i);
+            service_feeModel_data.SegFlag[i] = arrary_segFlag->valueint;
         }
     }
 
     cJSON *item_chargeFee = cJSON_GetObjectItem(root, "chargeFee");
+    cJSON *arrary_chargeFee = NULL;
     if (item_chargeFee != NULL && cJSON_IsArray(item_chargeFee))
     {
-        cJSON *item_arrayData;
         for (i = 0; i < 4; i++)
         {
-            item_arrayData = cJSON_GetArrayItem(item_chargeFee, i);
-            service_feeModel_data.chargeFee[i] = item_arrayData->valueint;
+            arrary_chargeFee = cJSON_GetArrayItem(item_chargeFee, i);
+            service_feeModel_data.chargeFee[i] = arrary_chargeFee->valueint;
         }
     }
 
     cJSON *item_serviceFee = cJSON_GetObjectItem(root, "serviceFee");
+    cJSON *arrary_serviceFee = NULL;
     if (item_serviceFee != NULL && cJSON_IsArray(item_serviceFee))
     {
-        cJSON *item_arrayData;
         for (i = 0; i < 4; i++)
         {
-            item_arrayData = cJSON_GetArrayItem(item_serviceFee, i);
-            service_feeModel_data.serviceFee[i] = item_arrayData->valueint;
+            arrary_serviceFee = cJSON_GetArrayItem(item_serviceFee, i);
+            service_feeModel_data.serviceFee[i] = arrary_serviceFee->valueint;
         }
     }
 
@@ -1169,21 +1183,22 @@ static int evs_service_orderCharge_handler(const char *request, char **response,
             {
                 service_oderCharge_data.num = EVS_MAX_SEG_LEN;
             }
-            cJSON *item_arrayData;
+            cJSON *array_validTime = NULL;
             int i = 0;
             for (i = 0; i < service_oderCharge_data.num; i++)
             {
-                item_arrayData = cJSON_GetArrayItem(item_validTime, i);
-                memcpy(service_oderCharge_data.validTime[i], item_arrayData->valuestring, strlen(item_arrayData->valuestring));
+                array_validTime = cJSON_GetArrayItem(item_validTime, i);
+                memcpy(service_oderCharge_data.validTime[i], array_validTime->valuestring, strlen(array_validTime->valuestring));
             }
 
             cJSON *item_kw = cJSON_GetObjectItem(root, "kw");
+            cJSON *array_kw;
             if (item_kw != NULL && cJSON_IsArray(item_kw))
             {
                 for (i = 0; i < service_oderCharge_data.num; i++)
                 {
-                    item_arrayData = cJSON_GetArrayItem(item_kw, i);
-                    service_oderCharge_data.kw[i] = item_arrayData->valueint;
+                    array_kw = cJSON_GetArrayItem(item_kw, i);
+                    service_oderCharge_data.kw[i] = array_kw->valueint;
                 }
             }
         }
@@ -2372,10 +2387,12 @@ int evs_linkkit_new(const int evs_is_ready, const int is_device_uid)
     char device_uid[IOTX_DEVICE_UID_LEN + 1] = "";
 #endif
 
-    
 #if !defined(PLATFORM_IS_DEBUG)
-    int custom_port = 18883; 
-#endif    
+    int custom_port = 18883;
+	IOT_SetLogLevel(IOT_LOG_ERROR); 
+#else
+    IOT_SetLogLevel(IOT_LOG_DEBUG);
+#endif
     void *callback;
     int dynamic_register = 0, post_reply_need = 0;
     evs_device_meta evs_dev_meta;
@@ -2471,8 +2488,6 @@ int evs_linkkit_new(const int evs_is_ready, const int is_device_uid)
     memcpy(master_meta_info.product_key, evs_dev_meta.product_key, strlen(evs_dev_meta.product_key));
     memcpy(master_meta_info.device_name, evs_dev_meta.device_name, strlen(evs_dev_meta.device_name));
     memcpy(master_meta_info.device_secret, evs_dev_meta.device_secret, strlen(evs_dev_meta.device_secret));
-
-    IOT_SetLogLevel(IOT_LOG_ERROR);
 
     /* 注册回调函数 */
     IOT_RegisterCallback(ITE_STATE_EVERYTHING, user_sdk_state_dump);
