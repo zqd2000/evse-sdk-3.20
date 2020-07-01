@@ -2545,6 +2545,7 @@ int evs_mainloop()
             }
             else
             {
+                evs_linkkit_open_cnt++;
                 PROTOCOL_TRACE("IOT_Linkkit_Open failed! retry after %d ms\n", 2000);
                 return EVS_LINKKIT_OPEN_FAULT;
             }
@@ -2565,6 +2566,7 @@ int evs_mainloop()
             }
             else
             {
+                evs_linkkit_connect_cnt++;
                 PROTOCOL_TRACE("IOT_Linkkit_Connect failed! retry after %d ms\n", 5000);
                 return EVS_LINKKIT_CONNECT_FAULT;
             }
