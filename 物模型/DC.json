@@ -1,0 +1,6271 @@
+{
+  "schema": "https://iotx-tsl.oss-ap-southeast-1.aliyuncs.com/schema.json",
+  "profile": {
+    "productKey": "a1NY7YC7tFJ"
+  },
+  "properties": [
+    {
+      "identifier": "dcBmsRunIty",
+      "name": "直流充电枪BMS监测属性",
+      "accessMode": "rw",
+      "required": false,
+      "dataType": {
+        "type": "struct",
+        "specs": [
+          {
+            "identifier": "gunNo",
+            "name": "充电枪编号",
+            "dataType": {
+              "type": "int",
+              "specs": {
+                "min": "1",
+                "max": "1000",
+                "step": "1"
+              }
+            }
+          },
+          {
+            "identifier": "preTradeNo",
+            "name": "平台交易流水号",
+            "dataType": {
+              "type": "text",
+              "specs": {
+                "length": "2048"
+              }
+            }
+          },
+          {
+            "identifier": "tradeNo",
+            "name": "设备交易流水号",
+            "dataType": {
+              "type": "text",
+              "specs": {
+                "length": "2048"
+              }
+            }
+          },
+          {
+            "identifier": "socVal",
+            "name": "soc",
+            "dataType": {
+              "type": "int",
+              "specs": {
+                "min": "0",
+                "max": "10000",
+                "step": "1"
+              }
+            }
+          },
+          {
+            "identifier": "BMSVer",
+            "name": "BMS通信协议版本号",
+            "dataType": {
+              "type": "int",
+              "specs": {
+                "min": "0",
+                "max": "1000000000",
+                "step": "1"
+              }
+            }
+          },
+          {
+            "identifier": "BMSMaxVol",
+            "name": "BMS最高允许充电总电压",
+            "dataType": {
+              "type": "int",
+              "specs": {
+                "min": "0",
+                "max": "2147483647",
+                "unit": "V/m",
+                "step": "1"
+              }
+            }
+          },
+          {
+            "identifier": "batType",
+            "name": "电池类型",
+            "dataType": {
+              "type": "int",
+              "specs": {
+                "min": "0",
+                "max": "2147483647",
+                "step": "1"
+              }
+            }
+          },
+          {
+            "identifier": "batRatedCap",
+            "name": "整车动力蓄电池额定容量",
+            "dataType": {
+              "type": "int",
+              "specs": {
+                "min": "0",
+                "max": "2147483647",
+                "step": "1"
+              }
+            }
+          },
+          {
+            "identifier": "batRatedTotalVol",
+            "name": "整车动力蓄电池额定总电压",
+            "dataType": {
+              "type": "int",
+              "specs": {
+                "min": "0",
+                "max": "2147483647",
+                "unit": "V/m",
+                "step": "1"
+              }
+            }
+          },
+          {
+            "identifier": "singlBatMaxAllowVol",
+            "name": "单体动力蓄电池最高允许充电电压",
+            "dataType": {
+              "type": "int",
+              "specs": {
+                "min": "0",
+                "max": "2147483647",
+                "unit": "V/m",
+                "step": "1"
+              }
+            }
+          },
+          {
+            "identifier": "maxAllowCur",
+            "name": "最高允许充电电流",
+            "dataType": {
+              "type": "int",
+              "specs": {
+                "min": "0",
+                "max": "2147483647",
+                "unit": "V/m",
+                "step": "1"
+              }
+            }
+          },
+          {
+            "identifier": "battotalEnergy",
+            "name": "整车动力蓄电池标称总能量",
+            "dataType": {
+              "type": "int",
+              "specs": {
+                "min": "0",
+                "max": "2147483647",
+                "unit": "V/m",
+                "step": "1"
+              }
+            }
+          },
+          {
+            "identifier": "maxTemp",
+            "name": "最高允许温度",
+            "dataType": {
+              "type": "int",
+              "specs": {
+                "min": "0",
+                "max": "2147483647",
+                "unit": "°C",
+                "step": "1"
+              }
+            }
+          },
+          {
+            "identifier": "batCurVol",
+            "name": "整车动力蓄电池当前电池电压",
+            "dataType": {
+              "type": "int",
+              "specs": {
+                "min": "0",
+                "max": "2147483647",
+                "unit": "V/m",
+                "step": "1"
+              }
+            }
+          },
+          {
+            "identifier": "maxVol",
+            "name": "最高允许充电总电压",
+            "dataType": {
+              "type": "int",
+              "specs": {
+                "min": "0",
+                "max": "2147483647",
+                "unit": "V/m",
+                "step": "1"
+              }
+            }
+          }
+        ]
+      }
+    },
+    {
+      "identifier": "dcGunRunIty",
+      "name": "直流充电枪充电中实时监测属性",
+      "accessMode": "rw",
+      "required": false,
+      "dataType": {
+        "type": "struct",
+        "specs": [
+          {
+            "identifier": "gunNo",
+            "name": "充电枪编号",
+            "dataType": {
+              "type": "int",
+              "specs": {
+                "min": "1",
+                "max": "255",
+                "step": "1"
+              }
+            }
+          },
+          {
+            "identifier": "workStatus",
+            "name": "工作状态",
+            "dataType": {
+              "type": "int",
+              "specs": {
+                "min": "10",
+                "max": "15",
+                "step": "1"
+              }
+            }
+          },
+          {
+            "identifier": "gunStatus",
+            "name": "连接确认开关状态",
+            "dataType": {
+              "type": "int",
+              "specs": {
+                "min": "10",
+                "max": "12",
+                "step": "1"
+              }
+            }
+          },
+          {
+            "identifier": "DCK1Status",
+            "name": "输出继电器K1状态",
+            "dataType": {
+              "type": "int",
+              "specs": {
+                "min": "10",
+                "max": "12",
+                "step": "1"
+              }
+            }
+          },
+          {
+            "identifier": "DCK2Status",
+            "name": "输出继电器K2状态",
+            "dataType": {
+              "type": "int",
+              "specs": {
+                "min": "10",
+                "max": "12",
+                "step": "1"
+              }
+            }
+          },
+          {
+            "identifier": "DCPlusFuseStatus",
+            "name": "DC+熔断器状态",
+            "dataType": {
+              "type": "int",
+              "specs": {
+                "min": "10",
+                "max": "12",
+                "step": "1"
+              }
+            }
+          },
+          {
+            "identifier": "DCMinusFuseStatus",
+            "name": "DC-熔断器状态",
+            "dataType": {
+              "type": "int",
+              "specs": {
+                "min": "10",
+                "max": "12",
+                "step": "1"
+              }
+            }
+          },
+          {
+            "identifier": "eLockStatus",
+            "name": "充电接口电子锁状态",
+            "dataType": {
+              "type": "int",
+              "specs": {
+                "min": "10",
+                "max": "12",
+                "step": "1"
+              }
+            }
+          },
+          {
+            "identifier": "chargeMode",
+            "name": "充电模式",
+            "dataType": {
+              "type": "int",
+              "specs": {
+                "min": "10",
+                "max": "12",
+                "step": "1"
+              }
+            }
+          },
+          {
+            "identifier": "conTemp1",
+            "name": "充电枪1温度",
+            "dataType": {
+              "type": "int",
+              "specs": {
+                "min": "-5000",
+                "max": "500000",
+                "step": "1"
+              }
+            }
+          },
+          {
+            "identifier": "conTemp2",
+            "name": "充电枪2温度",
+            "dataType": {
+              "type": "int",
+              "specs": {
+                "min": "-5000",
+                "max": "500000",
+                "step": "1"
+              }
+            }
+          },
+          {
+            "identifier": "dcVol",
+            "name": "充电机输出电压",
+            "dataType": {
+              "type": "int",
+              "specs": {
+                "min": "0",
+                "max": "2000000",
+                "step": "1"
+              }
+            }
+          },
+          {
+            "identifier": "dcCur",
+            "name": "充电机输出电流",
+            "dataType": {
+              "type": "int",
+              "specs": {
+                "min": "0",
+                "max": "1000000000",
+                "step": "1"
+              }
+            }
+          },
+          {
+            "identifier": "preTradeNo",
+            "name": "平台交易流水号",
+            "dataType": {
+              "type": "text",
+              "specs": {
+                "length": "2048"
+              }
+            }
+          },
+          {
+            "identifier": "tradeNo",
+            "name": "设备交易流水号",
+            "dataType": {
+              "type": "text",
+              "specs": {
+                "length": "2048"
+              }
+            }
+          },
+          {
+            "identifier": "realPower",
+            "name": "充电实际功率",
+            "dataType": {
+              "type": "int",
+              "specs": {
+                "min": "0",
+                "max": "100000000",
+                "step": "1"
+              }
+            }
+          },
+          {
+            "identifier": "chgTime",
+            "name": "累计充电时间",
+            "dataType": {
+              "type": "int",
+              "specs": {
+                "min": "0",
+                "max": "100000000",
+                "step": "1"
+              }
+            }
+          },
+          {
+            "identifier": "socVal",
+            "name": "SOC",
+            "dataType": {
+              "type": "int",
+              "specs": {
+                "min": "0",
+                "max": "1000",
+                "step": "1"
+              }
+            }
+          },
+          {
+            "identifier": "needVol",
+            "name": "需求电压",
+            "dataType": {
+              "type": "int",
+              "specs": {
+                "min": "0",
+                "max": "1000000000",
+                "step": "1"
+              }
+            }
+          },
+          {
+            "identifier": "needCur",
+            "name": "需求电流",
+            "dataType": {
+              "type": "int",
+              "specs": {
+                "min": "0",
+                "max": "100000000",
+                "step": "1"
+              }
+            }
+          },
+          {
+            "identifier": "bmsVol",
+            "name": "BMS充电电压测量值",
+            "dataType": {
+              "type": "int",
+              "specs": {
+                "min": "0",
+                "max": "1000000000",
+                "step": "1"
+              }
+            }
+          },
+          {
+            "identifier": "bmsCur",
+            "name": "BMS充电电流测量值",
+            "dataType": {
+              "type": "int",
+              "specs": {
+                "min": "0",
+                "max": "100000000",
+                "step": "1"
+              }
+            }
+          },
+          {
+            "identifier": "SingleMHV",
+            "name": "最高单体动力蓄电池电压",
+            "dataType": {
+              "type": "int",
+              "specs": {
+                "min": "0",
+                "max": "100000000",
+                "step": "1"
+              }
+            }
+          },
+          {
+            "identifier": "remainT",
+            "name": "剩余充电时间",
+            "dataType": {
+              "type": "int",
+              "specs": {
+                "min": "0",
+                "max": "100000000",
+                "step": "1"
+              }
+            }
+          },
+          {
+            "identifier": "MHTemp",
+            "name": "最高动力蓄电池温度",
+            "dataType": {
+              "type": "int",
+              "specs": {
+                "min": "0",
+                "max": "100000000",
+                "step": "1"
+              }
+            }
+          },
+          {
+            "identifier": "MLTemp",
+            "name": "最低动力蓄电池温度",
+            "dataType": {
+              "type": "int",
+              "specs": {
+                "min": "0",
+                "max": "100000000",
+                "step": "1"
+              }
+            }
+          },
+          {
+            "identifier": "totalElect",
+            "name": "总电量",
+            "dataType": {
+              "type": "int",
+              "specs": {
+                "min": "0",
+                "max": "1000000000",
+                "step": "1"
+              }
+            }
+          },
+          {
+            "identifier": "sharpElect",
+            "name": "尖电量",
+            "dataType": {
+              "type": "int",
+              "specs": {
+                "min": "0",
+                "max": "10000000",
+                "step": "1"
+              }
+            }
+          },
+          {
+            "identifier": "peakElect",
+            "name": "峰电量",
+            "dataType": {
+              "type": "int",
+              "specs": {
+                "min": "0",
+                "max": "100000000",
+                "step": "1"
+              }
+            }
+          },
+          {
+            "identifier": "flatElect",
+            "name": "平电量",
+            "dataType": {
+              "type": "int",
+              "specs": {
+                "min": "0",
+                "max": "100000000",
+                "step": "1"
+              }
+            }
+          },
+          {
+            "identifier": "valleyElect",
+            "name": "谷电量",
+            "dataType": {
+              "type": "int",
+              "specs": {
+                "min": "0",
+                "max": "1000000000",
+                "step": "1"
+              }
+            }
+          },
+          {
+            "identifier": "totalCost",
+            "name": "总金额",
+            "dataType": {
+              "type": "int",
+              "specs": {
+                "min": "0",
+                "max": "1000000000",
+                "step": "1"
+              }
+            }
+          },
+          {
+            "identifier": "totalPowerCost",
+            "name": "总电费",
+            "dataType": {
+              "type": "int",
+              "specs": {
+                "min": "0",
+                "max": "1000000000",
+                "step": "1"
+              }
+            }
+          },
+          {
+            "identifier": "totalServCost",
+            "name": "总服务费",
+            "dataType": {
+              "type": "int",
+              "specs": {
+                "min": "0",
+                "max": "1000000000",
+                "step": "1"
+              }
+            }
+          },
+          {
+            "identifier": "chgType",
+            "name": "充电类型",
+            "dataType": {
+              "type": "int",
+              "specs": {
+                "min": "10",
+                "max": "20",
+                "step": "1"
+              }
+            }
+          }
+        ]
+      }
+    },
+    {
+      "identifier": "dcGunIdleIty",
+      "name": "直流充电枪非充电中实时监测属性",
+      "accessMode": "rw",
+      "required": false,
+      "dataType": {
+        "type": "struct",
+        "specs": [
+          {
+            "identifier": "gunNo",
+            "name": "充电枪编号",
+            "dataType": {
+              "type": "int",
+              "specs": {
+                "min": "1",
+                "max": "255",
+                "step": "1"
+              }
+            }
+          },
+          {
+            "identifier": "workStatus",
+            "name": "工作状态",
+            "dataType": {
+              "type": "int",
+              "specs": {
+                "min": "10",
+                "max": "16",
+                "step": "1"
+              }
+            }
+          },
+          {
+            "identifier": "gunStatus",
+            "name": "充电枪连接状态",
+            "dataType": {
+              "type": "int",
+              "specs": {
+                "min": "10",
+                "max": "17",
+                "step": "1"
+              }
+            }
+          },
+          {
+            "identifier": "eLockStatus",
+            "name": "电子锁状态",
+            "dataType": {
+              "type": "int",
+              "specs": {
+                "min": "10",
+                "max": "12",
+                "step": "1"
+              }
+            }
+          },
+          {
+            "identifier": "DCK1Status",
+            "name": "直流输出接触器k1",
+            "dataType": {
+              "type": "int",
+              "specs": {
+                "min": "10",
+                "max": "12",
+                "step": "1"
+              }
+            }
+          },
+          {
+            "identifier": "conTemp1",
+            "name": "充电枪头1温度",
+            "dataType": {
+              "type": "int",
+              "specs": {
+                "min": "-3000",
+                "max": "400000000",
+                "step": "1"
+              }
+            }
+          },
+          {
+            "identifier": "dcVol",
+            "name": "充电机输出电压",
+            "dataType": {
+              "type": "int",
+              "specs": {
+                "min": "0",
+                "max": "1000000000",
+                "step": "1"
+              }
+            }
+          },
+          {
+            "identifier": "dcCur",
+            "name": "充电机输出电流",
+            "dataType": {
+              "type": "int",
+              "specs": {
+                "min": "0",
+                "max": "10000000",
+                "step": "1"
+              }
+            }
+          },
+          {
+            "identifier": "conTemp2",
+            "name": "充电枪头温度2",
+            "dataType": {
+              "type": "int",
+              "specs": {
+                "min": "-3000",
+                "max": "400000000",
+                "step": "1"
+              }
+            }
+          },
+          {
+            "identifier": "DCK2Status",
+            "name": "直流输出接触器k2",
+            "dataType": {
+              "type": "int",
+              "specs": {
+                "min": "10",
+                "max": "12",
+                "step": "1"
+              }
+            }
+          },
+          {
+            "identifier": "DCPlusFuseStatus",
+            "name": "DC正熔断器状态",
+            "dataType": {
+              "type": "int",
+              "specs": {
+                "min": "10",
+                "max": "12",
+                "step": "1"
+              }
+            }
+          },
+          {
+            "identifier": "DCMinusFuseStatus",
+            "name": "DC负熔断器状态",
+            "dataType": {
+              "type": "int",
+              "specs": {
+                "min": "10",
+                "max": "12",
+                "step": "1"
+              }
+            }
+          }
+        ]
+      }
+    },
+    {
+      "identifier": "dcDeRealIty",
+      "name": "直流充电设备实时监测属性",
+      "accessMode": "rw",
+      "required": false,
+      "dataType": {
+        "type": "struct",
+        "specs": [
+          {
+            "identifier": "netType",
+            "name": "网络类型",
+            "dataType": {
+              "type": "int",
+              "specs": {
+                "min": "10",
+                "max": "18",
+                "step": "1"
+              }
+            }
+          },
+          {
+            "identifier": "sigVal",
+            "name": "网络信号等级",
+            "dataType": {
+              "type": "int",
+              "specs": {
+                "min": "0",
+                "max": "32",
+                "step": "1"
+              }
+            }
+          },
+          {
+            "identifier": "netId",
+            "name": "网络运营商",
+            "dataType": {
+              "type": "int",
+              "specs": {
+                "min": "10",
+                "max": "14",
+                "step": "1"
+              }
+            }
+          },
+          {
+            "identifier": "acVolA",
+            "name": "A相采集电压",
+            "dataType": {
+              "type": "int",
+              "specs": {
+                "min": "0",
+                "max": "100000",
+                "step": "1"
+              }
+            }
+          },
+          {
+            "identifier": "acCurA",
+            "name": "A相采集电流",
+            "dataType": {
+              "type": "int",
+              "specs": {
+                "min": "0",
+                "max": "10000000",
+                "step": "1"
+              }
+            }
+          },
+          {
+            "identifier": "acVolB",
+            "name": "B相采集电压",
+            "dataType": {
+              "type": "int",
+              "specs": {
+                "min": "0",
+                "max": "10000000",
+                "step": "1"
+              }
+            }
+          },
+          {
+            "identifier": "acCurB",
+            "name": "B相采集电流",
+            "dataType": {
+              "type": "int",
+              "specs": {
+                "min": "0",
+                "max": "100000",
+                "step": "1"
+              }
+            }
+          },
+          {
+            "identifier": "acVolC",
+            "name": "C相采集电压",
+            "dataType": {
+              "type": "int",
+              "specs": {
+                "min": "0",
+                "max": "100000",
+                "step": "1"
+              }
+            }
+          },
+          {
+            "identifier": "acCurC",
+            "name": "C相采集电流",
+            "dataType": {
+              "type": "int",
+              "specs": {
+                "min": "0",
+                "max": "10000000",
+                "step": "1"
+              }
+            }
+          },
+          {
+            "identifier": "caseTemp",
+            "name": "桩内温度",
+            "dataType": {
+              "type": "int",
+              "specs": {
+                "min": "-20000",
+                "max": "3000000",
+                "step": "1"
+              }
+            }
+          },
+          {
+            "identifier": "eleModelId",
+            "name": "电费模型编号",
+            "dataType": {
+              "type": "text",
+              "specs": {
+                "length": "2048"
+              }
+            }
+          },
+          {
+            "identifier": "serModelId",
+            "name": "服务模型编号",
+            "dataType": {
+              "type": "text",
+              "specs": {
+                "length": "2048"
+              }
+            }
+          },
+          {
+            "identifier": "inletTemp",
+            "name": "设备入风口温度",
+            "dataType": {
+              "type": "int",
+              "specs": {
+                "min": "0",
+                "max": "10000000",
+                "unit": "°C",
+                "step": "1"
+              }
+            }
+          },
+          {
+            "identifier": "outletTemp",
+            "name": "设备出风口温度",
+            "dataType": {
+              "type": "int",
+              "specs": {
+                "min": "0",
+                "max": "1000000000",
+                "unit": "°C",
+                "step": "1"
+              }
+            }
+          }
+        ]
+      }
+    },
+    {
+      "identifier": "dcOutMeterIty",
+      "name": "直流输出电表底值监测属性",
+      "accessMode": "rw",
+      "required": false,
+      "dataType": {
+        "type": "struct",
+        "specs": [
+          {
+            "identifier": "gunNo",
+            "name": "充电枪编号",
+            "dataType": {
+              "type": "int",
+              "specs": {
+                "min": "1",
+                "max": "255",
+                "step": "1"
+              }
+            }
+          },
+          {
+            "identifier": "acqTime",
+            "name": "采集时间",
+            "dataType": {
+              "type": "text",
+              "specs": {
+                "length": "2048"
+              }
+            }
+          },
+          {
+            "identifier": "mailAddr",
+            "name": "通信地址",
+            "dataType": {
+              "type": "text",
+              "specs": {
+                "length": "2048"
+              }
+            }
+          },
+          {
+            "identifier": "meterNo",
+            "name": "表号",
+            "dataType": {
+              "type": "text",
+              "specs": {
+                "length": "2048"
+              }
+            }
+          },
+          {
+            "identifier": "assetID",
+            "name": "电表资产编码",
+            "dataType": {
+              "type": "text",
+              "specs": {
+                "length": "2048"
+              }
+            }
+          },
+          {
+            "identifier": "sumMeter",
+            "name": "电表底值",
+            "dataType": {
+              "type": "text",
+              "specs": {
+                "length": "2048"
+              }
+            }
+          },
+          {
+            "identifier": "lastTrade",
+            "name": "最后交易流水",
+            "dataType": {
+              "type": "text",
+              "specs": {
+                "length": "2048"
+              }
+            }
+          },
+          {
+            "identifier": "power",
+            "name": "充电中订单的已充电量",
+            "dataType": {
+              "type": "int",
+              "specs": {
+                "min": "0",
+                "max": "2147483647",
+                "step": "1"
+              }
+            }
+          }
+        ]
+      }
+    }
+  ],
+  "events": [
+    {
+      "identifier": "post",
+      "name": "post",
+      "type": "info",
+      "required": true,
+      "desc": "属性上报",
+      "method": "thing.event.property.post",
+      "outputData": [
+        {
+          "identifier": "dcBmsRunIty",
+          "name": "直流充电枪BMS监测属性",
+          "dataType": {
+            "type": "struct",
+            "specs": [
+              {
+                "identifier": "gunNo",
+                "name": "充电枪编号",
+                "dataType": {
+                  "type": "int",
+                  "specs": {
+                    "min": "1",
+                    "max": "1000",
+                    "step": "1"
+                  }
+                }
+              },
+              {
+                "identifier": "preTradeNo",
+                "name": "平台交易流水号",
+                "dataType": {
+                  "type": "text",
+                  "specs": {
+                    "length": "2048"
+                  }
+                }
+              },
+              {
+                "identifier": "tradeNo",
+                "name": "设备交易流水号",
+                "dataType": {
+                  "type": "text",
+                  "specs": {
+                    "length": "2048"
+                  }
+                }
+              },
+              {
+                "identifier": "socVal",
+                "name": "soc",
+                "dataType": {
+                  "type": "int",
+                  "specs": {
+                    "min": "0",
+                    "max": "10000",
+                    "step": "1"
+                  }
+                }
+              },
+              {
+                "identifier": "BMSVer",
+                "name": "BMS通信协议版本号",
+                "dataType": {
+                  "type": "int",
+                  "specs": {
+                    "min": "0",
+                    "max": "1000000000",
+                    "step": "1"
+                  }
+                }
+              },
+              {
+                "identifier": "BMSMaxVol",
+                "name": "BMS最高允许充电总电压",
+                "dataType": {
+                  "type": "int",
+                  "specs": {
+                    "min": "0",
+                    "max": "2147483647",
+                    "unit": "V/m",
+                    "step": "1"
+                  }
+                }
+              },
+              {
+                "identifier": "batType",
+                "name": "电池类型",
+                "dataType": {
+                  "type": "int",
+                  "specs": {
+                    "min": "0",
+                    "max": "2147483647",
+                    "step": "1"
+                  }
+                }
+              },
+              {
+                "identifier": "batRatedCap",
+                "name": "整车动力蓄电池额定容量",
+                "dataType": {
+                  "type": "int",
+                  "specs": {
+                    "min": "0",
+                    "max": "2147483647",
+                    "step": "1"
+                  }
+                }
+              },
+              {
+                "identifier": "batRatedTotalVol",
+                "name": "整车动力蓄电池额定总电压",
+                "dataType": {
+                  "type": "int",
+                  "specs": {
+                    "min": "0",
+                    "max": "2147483647",
+                    "unit": "V/m",
+                    "step": "1"
+                  }
+                }
+              },
+              {
+                "identifier": "singlBatMaxAllowVol",
+                "name": "单体动力蓄电池最高允许充电电压",
+                "dataType": {
+                  "type": "int",
+                  "specs": {
+                    "min": "0",
+                    "max": "2147483647",
+                    "unit": "V/m",
+                    "step": "1"
+                  }
+                }
+              },
+              {
+                "identifier": "maxAllowCur",
+                "name": "最高允许充电电流",
+                "dataType": {
+                  "type": "int",
+                  "specs": {
+                    "min": "0",
+                    "max": "2147483647",
+                    "unit": "V/m",
+                    "step": "1"
+                  }
+                }
+              },
+              {
+                "identifier": "battotalEnergy",
+                "name": "整车动力蓄电池标称总能量",
+                "dataType": {
+                  "type": "int",
+                  "specs": {
+                    "min": "0",
+                    "max": "2147483647",
+                    "unit": "V/m",
+                    "step": "1"
+                  }
+                }
+              },
+              {
+                "identifier": "maxTemp",
+                "name": "最高允许温度",
+                "dataType": {
+                  "type": "int",
+                  "specs": {
+                    "min": "0",
+                    "max": "2147483647",
+                    "unit": "°C",
+                    "step": "1"
+                  }
+                }
+              },
+              {
+                "identifier": "batCurVol",
+                "name": "整车动力蓄电池当前电池电压",
+                "dataType": {
+                  "type": "int",
+                  "specs": {
+                    "min": "0",
+                    "max": "2147483647",
+                    "unit": "V/m",
+                    "step": "1"
+                  }
+                }
+              },
+              {
+                "identifier": "maxVol",
+                "name": "最高允许充电总电压",
+                "dataType": {
+                  "type": "int",
+                  "specs": {
+                    "min": "0",
+                    "max": "2147483647",
+                    "unit": "V/m",
+                    "step": "1"
+                  }
+                }
+              }
+            ]
+          }
+        },
+        {
+          "identifier": "dcGunRunIty",
+          "name": "直流充电枪充电中实时监测属性",
+          "dataType": {
+            "type": "struct",
+            "specs": [
+              {
+                "identifier": "gunNo",
+                "name": "充电枪编号",
+                "dataType": {
+                  "type": "int",
+                  "specs": {
+                    "min": "1",
+                    "max": "255",
+                    "step": "1"
+                  }
+                }
+              },
+              {
+                "identifier": "workStatus",
+                "name": "工作状态",
+                "dataType": {
+                  "type": "int",
+                  "specs": {
+                    "min": "10",
+                    "max": "15",
+                    "step": "1"
+                  }
+                }
+              },
+              {
+                "identifier": "gunStatus",
+                "name": "连接确认开关状态",
+                "dataType": {
+                  "type": "int",
+                  "specs": {
+                    "min": "10",
+                    "max": "12",
+                    "step": "1"
+                  }
+                }
+              },
+              {
+                "identifier": "DCK1Status",
+                "name": "输出继电器K1状态",
+                "dataType": {
+                  "type": "int",
+                  "specs": {
+                    "min": "10",
+                    "max": "12",
+                    "step": "1"
+                  }
+                }
+              },
+              {
+                "identifier": "DCK2Status",
+                "name": "输出继电器K2状态",
+                "dataType": {
+                  "type": "int",
+                  "specs": {
+                    "min": "10",
+                    "max": "12",
+                    "step": "1"
+                  }
+                }
+              },
+              {
+                "identifier": "DCPlusFuseStatus",
+                "name": "DC+熔断器状态",
+                "dataType": {
+                  "type": "int",
+                  "specs": {
+                    "min": "10",
+                    "max": "12",
+                    "step": "1"
+                  }
+                }
+              },
+              {
+                "identifier": "DCMinusFuseStatus",
+                "name": "DC-熔断器状态",
+                "dataType": {
+                  "type": "int",
+                  "specs": {
+                    "min": "10",
+                    "max": "12",
+                    "step": "1"
+                  }
+                }
+              },
+              {
+                "identifier": "eLockStatus",
+                "name": "充电接口电子锁状态",
+                "dataType": {
+                  "type": "int",
+                  "specs": {
+                    "min": "10",
+                    "max": "12",
+                    "step": "1"
+                  }
+                }
+              },
+              {
+                "identifier": "chargeMode",
+                "name": "充电模式",
+                "dataType": {
+                  "type": "int",
+                  "specs": {
+                    "min": "10",
+                    "max": "12",
+                    "step": "1"
+                  }
+                }
+              },
+              {
+                "identifier": "conTemp1",
+                "name": "充电枪1温度",
+                "dataType": {
+                  "type": "int",
+                  "specs": {
+                    "min": "-5000",
+                    "max": "500000",
+                    "step": "1"
+                  }
+                }
+              },
+              {
+                "identifier": "conTemp2",
+                "name": "充电枪2温度",
+                "dataType": {
+                  "type": "int",
+                  "specs": {
+                    "min": "-5000",
+                    "max": "500000",
+                    "step": "1"
+                  }
+                }
+              },
+              {
+                "identifier": "dcVol",
+                "name": "充电机输出电压",
+                "dataType": {
+                  "type": "int",
+                  "specs": {
+                    "min": "0",
+                    "max": "2000000",
+                    "step": "1"
+                  }
+                }
+              },
+              {
+                "identifier": "dcCur",
+                "name": "充电机输出电流",
+                "dataType": {
+                  "type": "int",
+                  "specs": {
+                    "min": "0",
+                    "max": "1000000000",
+                    "step": "1"
+                  }
+                }
+              },
+              {
+                "identifier": "preTradeNo",
+                "name": "平台交易流水号",
+                "dataType": {
+                  "type": "text",
+                  "specs": {
+                    "length": "2048"
+                  }
+                }
+              },
+              {
+                "identifier": "tradeNo",
+                "name": "设备交易流水号",
+                "dataType": {
+                  "type": "text",
+                  "specs": {
+                    "length": "2048"
+                  }
+                }
+              },
+              {
+                "identifier": "realPower",
+                "name": "充电实际功率",
+                "dataType": {
+                  "type": "int",
+                  "specs": {
+                    "min": "0",
+                    "max": "100000000",
+                    "step": "1"
+                  }
+                }
+              },
+              {
+                "identifier": "chgTime",
+                "name": "累计充电时间",
+                "dataType": {
+                  "type": "int",
+                  "specs": {
+                    "min": "0",
+                    "max": "100000000",
+                    "step": "1"
+                  }
+                }
+              },
+              {
+                "identifier": "socVal",
+                "name": "SOC",
+                "dataType": {
+                  "type": "int",
+                  "specs": {
+                    "min": "0",
+                    "max": "1000",
+                    "step": "1"
+                  }
+                }
+              },
+              {
+                "identifier": "needVol",
+                "name": "需求电压",
+                "dataType": {
+                  "type": "int",
+                  "specs": {
+                    "min": "0",
+                    "max": "1000000000",
+                    "step": "1"
+                  }
+                }
+              },
+              {
+                "identifier": "needCur",
+                "name": "需求电流",
+                "dataType": {
+                  "type": "int",
+                  "specs": {
+                    "min": "0",
+                    "max": "100000000",
+                    "step": "1"
+                  }
+                }
+              },
+              {
+                "identifier": "bmsVol",
+                "name": "BMS充电电压测量值",
+                "dataType": {
+                  "type": "int",
+                  "specs": {
+                    "min": "0",
+                    "max": "1000000000",
+                    "step": "1"
+                  }
+                }
+              },
+              {
+                "identifier": "bmsCur",
+                "name": "BMS充电电流测量值",
+                "dataType": {
+                  "type": "int",
+                  "specs": {
+                    "min": "0",
+                    "max": "100000000",
+                    "step": "1"
+                  }
+                }
+              },
+              {
+                "identifier": "SingleMHV",
+                "name": "最高单体动力蓄电池电压",
+                "dataType": {
+                  "type": "int",
+                  "specs": {
+                    "min": "0",
+                    "max": "100000000",
+                    "step": "1"
+                  }
+                }
+              },
+              {
+                "identifier": "remainT",
+                "name": "剩余充电时间",
+                "dataType": {
+                  "type": "int",
+                  "specs": {
+                    "min": "0",
+                    "max": "100000000",
+                    "step": "1"
+                  }
+                }
+              },
+              {
+                "identifier": "MHTemp",
+                "name": "最高动力蓄电池温度",
+                "dataType": {
+                  "type": "int",
+                  "specs": {
+                    "min": "0",
+                    "max": "100000000",
+                    "step": "1"
+                  }
+                }
+              },
+              {
+                "identifier": "MLTemp",
+                "name": "最低动力蓄电池温度",
+                "dataType": {
+                  "type": "int",
+                  "specs": {
+                    "min": "0",
+                    "max": "100000000",
+                    "step": "1"
+                  }
+                }
+              },
+              {
+                "identifier": "totalElect",
+                "name": "总电量",
+                "dataType": {
+                  "type": "int",
+                  "specs": {
+                    "min": "0",
+                    "max": "1000000000",
+                    "step": "1"
+                  }
+                }
+              },
+              {
+                "identifier": "sharpElect",
+                "name": "尖电量",
+                "dataType": {
+                  "type": "int",
+                  "specs": {
+                    "min": "0",
+                    "max": "10000000",
+                    "step": "1"
+                  }
+                }
+              },
+              {
+                "identifier": "peakElect",
+                "name": "峰电量",
+                "dataType": {
+                  "type": "int",
+                  "specs": {
+                    "min": "0",
+                    "max": "100000000",
+                    "step": "1"
+                  }
+                }
+              },
+              {
+                "identifier": "flatElect",
+                "name": "平电量",
+                "dataType": {
+                  "type": "int",
+                  "specs": {
+                    "min": "0",
+                    "max": "100000000",
+                    "step": "1"
+                  }
+                }
+              },
+              {
+                "identifier": "valleyElect",
+                "name": "谷电量",
+                "dataType": {
+                  "type": "int",
+                  "specs": {
+                    "min": "0",
+                    "max": "1000000000",
+                    "step": "1"
+                  }
+                }
+              },
+              {
+                "identifier": "totalCost",
+                "name": "总金额",
+                "dataType": {
+                  "type": "int",
+                  "specs": {
+                    "min": "0",
+                    "max": "1000000000",
+                    "step": "1"
+                  }
+                }
+              },
+              {
+                "identifier": "totalPowerCost",
+                "name": "总电费",
+                "dataType": {
+                  "type": "int",
+                  "specs": {
+                    "min": "0",
+                    "max": "1000000000",
+                    "step": "1"
+                  }
+                }
+              },
+              {
+                "identifier": "totalServCost",
+                "name": "总服务费",
+                "dataType": {
+                  "type": "int",
+                  "specs": {
+                    "min": "0",
+                    "max": "1000000000",
+                    "step": "1"
+                  }
+                }
+              },
+              {
+                "identifier": "chgType",
+                "name": "充电类型",
+                "dataType": {
+                  "type": "int",
+                  "specs": {
+                    "min": "10",
+                    "max": "20",
+                    "step": "1"
+                  }
+                }
+              }
+            ]
+          }
+        },
+        {
+          "identifier": "dcGunIdleIty",
+          "name": "直流充电枪非充电中实时监测属性",
+          "dataType": {
+            "type": "struct",
+            "specs": [
+              {
+                "identifier": "gunNo",
+                "name": "充电枪编号",
+                "dataType": {
+                  "type": "int",
+                  "specs": {
+                    "min": "1",
+                    "max": "255",
+                    "step": "1"
+                  }
+                }
+              },
+              {
+                "identifier": "workStatus",
+                "name": "工作状态",
+                "dataType": {
+                  "type": "int",
+                  "specs": {
+                    "min": "10",
+                    "max": "16",
+                    "step": "1"
+                  }
+                }
+              },
+              {
+                "identifier": "gunStatus",
+                "name": "充电枪连接状态",
+                "dataType": {
+                  "type": "int",
+                  "specs": {
+                    "min": "10",
+                    "max": "17",
+                    "step": "1"
+                  }
+                }
+              },
+              {
+                "identifier": "eLockStatus",
+                "name": "电子锁状态",
+                "dataType": {
+                  "type": "int",
+                  "specs": {
+                    "min": "10",
+                    "max": "12",
+                    "step": "1"
+                  }
+                }
+              },
+              {
+                "identifier": "DCK1Status",
+                "name": "直流输出接触器k1",
+                "dataType": {
+                  "type": "int",
+                  "specs": {
+                    "min": "10",
+                    "max": "12",
+                    "step": "1"
+                  }
+                }
+              },
+              {
+                "identifier": "conTemp1",
+                "name": "充电枪头1温度",
+                "dataType": {
+                  "type": "int",
+                  "specs": {
+                    "min": "-3000",
+                    "max": "400000000",
+                    "step": "1"
+                  }
+                }
+              },
+              {
+                "identifier": "dcVol",
+                "name": "充电机输出电压",
+                "dataType": {
+                  "type": "int",
+                  "specs": {
+                    "min": "0",
+                    "max": "1000000000",
+                    "step": "1"
+                  }
+                }
+              },
+              {
+                "identifier": "dcCur",
+                "name": "充电机输出电流",
+                "dataType": {
+                  "type": "int",
+                  "specs": {
+                    "min": "0",
+                    "max": "10000000",
+                    "step": "1"
+                  }
+                }
+              },
+              {
+                "identifier": "conTemp2",
+                "name": "充电枪头温度2",
+                "dataType": {
+                  "type": "int",
+                  "specs": {
+                    "min": "-3000",
+                    "max": "400000000",
+                    "step": "1"
+                  }
+                }
+              },
+              {
+                "identifier": "DCK2Status",
+                "name": "直流输出接触器k2",
+                "dataType": {
+                  "type": "int",
+                  "specs": {
+                    "min": "10",
+                    "max": "12",
+                    "step": "1"
+                  }
+                }
+              },
+              {
+                "identifier": "DCPlusFuseStatus",
+                "name": "DC正熔断器状态",
+                "dataType": {
+                  "type": "int",
+                  "specs": {
+                    "min": "10",
+                    "max": "12",
+                    "step": "1"
+                  }
+                }
+              },
+              {
+                "identifier": "DCMinusFuseStatus",
+                "name": "DC负熔断器状态",
+                "dataType": {
+                  "type": "int",
+                  "specs": {
+                    "min": "10",
+                    "max": "12",
+                    "step": "1"
+                  }
+                }
+              }
+            ]
+          }
+        },
+        {
+          "identifier": "dcDeRealIty",
+          "name": "直流充电设备实时监测属性",
+          "dataType": {
+            "type": "struct",
+            "specs": [
+              {
+                "identifier": "netType",
+                "name": "网络类型",
+                "dataType": {
+                  "type": "int",
+                  "specs": {
+                    "min": "10",
+                    "max": "18",
+                    "step": "1"
+                  }
+                }
+              },
+              {
+                "identifier": "sigVal",
+                "name": "网络信号等级",
+                "dataType": {
+                  "type": "int",
+                  "specs": {
+                    "min": "0",
+                    "max": "32",
+                    "step": "1"
+                  }
+                }
+              },
+              {
+                "identifier": "netId",
+                "name": "网络运营商",
+                "dataType": {
+                  "type": "int",
+                  "specs": {
+                    "min": "10",
+                    "max": "14",
+                    "step": "1"
+                  }
+                }
+              },
+              {
+                "identifier": "acVolA",
+                "name": "A相采集电压",
+                "dataType": {
+                  "type": "int",
+                  "specs": {
+                    "min": "0",
+                    "max": "100000",
+                    "step": "1"
+                  }
+                }
+              },
+              {
+                "identifier": "acCurA",
+                "name": "A相采集电流",
+                "dataType": {
+                  "type": "int",
+                  "specs": {
+                    "min": "0",
+                    "max": "10000000",
+                    "step": "1"
+                  }
+                }
+              },
+              {
+                "identifier": "acVolB",
+                "name": "B相采集电压",
+                "dataType": {
+                  "type": "int",
+                  "specs": {
+                    "min": "0",
+                    "max": "10000000",
+                    "step": "1"
+                  }
+                }
+              },
+              {
+                "identifier": "acCurB",
+                "name": "B相采集电流",
+                "dataType": {
+                  "type": "int",
+                  "specs": {
+                    "min": "0",
+                    "max": "100000",
+                    "step": "1"
+                  }
+                }
+              },
+              {
+                "identifier": "acVolC",
+                "name": "C相采集电压",
+                "dataType": {
+                  "type": "int",
+                  "specs": {
+                    "min": "0",
+                    "max": "100000",
+                    "step": "1"
+                  }
+                }
+              },
+              {
+                "identifier": "acCurC",
+                "name": "C相采集电流",
+                "dataType": {
+                  "type": "int",
+                  "specs": {
+                    "min": "0",
+                    "max": "10000000",
+                    "step": "1"
+                  }
+                }
+              },
+              {
+                "identifier": "caseTemp",
+                "name": "桩内温度",
+                "dataType": {
+                  "type": "int",
+                  "specs": {
+                    "min": "-20000",
+                    "max": "3000000",
+                    "step": "1"
+                  }
+                }
+              },
+              {
+                "identifier": "eleModelId",
+                "name": "电费模型编号",
+                "dataType": {
+                  "type": "text",
+                  "specs": {
+                    "length": "2048"
+                  }
+                }
+              },
+              {
+                "identifier": "serModelId",
+                "name": "服务模型编号",
+                "dataType": {
+                  "type": "text",
+                  "specs": {
+                    "length": "2048"
+                  }
+                }
+              },
+              {
+                "identifier": "inletTemp",
+                "name": "设备入风口温度",
+                "dataType": {
+                  "type": "int",
+                  "specs": {
+                    "min": "0",
+                    "max": "10000000",
+                    "unit": "°C",
+                    "step": "1"
+                  }
+                }
+              },
+              {
+                "identifier": "outletTemp",
+                "name": "设备出风口温度",
+                "dataType": {
+                  "type": "int",
+                  "specs": {
+                    "min": "0",
+                    "max": "1000000000",
+                    "unit": "°C",
+                    "step": "1"
+                  }
+                }
+              }
+            ]
+          }
+        },
+        {
+          "identifier": "dcOutMeterIty",
+          "name": "直流输出电表底值监测属性",
+          "dataType": {
+            "type": "struct",
+            "specs": [
+              {
+                "identifier": "gunNo",
+                "name": "充电枪编号",
+                "dataType": {
+                  "type": "int",
+                  "specs": {
+                    "min": "1",
+                    "max": "255",
+                    "step": "1"
+                  }
+                }
+              },
+              {
+                "identifier": "acqTime",
+                "name": "采集时间",
+                "dataType": {
+                  "type": "text",
+                  "specs": {
+                    "length": "2048"
+                  }
+                }
+              },
+              {
+                "identifier": "mailAddr",
+                "name": "通信地址",
+                "dataType": {
+                  "type": "text",
+                  "specs": {
+                    "length": "2048"
+                  }
+                }
+              },
+              {
+                "identifier": "meterNo",
+                "name": "表号",
+                "dataType": {
+                  "type": "text",
+                  "specs": {
+                    "length": "2048"
+                  }
+                }
+              },
+              {
+                "identifier": "assetID",
+                "name": "电表资产编码",
+                "dataType": {
+                  "type": "text",
+                  "specs": {
+                    "length": "2048"
+                  }
+                }
+              },
+              {
+                "identifier": "sumMeter",
+                "name": "电表底值",
+                "dataType": {
+                  "type": "text",
+                  "specs": {
+                    "length": "2048"
+                  }
+                }
+              },
+              {
+                "identifier": "lastTrade",
+                "name": "最后交易流水",
+                "dataType": {
+                  "type": "text",
+                  "specs": {
+                    "length": "2048"
+                  }
+                }
+              },
+              {
+                "identifier": "power",
+                "name": "充电中订单的已充电量",
+                "dataType": {
+                  "type": "int",
+                  "specs": {
+                    "min": "0",
+                    "max": "2147483647",
+                    "step": "1"
+                  }
+                }
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "identifier": "askConfigEvt",
+      "name": "配置更新请求",
+      "type": "info",
+      "required": false,
+      "method": "thing.event.askConfigEvt.post",
+      "outputData": []
+    },
+    {
+      "identifier": "orderUpdateEvt",
+      "name": "交易记录上传事件",
+      "type": "info",
+      "required": false,
+      "method": "thing.event.orderUpdateEvt.post",
+      "outputData": [
+        {
+          "identifier": "gunNo",
+          "name": "充电枪编号",
+          "dataType": {
+            "type": "int",
+            "specs": {
+              "min": "1",
+              "max": "255",
+              "step": "1"
+            }
+          }
+        },
+        {
+          "identifier": "preTradeNo",
+          "name": "平台交易流水号",
+          "dataType": {
+            "type": "text",
+            "specs": {
+              "length": "2048"
+            }
+          }
+        },
+        {
+          "identifier": "tradeNo",
+          "name": "设备交易流水号",
+          "dataType": {
+            "type": "text",
+            "specs": {
+              "length": "2048"
+            }
+          }
+        },
+        {
+          "identifier": "vinCode",
+          "name": "VIN",
+          "dataType": {
+            "type": "text",
+            "specs": {
+              "length": "2048"
+            }
+          }
+        },
+        {
+          "identifier": "timeDivType",
+          "name": "计量计费类型",
+          "dataType": {
+            "type": "int",
+            "specs": {
+              "min": "0",
+              "max": "2147483647",
+              "step": "1"
+            }
+          }
+        },
+        {
+          "identifier": "chargeStartTime",
+          "name": "开始充电时间",
+          "dataType": {
+            "type": "text",
+            "specs": {
+              "length": "2048"
+            }
+          }
+        },
+        {
+          "identifier": "chargeEndTime",
+          "name": "结束充电时间",
+          "dataType": {
+            "type": "text",
+            "specs": {
+              "length": "2048"
+            }
+          }
+        },
+        {
+          "identifier": "startSoc",
+          "name": "启动时SOC",
+          "dataType": {
+            "type": "int",
+            "specs": {
+              "min": "0",
+              "max": "2147483647",
+              "step": "1"
+            }
+          }
+        },
+        {
+          "identifier": "endSoc",
+          "name": "停止时SOC",
+          "dataType": {
+            "type": "int",
+            "specs": {
+              "min": "0",
+              "max": "2147483647",
+              "step": "1"
+            }
+          }
+        },
+        {
+          "identifier": "reason",
+          "name": "停止充电原因",
+          "dataType": {
+            "type": "int",
+            "specs": {
+              "min": "0",
+              "max": "2147483647",
+              "step": "1"
+            }
+          }
+        },
+        {
+          "identifier": "eleModelId",
+          "name": "电费模型编号",
+          "dataType": {
+            "type": "text",
+            "specs": {
+              "length": "2048"
+            }
+          }
+        },
+        {
+          "identifier": "serModelId",
+          "name": "服务费模型编号",
+          "dataType": {
+            "type": "text",
+            "specs": {
+              "length": "2048"
+            }
+          }
+        },
+        {
+          "identifier": "sumStart",
+          "name": "电表总起示值",
+          "dataType": {
+            "type": "text",
+            "specs": {
+              "length": "2048"
+            }
+          }
+        },
+        {
+          "identifier": "sumEnd",
+          "name": "电表总止示值",
+          "dataType": {
+            "type": "text",
+            "specs": {
+              "length": "2048"
+            }
+          }
+        },
+        {
+          "identifier": "totalElect",
+          "name": "总电量",
+          "dataType": {
+            "type": "int",
+            "specs": {
+              "min": "0",
+              "max": "2147483647",
+              "step": "1"
+            }
+          }
+        },
+        {
+          "identifier": "sharpElect",
+          "name": "尖电量",
+          "dataType": {
+            "type": "int",
+            "specs": {
+              "min": "0",
+              "max": "2147483647",
+              "step": "1"
+            }
+          }
+        },
+        {
+          "identifier": "peakElect",
+          "name": "峰电量",
+          "dataType": {
+            "type": "int",
+            "specs": {
+              "min": "0",
+              "max": "2147483647",
+              "step": "1"
+            }
+          }
+        },
+        {
+          "identifier": "flatElect",
+          "name": "平电量",
+          "dataType": {
+            "type": "int",
+            "specs": {
+              "min": "0",
+              "max": "2147483647",
+              "step": "1"
+            }
+          }
+        },
+        {
+          "identifier": "valleyElect",
+          "name": "谷电量",
+          "dataType": {
+            "type": "int",
+            "specs": {
+              "min": "0",
+              "max": "2147483647",
+              "step": "1"
+            }
+          }
+        },
+        {
+          "identifier": "totalPowerCost",
+          "name": "总电费",
+          "dataType": {
+            "type": "int",
+            "specs": {
+              "min": "0",
+              "max": "2147483647",
+              "step": "1"
+            }
+          }
+        },
+        {
+          "identifier": "totalServCost",
+          "name": "总服务费",
+          "dataType": {
+            "type": "int",
+            "specs": {
+              "min": "0",
+              "max": "2147483647",
+              "step": "1"
+            }
+          }
+        },
+        {
+          "identifier": "sharpPowerCost",
+          "name": "尖电费",
+          "dataType": {
+            "type": "int",
+            "specs": {
+              "min": "0",
+              "max": "2147483647",
+              "step": "1"
+            }
+          }
+        },
+        {
+          "identifier": "peakPowerCost",
+          "name": "峰电费",
+          "dataType": {
+            "type": "int",
+            "specs": {
+              "min": "0",
+              "max": "2147483647",
+              "step": "1"
+            }
+          }
+        },
+        {
+          "identifier": "flatPowerCost",
+          "name": "平电费",
+          "dataType": {
+            "type": "int",
+            "specs": {
+              "min": "0",
+              "max": "2147483647",
+              "step": "1"
+            }
+          }
+        },
+        {
+          "identifier": "valleyPowerCost",
+          "name": "谷电费",
+          "dataType": {
+            "type": "int",
+            "specs": {
+              "min": "0",
+              "max": "2147483647",
+              "step": "1"
+            }
+          }
+        },
+        {
+          "identifier": "sharpServCost",
+          "name": "尖服务费",
+          "dataType": {
+            "type": "int",
+            "specs": {
+              "min": "0",
+              "max": "2147483647",
+              "step": "1"
+            }
+          }
+        },
+        {
+          "identifier": "peakServCost",
+          "name": "峰服务费",
+          "dataType": {
+            "type": "int",
+            "specs": {
+              "min": "0",
+              "max": "2147483647",
+              "step": "1"
+            }
+          }
+        },
+        {
+          "identifier": "flatServCost",
+          "name": "平服务费",
+          "dataType": {
+            "type": "int",
+            "specs": {
+              "min": "0",
+              "max": "2147483647",
+              "step": "1"
+            }
+          }
+        },
+        {
+          "identifier": "valleyServCost",
+          "name": "谷服务费",
+          "dataType": {
+            "type": "int",
+            "specs": {
+              "min": "0",
+              "max": "2147483647",
+              "step": "1"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "identifier": "stopChaResEvt",
+      "name": "停止结果事件",
+      "type": "info",
+      "required": false,
+      "method": "thing.event.stopChaResEvt.post",
+      "outputData": [
+        {
+          "identifier": "gunNo",
+          "name": "充电枪编号",
+          "dataType": {
+            "type": "int",
+            "specs": {
+              "min": "1",
+              "max": "255",
+              "step": "1"
+            }
+          }
+        },
+        {
+          "identifier": "preTradeNo",
+          "name": "平台交易流水号",
+          "dataType": {
+            "type": "text",
+            "specs": {
+              "length": "2048"
+            }
+          }
+        },
+        {
+          "identifier": "tradeNo",
+          "name": "设备交易流水号",
+          "dataType": {
+            "type": "text",
+            "specs": {
+              "length": "2048"
+            }
+          }
+        },
+        {
+          "identifier": "stopResult",
+          "name": "停止结果",
+          "dataType": {
+            "type": "int",
+            "specs": {
+              "min": "1",
+              "max": "255",
+              "step": "1"
+            }
+          }
+        },
+        {
+          "identifier": "resultCode",
+          "name": "停止原因",
+          "dataType": {
+            "type": "int",
+            "specs": {
+              "min": "0",
+              "max": "2147483647",
+              "step": "1"
+            }
+          }
+        },
+        {
+          "identifier": "stopFailReson",
+          "name": "停止失败原因",
+          "dataType": {
+            "type": "int",
+            "specs": {
+              "min": "1",
+              "max": "255",
+              "step": "1"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "identifier": "startChargeAuthEvt",
+      "name": "启动充电鉴权",
+      "type": "info",
+      "required": false,
+      "method": "thing.event.startChargeAuthEvt.post",
+      "outputData": [
+        {
+          "identifier": "gunNo",
+          "name": "充电枪编号",
+          "dataType": {
+            "type": "int",
+            "specs": {
+              "min": "1",
+              "max": "255",
+              "step": "1"
+            }
+          }
+        },
+        {
+          "identifier": "preTradeNo",
+          "name": "平台交易流水号",
+          "dataType": {
+            "type": "text",
+            "specs": {
+              "length": "2048"
+            }
+          }
+        },
+        {
+          "identifier": "tradeNo",
+          "name": "设备交易流水号",
+          "dataType": {
+            "type": "text",
+            "specs": {
+              "length": "2048"
+            }
+          }
+        },
+        {
+          "identifier": "startType",
+          "name": "启动方式",
+          "dataType": {
+            "type": "int",
+            "specs": {
+              "min": "0",
+              "max": "2147483647",
+              "step": "1"
+            }
+          }
+        },
+        {
+          "identifier": "authCode",
+          "name": "鉴权码",
+          "dataType": {
+            "type": "text",
+            "specs": {
+              "length": "2048"
+            }
+          }
+        },
+        {
+          "identifier": "batterySOC",
+          "name": "电池SOC",
+          "dataType": {
+            "type": "int",
+            "specs": {
+              "min": "0",
+              "max": "2147483647",
+              "step": "1"
+            }
+          }
+        },
+        {
+          "identifier": "chargeTimes",
+          "name": "已充电次数",
+          "dataType": {
+            "type": "int",
+            "specs": {
+              "min": "0",
+              "max": "2147483647",
+              "step": "1"
+            }
+          }
+        },
+        {
+          "identifier": "batteryVol",
+          "name": "当前电池电压",
+          "dataType": {
+            "type": "int",
+            "specs": {
+              "min": "0",
+              "max": "2147483647",
+              "step": "1"
+            }
+          }
+        },
+        {
+          "identifier": "batteryCap",
+          "name": "电池容量",
+          "dataType": {
+            "type": "int",
+            "specs": {
+              "min": "0",
+              "max": "2147483647",
+              "step": "1"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "identifier": "askFeeModelEvt",
+      "name": "计量计费模型请求",
+      "type": "info",
+      "required": false,
+      "method": "thing.event.askFeeModelEvt.post",
+      "outputData": [
+        {
+          "identifier": "gunNo",
+          "name": "充电枪编号",
+          "dataType": {
+            "type": "int",
+            "specs": {
+              "min": "1",
+              "max": "255",
+              "step": "1"
+            }
+          }
+        },
+        {
+          "identifier": "eleModelId",
+          "name": "当前电费模型编号",
+          "dataType": {
+            "type": "text",
+            "specs": {
+              "length": "2048"
+            }
+          }
+        },
+        {
+          "identifier": "serModelId",
+          "name": "当前服务费模型编号",
+          "dataType": {
+            "type": "text",
+            "specs": {
+              "length": "2048"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "identifier": "totalFaultEvt",
+      "name": "故障告警",
+      "type": "alert",
+      "required": false,
+      "desc": "说明：发生的故障告警使用数组格式上传。故障或告警恢复后需再次上传平台。当总故障和总告警都为0时平台认定充电设备完全恢复正常。",
+      "method": "thing.event.totalFaultEvt.post",
+      "outputData": [
+        {
+          "identifier": "gunNo",
+          "name": "枪编号",
+          "dataType": {
+            "type": "int",
+            "specs": {
+              "min": "0",
+              "max": "255",
+              "step": "1"
+            }
+          }
+        },
+        {
+          "identifier": "faultSum",
+          "name": "故障总数目",
+          "dataType": {
+            "type": "int",
+            "specs": {
+              "min": "0",
+              "max": "10000",
+              "step": "1"
+            }
+          }
+        },
+        {
+          "identifier": "warnSum",
+          "name": "告警总数目",
+          "dataType": {
+            "type": "int",
+            "specs": {
+              "min": "0",
+              "max": "10000",
+              "step": "1"
+            }
+          }
+        },
+        {
+          "identifier": "faultValue",
+          "name": "故障点数据",
+          "dataType": {
+            "type": "array",
+            "specs": {
+              "size": "255",
+              "item": {
+                "type": "int"
+              }
+            }
+          }
+        },
+        {
+          "identifier": "warnValue",
+          "name": "告警点数据",
+          "dataType": {
+            "type": "array",
+            "specs": {
+              "size": "255",
+              "item": {
+                "type": "int"
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "identifier": "startChaResEvt",
+      "name": "启动充电结果事件",
+      "type": "info",
+      "required": false,
+      "method": "thing.event.startChaResEvt.post",
+      "outputData": [
+        {
+          "identifier": "gunNo",
+          "name": "充电枪编号",
+          "dataType": {
+            "type": "int",
+            "specs": {
+              "min": "1",
+              "max": "255",
+              "step": "1"
+            }
+          }
+        },
+        {
+          "identifier": "preTradeNo",
+          "name": "平台交易流水号",
+          "dataType": {
+            "type": "text",
+            "specs": {
+              "length": "2048"
+            }
+          }
+        },
+        {
+          "identifier": "tradeNo",
+          "name": "设备交易流水号",
+          "dataType": {
+            "type": "text",
+            "specs": {
+              "length": "2048"
+            }
+          }
+        },
+        {
+          "identifier": "startResult",
+          "name": "启动结果",
+          "dataType": {
+            "type": "int",
+            "specs": {
+              "min": "0",
+              "max": "2147483647",
+              "step": "1"
+            }
+          }
+        },
+        {
+          "identifier": "faultCode",
+          "name": "故障代码",
+          "dataType": {
+            "type": "int",
+            "specs": {
+              "min": "0",
+              "max": "2147483647",
+              "step": "1"
+            }
+          }
+        },
+        {
+          "identifier": "vinCode",
+          "name": "vin码",
+          "dataType": {
+            "type": "text",
+            "specs": {
+              "length": "2048"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "identifier": "dcStChEvt",
+      "name": "直流充电枪状态变更事件",
+      "type": "info",
+      "required": false,
+      "method": "thing.event.dcStChEvt.post",
+      "outputData": [
+        {
+          "identifier": "gunNo",
+          "name": "充电枪编号",
+          "dataType": {
+            "type": "int",
+            "specs": {
+              "min": "1",
+              "max": "255",
+              "step": "1"
+            }
+          }
+        },
+        {
+          "identifier": "yxOccurTime",
+          "name": "发生时刻",
+          "dataType": {
+            "type": "text",
+            "specs": {
+              "length": "2048"
+            }
+          }
+        },
+        {
+          "identifier": "connCheckStatus",
+          "name": "充电枪连接状态",
+          "dataType": {
+            "type": "int",
+            "specs": {
+              "min": "0",
+              "max": "2147483647",
+              "step": "1"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "identifier": "firmwareEvt",
+      "name": "固件信息上送",
+      "type": "info",
+      "required": false,
+      "desc": "固件信息",
+      "method": "thing.event.firmwareEvt.post",
+      "outputData": [
+        {
+          "identifier": "simNo",
+          "name": "SIM卡号",
+          "dataType": {
+            "type": "text",
+            "specs": {
+              "length": "1000"
+            }
+          }
+        },
+        {
+          "identifier": "eleModelId",
+          "name": "电费模型编号",
+          "dataType": {
+            "type": "text",
+            "specs": {
+              "length": "1000"
+            }
+          }
+        },
+        {
+          "identifier": "stakeModel",
+          "name": "充电桩型号",
+          "dataType": {
+            "type": "text",
+            "specs": {
+              "length": "1000"
+            }
+          }
+        },
+        {
+          "identifier": "vendorCode",
+          "name": "生产厂商编码",
+          "dataType": {
+            "type": "int",
+            "specs": {
+              "min": "0",
+              "max": "2147483647",
+              "step": "1"
+            }
+          }
+        },
+        {
+          "identifier": "devSn",
+          "name": "出厂编号",
+          "dataType": {
+            "type": "text",
+            "specs": {
+              "length": "2048"
+            }
+          }
+        },
+        {
+          "identifier": "devType",
+          "name": "桩类型",
+          "dataType": {
+            "type": "int",
+            "specs": {
+              "min": "0",
+              "max": "2147483647",
+              "step": "1"
+            }
+          }
+        },
+        {
+          "identifier": "portNum",
+          "name": "充电接口数量",
+          "dataType": {
+            "type": "int",
+            "specs": {
+              "min": "1",
+              "max": "255",
+              "step": "1"
+            }
+          }
+        },
+        {
+          "identifier": "simMac",
+          "name": "网络MAC地址",
+          "dataType": {
+            "type": "text",
+            "specs": {
+              "length": "2048"
+            }
+          }
+        },
+        {
+          "identifier": "longitude",
+          "name": "经度",
+          "dataType": {
+            "type": "int",
+            "specs": {
+              "min": "-10000000",
+              "max": "10000000",
+              "step": "1"
+            }
+          }
+        },
+        {
+          "identifier": "latitude",
+          "name": "纬度",
+          "dataType": {
+            "type": "int",
+            "specs": {
+              "min": "-10000000",
+              "max": "10000000",
+              "step": "1"
+            }
+          }
+        },
+        {
+          "identifier": "height",
+          "name": "高度",
+          "dataType": {
+            "type": "int",
+            "specs": {
+              "min": "-100000000",
+              "max": "100000000",
+              "step": "1"
+            }
+          }
+        },
+        {
+          "identifier": "gridType",
+          "name": "坐标类型",
+          "dataType": {
+            "type": "int",
+            "specs": {
+              "min": "1",
+              "max": "100",
+              "step": "1"
+            }
+          }
+        },
+        {
+          "identifier": "btMac",
+          "name": "蓝牙MAC地址",
+          "dataType": {
+            "type": "text",
+            "specs": {
+              "length": "2048"
+            }
+          }
+        },
+        {
+          "identifier": "meaType",
+          "name": "计量方式",
+          "dataType": {
+            "type": "int",
+            "specs": {
+              "min": "1",
+              "max": "100",
+              "step": "1"
+            }
+          }
+        },
+        {
+          "identifier": "otRate",
+          "name": "额定功率",
+          "dataType": {
+            "type": "int",
+            "specs": {
+              "min": "1",
+              "max": "100000",
+              "step": "1"
+            }
+          }
+        },
+        {
+          "identifier": "otMinVol",
+          "name": "输出最小电压",
+          "dataType": {
+            "type": "int",
+            "specs": {
+              "min": "0",
+              "max": "2147483647",
+              "step": "1"
+            }
+          }
+        },
+        {
+          "identifier": "otMaxVol",
+          "name": "输出最大电压",
+          "dataType": {
+            "type": "int",
+            "specs": {
+              "min": "0",
+              "max": "2147483647",
+              "step": "1"
+            }
+          }
+        },
+        {
+          "identifier": "otCur",
+          "name": "输出最大电流",
+          "dataType": {
+            "type": "int",
+            "specs": {
+              "min": "0",
+              "max": "2147483647",
+              "step": "1"
+            }
+          }
+        },
+        {
+          "identifier": "inMeter",
+          "name": "直流输入电表地址",
+          "dataType": {
+            "type": "array",
+            "specs": {
+              "size": "512",
+              "item": {
+                "type": "text"
+              }
+            }
+          }
+        },
+        {
+          "identifier": "outMeter",
+          "name": "计量用电能表地址",
+          "dataType": {
+            "type": "array",
+            "specs": {
+              "size": "512",
+              "item": {
+                "type": "text"
+              }
+            }
+          }
+        },
+        {
+          "identifier": "CT",
+          "name": "电流互感器系数",
+          "dataType": {
+            "type": "int",
+            "specs": {
+              "min": "0",
+              "max": "2147483647",
+              "step": "1"
+            }
+          }
+        },
+        {
+          "identifier": "isGateLock",
+          "name": "是否有智能门锁",
+          "dataType": {
+            "type": "int",
+            "specs": {
+              "min": "0",
+              "max": "2147483647",
+              "step": "1"
+            }
+          }
+        },
+        {
+          "identifier": "isGroundLock",
+          "name": "是否有地锁",
+          "dataType": {
+            "type": "int",
+            "specs": {
+              "min": "0",
+              "max": "2147483647",
+              "step": "1"
+            }
+          }
+        },
+        {
+          "identifier": "serModelId",
+          "name": "服务费模型编号",
+          "dataType": {
+            "type": "text",
+            "specs": {
+              "length": "1000"
+            }
+          }
+        }
+      ]
+    }
+  ],
+  "services": [
+    {
+      "identifier": "set",
+      "name": "set",
+      "required": true,
+      "callType": "async",
+      "desc": "属性设置",
+      "method": "thing.service.property.set",
+      "inputData": [
+        {
+          "identifier": "dcBmsRunIty",
+          "name": "直流充电枪BMS监测属性",
+          "dataType": {
+            "type": "struct",
+            "specs": [
+              {
+                "identifier": "gunNo",
+                "name": "充电枪编号",
+                "dataType": {
+                  "type": "int",
+                  "specs": {
+                    "min": "1",
+                    "max": "1000",
+                    "step": "1"
+                  }
+                }
+              },
+              {
+                "identifier": "preTradeNo",
+                "name": "平台交易流水号",
+                "dataType": {
+                  "type": "text",
+                  "specs": {
+                    "length": "2048"
+                  }
+                }
+              },
+              {
+                "identifier": "tradeNo",
+                "name": "设备交易流水号",
+                "dataType": {
+                  "type": "text",
+                  "specs": {
+                    "length": "2048"
+                  }
+                }
+              },
+              {
+                "identifier": "socVal",
+                "name": "soc",
+                "dataType": {
+                  "type": "int",
+                  "specs": {
+                    "min": "0",
+                    "max": "10000",
+                    "step": "1"
+                  }
+                }
+              },
+              {
+                "identifier": "BMSVer",
+                "name": "BMS通信协议版本号",
+                "dataType": {
+                  "type": "int",
+                  "specs": {
+                    "min": "0",
+                    "max": "1000000000",
+                    "step": "1"
+                  }
+                }
+              },
+              {
+                "identifier": "BMSMaxVol",
+                "name": "BMS最高允许充电总电压",
+                "dataType": {
+                  "type": "int",
+                  "specs": {
+                    "min": "0",
+                    "max": "2147483647",
+                    "unit": "V/m",
+                    "step": "1"
+                  }
+                }
+              },
+              {
+                "identifier": "batType",
+                "name": "电池类型",
+                "dataType": {
+                  "type": "int",
+                  "specs": {
+                    "min": "0",
+                    "max": "2147483647",
+                    "step": "1"
+                  }
+                }
+              },
+              {
+                "identifier": "batRatedCap",
+                "name": "整车动力蓄电池额定容量",
+                "dataType": {
+                  "type": "int",
+                  "specs": {
+                    "min": "0",
+                    "max": "2147483647",
+                    "step": "1"
+                  }
+                }
+              },
+              {
+                "identifier": "batRatedTotalVol",
+                "name": "整车动力蓄电池额定总电压",
+                "dataType": {
+                  "type": "int",
+                  "specs": {
+                    "min": "0",
+                    "max": "2147483647",
+                    "unit": "V/m",
+                    "step": "1"
+                  }
+                }
+              },
+              {
+                "identifier": "singlBatMaxAllowVol",
+                "name": "单体动力蓄电池最高允许充电电压",
+                "dataType": {
+                  "type": "int",
+                  "specs": {
+                    "min": "0",
+                    "max": "2147483647",
+                    "unit": "V/m",
+                    "step": "1"
+                  }
+                }
+              },
+              {
+                "identifier": "maxAllowCur",
+                "name": "最高允许充电电流",
+                "dataType": {
+                  "type": "int",
+                  "specs": {
+                    "min": "0",
+                    "max": "2147483647",
+                    "unit": "V/m",
+                    "step": "1"
+                  }
+                }
+              },
+              {
+                "identifier": "battotalEnergy",
+                "name": "整车动力蓄电池标称总能量",
+                "dataType": {
+                  "type": "int",
+                  "specs": {
+                    "min": "0",
+                    "max": "2147483647",
+                    "unit": "V/m",
+                    "step": "1"
+                  }
+                }
+              },
+              {
+                "identifier": "maxTemp",
+                "name": "最高允许温度",
+                "dataType": {
+                  "type": "int",
+                  "specs": {
+                    "min": "0",
+                    "max": "2147483647",
+                    "unit": "°C",
+                    "step": "1"
+                  }
+                }
+              },
+              {
+                "identifier": "batCurVol",
+                "name": "整车动力蓄电池当前电池电压",
+                "dataType": {
+                  "type": "int",
+                  "specs": {
+                    "min": "0",
+                    "max": "2147483647",
+                    "unit": "V/m",
+                    "step": "1"
+                  }
+                }
+              },
+              {
+                "identifier": "maxVol",
+                "name": "最高允许充电总电压",
+                "dataType": {
+                  "type": "int",
+                  "specs": {
+                    "min": "0",
+                    "max": "2147483647",
+                    "unit": "V/m",
+                    "step": "1"
+                  }
+                }
+              }
+            ]
+          }
+        },
+        {
+          "identifier": "dcGunRunIty",
+          "name": "直流充电枪充电中实时监测属性",
+          "dataType": {
+            "type": "struct",
+            "specs": [
+              {
+                "identifier": "gunNo",
+                "name": "充电枪编号",
+                "dataType": {
+                  "type": "int",
+                  "specs": {
+                    "min": "1",
+                    "max": "255",
+                    "step": "1"
+                  }
+                }
+              },
+              {
+                "identifier": "workStatus",
+                "name": "工作状态",
+                "dataType": {
+                  "type": "int",
+                  "specs": {
+                    "min": "10",
+                    "max": "15",
+                    "step": "1"
+                  }
+                }
+              },
+              {
+                "identifier": "gunStatus",
+                "name": "连接确认开关状态",
+                "dataType": {
+                  "type": "int",
+                  "specs": {
+                    "min": "10",
+                    "max": "12",
+                    "step": "1"
+                  }
+                }
+              },
+              {
+                "identifier": "DCK1Status",
+                "name": "输出继电器K1状态",
+                "dataType": {
+                  "type": "int",
+                  "specs": {
+                    "min": "10",
+                    "max": "12",
+                    "step": "1"
+                  }
+                }
+              },
+              {
+                "identifier": "DCK2Status",
+                "name": "输出继电器K2状态",
+                "dataType": {
+                  "type": "int",
+                  "specs": {
+                    "min": "10",
+                    "max": "12",
+                    "step": "1"
+                  }
+                }
+              },
+              {
+                "identifier": "DCPlusFuseStatus",
+                "name": "DC+熔断器状态",
+                "dataType": {
+                  "type": "int",
+                  "specs": {
+                    "min": "10",
+                    "max": "12",
+                    "step": "1"
+                  }
+                }
+              },
+              {
+                "identifier": "DCMinusFuseStatus",
+                "name": "DC-熔断器状态",
+                "dataType": {
+                  "type": "int",
+                  "specs": {
+                    "min": "10",
+                    "max": "12",
+                    "step": "1"
+                  }
+                }
+              },
+              {
+                "identifier": "eLockStatus",
+                "name": "充电接口电子锁状态",
+                "dataType": {
+                  "type": "int",
+                  "specs": {
+                    "min": "10",
+                    "max": "12",
+                    "step": "1"
+                  }
+                }
+              },
+              {
+                "identifier": "chargeMode",
+                "name": "充电模式",
+                "dataType": {
+                  "type": "int",
+                  "specs": {
+                    "min": "10",
+                    "max": "12",
+                    "step": "1"
+                  }
+                }
+              },
+              {
+                "identifier": "conTemp1",
+                "name": "充电枪1温度",
+                "dataType": {
+                  "type": "int",
+                  "specs": {
+                    "min": "-5000",
+                    "max": "500000",
+                    "step": "1"
+                  }
+                }
+              },
+              {
+                "identifier": "conTemp2",
+                "name": "充电枪2温度",
+                "dataType": {
+                  "type": "int",
+                  "specs": {
+                    "min": "-5000",
+                    "max": "500000",
+                    "step": "1"
+                  }
+                }
+              },
+              {
+                "identifier": "dcVol",
+                "name": "充电机输出电压",
+                "dataType": {
+                  "type": "int",
+                  "specs": {
+                    "min": "0",
+                    "max": "2000000",
+                    "step": "1"
+                  }
+                }
+              },
+              {
+                "identifier": "dcCur",
+                "name": "充电机输出电流",
+                "dataType": {
+                  "type": "int",
+                  "specs": {
+                    "min": "0",
+                    "max": "1000000000",
+                    "step": "1"
+                  }
+                }
+              },
+              {
+                "identifier": "preTradeNo",
+                "name": "平台交易流水号",
+                "dataType": {
+                  "type": "text",
+                  "specs": {
+                    "length": "2048"
+                  }
+                }
+              },
+              {
+                "identifier": "tradeNo",
+                "name": "设备交易流水号",
+                "dataType": {
+                  "type": "text",
+                  "specs": {
+                    "length": "2048"
+                  }
+                }
+              },
+              {
+                "identifier": "realPower",
+                "name": "充电实际功率",
+                "dataType": {
+                  "type": "int",
+                  "specs": {
+                    "min": "0",
+                    "max": "100000000",
+                    "step": "1"
+                  }
+                }
+              },
+              {
+                "identifier": "chgTime",
+                "name": "累计充电时间",
+                "dataType": {
+                  "type": "int",
+                  "specs": {
+                    "min": "0",
+                    "max": "100000000",
+                    "step": "1"
+                  }
+                }
+              },
+              {
+                "identifier": "socVal",
+                "name": "SOC",
+                "dataType": {
+                  "type": "int",
+                  "specs": {
+                    "min": "0",
+                    "max": "1000",
+                    "step": "1"
+                  }
+                }
+              },
+              {
+                "identifier": "needVol",
+                "name": "需求电压",
+                "dataType": {
+                  "type": "int",
+                  "specs": {
+                    "min": "0",
+                    "max": "1000000000",
+                    "step": "1"
+                  }
+                }
+              },
+              {
+                "identifier": "needCur",
+                "name": "需求电流",
+                "dataType": {
+                  "type": "int",
+                  "specs": {
+                    "min": "0",
+                    "max": "100000000",
+                    "step": "1"
+                  }
+                }
+              },
+              {
+                "identifier": "bmsVol",
+                "name": "BMS充电电压测量值",
+                "dataType": {
+                  "type": "int",
+                  "specs": {
+                    "min": "0",
+                    "max": "1000000000",
+                    "step": "1"
+                  }
+                }
+              },
+              {
+                "identifier": "bmsCur",
+                "name": "BMS充电电流测量值",
+                "dataType": {
+                  "type": "int",
+                  "specs": {
+                    "min": "0",
+                    "max": "100000000",
+                    "step": "1"
+                  }
+                }
+              },
+              {
+                "identifier": "SingleMHV",
+                "name": "最高单体动力蓄电池电压",
+                "dataType": {
+                  "type": "int",
+                  "specs": {
+                    "min": "0",
+                    "max": "100000000",
+                    "step": "1"
+                  }
+                }
+              },
+              {
+                "identifier": "remainT",
+                "name": "剩余充电时间",
+                "dataType": {
+                  "type": "int",
+                  "specs": {
+                    "min": "0",
+                    "max": "100000000",
+                    "step": "1"
+                  }
+                }
+              },
+              {
+                "identifier": "MHTemp",
+                "name": "最高动力蓄电池温度",
+                "dataType": {
+                  "type": "int",
+                  "specs": {
+                    "min": "0",
+                    "max": "100000000",
+                    "step": "1"
+                  }
+                }
+              },
+              {
+                "identifier": "MLTemp",
+                "name": "最低动力蓄电池温度",
+                "dataType": {
+                  "type": "int",
+                  "specs": {
+                    "min": "0",
+                    "max": "100000000",
+                    "step": "1"
+                  }
+                }
+              },
+              {
+                "identifier": "totalElect",
+                "name": "总电量",
+                "dataType": {
+                  "type": "int",
+                  "specs": {
+                    "min": "0",
+                    "max": "1000000000",
+                    "step": "1"
+                  }
+                }
+              },
+              {
+                "identifier": "sharpElect",
+                "name": "尖电量",
+                "dataType": {
+                  "type": "int",
+                  "specs": {
+                    "min": "0",
+                    "max": "10000000",
+                    "step": "1"
+                  }
+                }
+              },
+              {
+                "identifier": "peakElect",
+                "name": "峰电量",
+                "dataType": {
+                  "type": "int",
+                  "specs": {
+                    "min": "0",
+                    "max": "100000000",
+                    "step": "1"
+                  }
+                }
+              },
+              {
+                "identifier": "flatElect",
+                "name": "平电量",
+                "dataType": {
+                  "type": "int",
+                  "specs": {
+                    "min": "0",
+                    "max": "100000000",
+                    "step": "1"
+                  }
+                }
+              },
+              {
+                "identifier": "valleyElect",
+                "name": "谷电量",
+                "dataType": {
+                  "type": "int",
+                  "specs": {
+                    "min": "0",
+                    "max": "1000000000",
+                    "step": "1"
+                  }
+                }
+              },
+              {
+                "identifier": "totalCost",
+                "name": "总金额",
+                "dataType": {
+                  "type": "int",
+                  "specs": {
+                    "min": "0",
+                    "max": "1000000000",
+                    "step": "1"
+                  }
+                }
+              },
+              {
+                "identifier": "totalPowerCost",
+                "name": "总电费",
+                "dataType": {
+                  "type": "int",
+                  "specs": {
+                    "min": "0",
+                    "max": "1000000000",
+                    "step": "1"
+                  }
+                }
+              },
+              {
+                "identifier": "totalServCost",
+                "name": "总服务费",
+                "dataType": {
+                  "type": "int",
+                  "specs": {
+                    "min": "0",
+                    "max": "1000000000",
+                    "step": "1"
+                  }
+                }
+              },
+              {
+                "identifier": "chgType",
+                "name": "充电类型",
+                "dataType": {
+                  "type": "int",
+                  "specs": {
+                    "min": "10",
+                    "max": "20",
+                    "step": "1"
+                  }
+                }
+              }
+            ]
+          }
+        },
+        {
+          "identifier": "dcGunIdleIty",
+          "name": "直流充电枪非充电中实时监测属性",
+          "dataType": {
+            "type": "struct",
+            "specs": [
+              {
+                "identifier": "gunNo",
+                "name": "充电枪编号",
+                "dataType": {
+                  "type": "int",
+                  "specs": {
+                    "min": "1",
+                    "max": "255",
+                    "step": "1"
+                  }
+                }
+              },
+              {
+                "identifier": "workStatus",
+                "name": "工作状态",
+                "dataType": {
+                  "type": "int",
+                  "specs": {
+                    "min": "10",
+                    "max": "16",
+                    "step": "1"
+                  }
+                }
+              },
+              {
+                "identifier": "gunStatus",
+                "name": "充电枪连接状态",
+                "dataType": {
+                  "type": "int",
+                  "specs": {
+                    "min": "10",
+                    "max": "17",
+                    "step": "1"
+                  }
+                }
+              },
+              {
+                "identifier": "eLockStatus",
+                "name": "电子锁状态",
+                "dataType": {
+                  "type": "int",
+                  "specs": {
+                    "min": "10",
+                    "max": "12",
+                    "step": "1"
+                  }
+                }
+              },
+              {
+                "identifier": "DCK1Status",
+                "name": "直流输出接触器k1",
+                "dataType": {
+                  "type": "int",
+                  "specs": {
+                    "min": "10",
+                    "max": "12",
+                    "step": "1"
+                  }
+                }
+              },
+              {
+                "identifier": "conTemp1",
+                "name": "充电枪头1温度",
+                "dataType": {
+                  "type": "int",
+                  "specs": {
+                    "min": "-3000",
+                    "max": "400000000",
+                    "step": "1"
+                  }
+                }
+              },
+              {
+                "identifier": "dcVol",
+                "name": "充电机输出电压",
+                "dataType": {
+                  "type": "int",
+                  "specs": {
+                    "min": "0",
+                    "max": "1000000000",
+                    "step": "1"
+                  }
+                }
+              },
+              {
+                "identifier": "dcCur",
+                "name": "充电机输出电流",
+                "dataType": {
+                  "type": "int",
+                  "specs": {
+                    "min": "0",
+                    "max": "10000000",
+                    "step": "1"
+                  }
+                }
+              },
+              {
+                "identifier": "conTemp2",
+                "name": "充电枪头温度2",
+                "dataType": {
+                  "type": "int",
+                  "specs": {
+                    "min": "-3000",
+                    "max": "400000000",
+                    "step": "1"
+                  }
+                }
+              },
+              {
+                "identifier": "DCK2Status",
+                "name": "直流输出接触器k2",
+                "dataType": {
+                  "type": "int",
+                  "specs": {
+                    "min": "10",
+                    "max": "12",
+                    "step": "1"
+                  }
+                }
+              },
+              {
+                "identifier": "DCPlusFuseStatus",
+                "name": "DC正熔断器状态",
+                "dataType": {
+                  "type": "int",
+                  "specs": {
+                    "min": "10",
+                    "max": "12",
+                    "step": "1"
+                  }
+                }
+              },
+              {
+                "identifier": "DCMinusFuseStatus",
+                "name": "DC负熔断器状态",
+                "dataType": {
+                  "type": "int",
+                  "specs": {
+                    "min": "10",
+                    "max": "12",
+                    "step": "1"
+                  }
+                }
+              }
+            ]
+          }
+        },
+        {
+          "identifier": "dcDeRealIty",
+          "name": "直流充电设备实时监测属性",
+          "dataType": {
+            "type": "struct",
+            "specs": [
+              {
+                "identifier": "netType",
+                "name": "网络类型",
+                "dataType": {
+                  "type": "int",
+                  "specs": {
+                    "min": "10",
+                    "max": "18",
+                    "step": "1"
+                  }
+                }
+              },
+              {
+                "identifier": "sigVal",
+                "name": "网络信号等级",
+                "dataType": {
+                  "type": "int",
+                  "specs": {
+                    "min": "0",
+                    "max": "32",
+                    "step": "1"
+                  }
+                }
+              },
+              {
+                "identifier": "netId",
+                "name": "网络运营商",
+                "dataType": {
+                  "type": "int",
+                  "specs": {
+                    "min": "10",
+                    "max": "14",
+                    "step": "1"
+                  }
+                }
+              },
+              {
+                "identifier": "acVolA",
+                "name": "A相采集电压",
+                "dataType": {
+                  "type": "int",
+                  "specs": {
+                    "min": "0",
+                    "max": "100000",
+                    "step": "1"
+                  }
+                }
+              },
+              {
+                "identifier": "acCurA",
+                "name": "A相采集电流",
+                "dataType": {
+                  "type": "int",
+                  "specs": {
+                    "min": "0",
+                    "max": "10000000",
+                    "step": "1"
+                  }
+                }
+              },
+              {
+                "identifier": "acVolB",
+                "name": "B相采集电压",
+                "dataType": {
+                  "type": "int",
+                  "specs": {
+                    "min": "0",
+                    "max": "10000000",
+                    "step": "1"
+                  }
+                }
+              },
+              {
+                "identifier": "acCurB",
+                "name": "B相采集电流",
+                "dataType": {
+                  "type": "int",
+                  "specs": {
+                    "min": "0",
+                    "max": "100000",
+                    "step": "1"
+                  }
+                }
+              },
+              {
+                "identifier": "acVolC",
+                "name": "C相采集电压",
+                "dataType": {
+                  "type": "int",
+                  "specs": {
+                    "min": "0",
+                    "max": "100000",
+                    "step": "1"
+                  }
+                }
+              },
+              {
+                "identifier": "acCurC",
+                "name": "C相采集电流",
+                "dataType": {
+                  "type": "int",
+                  "specs": {
+                    "min": "0",
+                    "max": "10000000",
+                    "step": "1"
+                  }
+                }
+              },
+              {
+                "identifier": "caseTemp",
+                "name": "桩内温度",
+                "dataType": {
+                  "type": "int",
+                  "specs": {
+                    "min": "-20000",
+                    "max": "3000000",
+                    "step": "1"
+                  }
+                }
+              },
+              {
+                "identifier": "eleModelId",
+                "name": "电费模型编号",
+                "dataType": {
+                  "type": "text",
+                  "specs": {
+                    "length": "2048"
+                  }
+                }
+              },
+              {
+                "identifier": "serModelId",
+                "name": "服务模型编号",
+                "dataType": {
+                  "type": "text",
+                  "specs": {
+                    "length": "2048"
+                  }
+                }
+              },
+              {
+                "identifier": "inletTemp",
+                "name": "设备入风口温度",
+                "dataType": {
+                  "type": "int",
+                  "specs": {
+                    "min": "0",
+                    "max": "10000000",
+                    "unit": "°C",
+                    "step": "1"
+                  }
+                }
+              },
+              {
+                "identifier": "outletTemp",
+                "name": "设备出风口温度",
+                "dataType": {
+                  "type": "int",
+                  "specs": {
+                    "min": "0",
+                    "max": "1000000000",
+                    "unit": "°C",
+                    "step": "1"
+                  }
+                }
+              }
+            ]
+          }
+        },
+        {
+          "identifier": "dcOutMeterIty",
+          "name": "直流输出电表底值监测属性",
+          "dataType": {
+            "type": "struct",
+            "specs": [
+              {
+                "identifier": "gunNo",
+                "name": "充电枪编号",
+                "dataType": {
+                  "type": "int",
+                  "specs": {
+                    "min": "1",
+                    "max": "255",
+                    "step": "1"
+                  }
+                }
+              },
+              {
+                "identifier": "acqTime",
+                "name": "采集时间",
+                "dataType": {
+                  "type": "text",
+                  "specs": {
+                    "length": "2048"
+                  }
+                }
+              },
+              {
+                "identifier": "mailAddr",
+                "name": "通信地址",
+                "dataType": {
+                  "type": "text",
+                  "specs": {
+                    "length": "2048"
+                  }
+                }
+              },
+              {
+                "identifier": "meterNo",
+                "name": "表号",
+                "dataType": {
+                  "type": "text",
+                  "specs": {
+                    "length": "2048"
+                  }
+                }
+              },
+              {
+                "identifier": "assetID",
+                "name": "电表资产编码",
+                "dataType": {
+                  "type": "text",
+                  "specs": {
+                    "length": "2048"
+                  }
+                }
+              },
+              {
+                "identifier": "sumMeter",
+                "name": "电表底值",
+                "dataType": {
+                  "type": "text",
+                  "specs": {
+                    "length": "2048"
+                  }
+                }
+              },
+              {
+                "identifier": "lastTrade",
+                "name": "最后交易流水",
+                "dataType": {
+                  "type": "text",
+                  "specs": {
+                    "length": "2048"
+                  }
+                }
+              },
+              {
+                "identifier": "power",
+                "name": "充电中订单的已充电量",
+                "dataType": {
+                  "type": "int",
+                  "specs": {
+                    "min": "0",
+                    "max": "2147483647",
+                    "step": "1"
+                  }
+                }
+              }
+            ]
+          }
+        }
+      ],
+      "outputData": []
+    },
+    {
+      "identifier": "get",
+      "name": "get",
+      "required": true,
+      "callType": "async",
+      "desc": "属性获取",
+      "method": "thing.service.property.get",
+      "inputData": [
+        "dcBmsRunIty",
+        "dcGunRunIty",
+        "dcGunIdleIty",
+        "dcDeRealIty",
+        "dcOutMeterIty"
+      ],
+      "outputData": [
+        {
+          "identifier": "dcBmsRunIty",
+          "name": "直流充电枪BMS监测属性",
+          "dataType": {
+            "type": "struct",
+            "specs": [
+              {
+                "identifier": "gunNo",
+                "name": "充电枪编号",
+                "dataType": {
+                  "type": "int",
+                  "specs": {
+                    "min": "1",
+                    "max": "1000",
+                    "step": "1"
+                  }
+                }
+              },
+              {
+                "identifier": "preTradeNo",
+                "name": "平台交易流水号",
+                "dataType": {
+                  "type": "text",
+                  "specs": {
+                    "length": "2048"
+                  }
+                }
+              },
+              {
+                "identifier": "tradeNo",
+                "name": "设备交易流水号",
+                "dataType": {
+                  "type": "text",
+                  "specs": {
+                    "length": "2048"
+                  }
+                }
+              },
+              {
+                "identifier": "socVal",
+                "name": "soc",
+                "dataType": {
+                  "type": "int",
+                  "specs": {
+                    "min": "0",
+                    "max": "10000",
+                    "step": "1"
+                  }
+                }
+              },
+              {
+                "identifier": "BMSVer",
+                "name": "BMS通信协议版本号",
+                "dataType": {
+                  "type": "int",
+                  "specs": {
+                    "min": "0",
+                    "max": "1000000000",
+                    "step": "1"
+                  }
+                }
+              },
+              {
+                "identifier": "BMSMaxVol",
+                "name": "BMS最高允许充电总电压",
+                "dataType": {
+                  "type": "int",
+                  "specs": {
+                    "min": "0",
+                    "max": "2147483647",
+                    "unit": "V/m",
+                    "step": "1"
+                  }
+                }
+              },
+              {
+                "identifier": "batType",
+                "name": "电池类型",
+                "dataType": {
+                  "type": "int",
+                  "specs": {
+                    "min": "0",
+                    "max": "2147483647",
+                    "step": "1"
+                  }
+                }
+              },
+              {
+                "identifier": "batRatedCap",
+                "name": "整车动力蓄电池额定容量",
+                "dataType": {
+                  "type": "int",
+                  "specs": {
+                    "min": "0",
+                    "max": "2147483647",
+                    "step": "1"
+                  }
+                }
+              },
+              {
+                "identifier": "batRatedTotalVol",
+                "name": "整车动力蓄电池额定总电压",
+                "dataType": {
+                  "type": "int",
+                  "specs": {
+                    "min": "0",
+                    "max": "2147483647",
+                    "unit": "V/m",
+                    "step": "1"
+                  }
+                }
+              },
+              {
+                "identifier": "singlBatMaxAllowVol",
+                "name": "单体动力蓄电池最高允许充电电压",
+                "dataType": {
+                  "type": "int",
+                  "specs": {
+                    "min": "0",
+                    "max": "2147483647",
+                    "unit": "V/m",
+                    "step": "1"
+                  }
+                }
+              },
+              {
+                "identifier": "maxAllowCur",
+                "name": "最高允许充电电流",
+                "dataType": {
+                  "type": "int",
+                  "specs": {
+                    "min": "0",
+                    "max": "2147483647",
+                    "unit": "V/m",
+                    "step": "1"
+                  }
+                }
+              },
+              {
+                "identifier": "battotalEnergy",
+                "name": "整车动力蓄电池标称总能量",
+                "dataType": {
+                  "type": "int",
+                  "specs": {
+                    "min": "0",
+                    "max": "2147483647",
+                    "unit": "V/m",
+                    "step": "1"
+                  }
+                }
+              },
+              {
+                "identifier": "maxTemp",
+                "name": "最高允许温度",
+                "dataType": {
+                  "type": "int",
+                  "specs": {
+                    "min": "0",
+                    "max": "2147483647",
+                    "unit": "°C",
+                    "step": "1"
+                  }
+                }
+              },
+              {
+                "identifier": "batCurVol",
+                "name": "整车动力蓄电池当前电池电压",
+                "dataType": {
+                  "type": "int",
+                  "specs": {
+                    "min": "0",
+                    "max": "2147483647",
+                    "unit": "V/m",
+                    "step": "1"
+                  }
+                }
+              },
+              {
+                "identifier": "maxVol",
+                "name": "最高允许充电总电压",
+                "dataType": {
+                  "type": "int",
+                  "specs": {
+                    "min": "0",
+                    "max": "2147483647",
+                    "unit": "V/m",
+                    "step": "1"
+                  }
+                }
+              }
+            ]
+          }
+        },
+        {
+          "identifier": "dcGunRunIty",
+          "name": "直流充电枪充电中实时监测属性",
+          "dataType": {
+            "type": "struct",
+            "specs": [
+              {
+                "identifier": "gunNo",
+                "name": "充电枪编号",
+                "dataType": {
+                  "type": "int",
+                  "specs": {
+                    "min": "1",
+                    "max": "255",
+                    "step": "1"
+                  }
+                }
+              },
+              {
+                "identifier": "workStatus",
+                "name": "工作状态",
+                "dataType": {
+                  "type": "int",
+                  "specs": {
+                    "min": "10",
+                    "max": "15",
+                    "step": "1"
+                  }
+                }
+              },
+              {
+                "identifier": "gunStatus",
+                "name": "连接确认开关状态",
+                "dataType": {
+                  "type": "int",
+                  "specs": {
+                    "min": "10",
+                    "max": "12",
+                    "step": "1"
+                  }
+                }
+              },
+              {
+                "identifier": "DCK1Status",
+                "name": "输出继电器K1状态",
+                "dataType": {
+                  "type": "int",
+                  "specs": {
+                    "min": "10",
+                    "max": "12",
+                    "step": "1"
+                  }
+                }
+              },
+              {
+                "identifier": "DCK2Status",
+                "name": "输出继电器K2状态",
+                "dataType": {
+                  "type": "int",
+                  "specs": {
+                    "min": "10",
+                    "max": "12",
+                    "step": "1"
+                  }
+                }
+              },
+              {
+                "identifier": "DCPlusFuseStatus",
+                "name": "DC+熔断器状态",
+                "dataType": {
+                  "type": "int",
+                  "specs": {
+                    "min": "10",
+                    "max": "12",
+                    "step": "1"
+                  }
+                }
+              },
+              {
+                "identifier": "DCMinusFuseStatus",
+                "name": "DC-熔断器状态",
+                "dataType": {
+                  "type": "int",
+                  "specs": {
+                    "min": "10",
+                    "max": "12",
+                    "step": "1"
+                  }
+                }
+              },
+              {
+                "identifier": "eLockStatus",
+                "name": "充电接口电子锁状态",
+                "dataType": {
+                  "type": "int",
+                  "specs": {
+                    "min": "10",
+                    "max": "12",
+                    "step": "1"
+                  }
+                }
+              },
+              {
+                "identifier": "chargeMode",
+                "name": "充电模式",
+                "dataType": {
+                  "type": "int",
+                  "specs": {
+                    "min": "10",
+                    "max": "12",
+                    "step": "1"
+                  }
+                }
+              },
+              {
+                "identifier": "conTemp1",
+                "name": "充电枪1温度",
+                "dataType": {
+                  "type": "int",
+                  "specs": {
+                    "min": "-5000",
+                    "max": "500000",
+                    "step": "1"
+                  }
+                }
+              },
+              {
+                "identifier": "conTemp2",
+                "name": "充电枪2温度",
+                "dataType": {
+                  "type": "int",
+                  "specs": {
+                    "min": "-5000",
+                    "max": "500000",
+                    "step": "1"
+                  }
+                }
+              },
+              {
+                "identifier": "dcVol",
+                "name": "充电机输出电压",
+                "dataType": {
+                  "type": "int",
+                  "specs": {
+                    "min": "0",
+                    "max": "2000000",
+                    "step": "1"
+                  }
+                }
+              },
+              {
+                "identifier": "dcCur",
+                "name": "充电机输出电流",
+                "dataType": {
+                  "type": "int",
+                  "specs": {
+                    "min": "0",
+                    "max": "1000000000",
+                    "step": "1"
+                  }
+                }
+              },
+              {
+                "identifier": "preTradeNo",
+                "name": "平台交易流水号",
+                "dataType": {
+                  "type": "text",
+                  "specs": {
+                    "length": "2048"
+                  }
+                }
+              },
+              {
+                "identifier": "tradeNo",
+                "name": "设备交易流水号",
+                "dataType": {
+                  "type": "text",
+                  "specs": {
+                    "length": "2048"
+                  }
+                }
+              },
+              {
+                "identifier": "realPower",
+                "name": "充电实际功率",
+                "dataType": {
+                  "type": "int",
+                  "specs": {
+                    "min": "0",
+                    "max": "100000000",
+                    "step": "1"
+                  }
+                }
+              },
+              {
+                "identifier": "chgTime",
+                "name": "累计充电时间",
+                "dataType": {
+                  "type": "int",
+                  "specs": {
+                    "min": "0",
+                    "max": "100000000",
+                    "step": "1"
+                  }
+                }
+              },
+              {
+                "identifier": "socVal",
+                "name": "SOC",
+                "dataType": {
+                  "type": "int",
+                  "specs": {
+                    "min": "0",
+                    "max": "1000",
+                    "step": "1"
+                  }
+                }
+              },
+              {
+                "identifier": "needVol",
+                "name": "需求电压",
+                "dataType": {
+                  "type": "int",
+                  "specs": {
+                    "min": "0",
+                    "max": "1000000000",
+                    "step": "1"
+                  }
+                }
+              },
+              {
+                "identifier": "needCur",
+                "name": "需求电流",
+                "dataType": {
+                  "type": "int",
+                  "specs": {
+                    "min": "0",
+                    "max": "100000000",
+                    "step": "1"
+                  }
+                }
+              },
+              {
+                "identifier": "bmsVol",
+                "name": "BMS充电电压测量值",
+                "dataType": {
+                  "type": "int",
+                  "specs": {
+                    "min": "0",
+                    "max": "1000000000",
+                    "step": "1"
+                  }
+                }
+              },
+              {
+                "identifier": "bmsCur",
+                "name": "BMS充电电流测量值",
+                "dataType": {
+                  "type": "int",
+                  "specs": {
+                    "min": "0",
+                    "max": "100000000",
+                    "step": "1"
+                  }
+                }
+              },
+              {
+                "identifier": "SingleMHV",
+                "name": "最高单体动力蓄电池电压",
+                "dataType": {
+                  "type": "int",
+                  "specs": {
+                    "min": "0",
+                    "max": "100000000",
+                    "step": "1"
+                  }
+                }
+              },
+              {
+                "identifier": "remainT",
+                "name": "剩余充电时间",
+                "dataType": {
+                  "type": "int",
+                  "specs": {
+                    "min": "0",
+                    "max": "100000000",
+                    "step": "1"
+                  }
+                }
+              },
+              {
+                "identifier": "MHTemp",
+                "name": "最高动力蓄电池温度",
+                "dataType": {
+                  "type": "int",
+                  "specs": {
+                    "min": "0",
+                    "max": "100000000",
+                    "step": "1"
+                  }
+                }
+              },
+              {
+                "identifier": "MLTemp",
+                "name": "最低动力蓄电池温度",
+                "dataType": {
+                  "type": "int",
+                  "specs": {
+                    "min": "0",
+                    "max": "100000000",
+                    "step": "1"
+                  }
+                }
+              },
+              {
+                "identifier": "totalElect",
+                "name": "总电量",
+                "dataType": {
+                  "type": "int",
+                  "specs": {
+                    "min": "0",
+                    "max": "1000000000",
+                    "step": "1"
+                  }
+                }
+              },
+              {
+                "identifier": "sharpElect",
+                "name": "尖电量",
+                "dataType": {
+                  "type": "int",
+                  "specs": {
+                    "min": "0",
+                    "max": "10000000",
+                    "step": "1"
+                  }
+                }
+              },
+              {
+                "identifier": "peakElect",
+                "name": "峰电量",
+                "dataType": {
+                  "type": "int",
+                  "specs": {
+                    "min": "0",
+                    "max": "100000000",
+                    "step": "1"
+                  }
+                }
+              },
+              {
+                "identifier": "flatElect",
+                "name": "平电量",
+                "dataType": {
+                  "type": "int",
+                  "specs": {
+                    "min": "0",
+                    "max": "100000000",
+                    "step": "1"
+                  }
+                }
+              },
+              {
+                "identifier": "valleyElect",
+                "name": "谷电量",
+                "dataType": {
+                  "type": "int",
+                  "specs": {
+                    "min": "0",
+                    "max": "1000000000",
+                    "step": "1"
+                  }
+                }
+              },
+              {
+                "identifier": "totalCost",
+                "name": "总金额",
+                "dataType": {
+                  "type": "int",
+                  "specs": {
+                    "min": "0",
+                    "max": "1000000000",
+                    "step": "1"
+                  }
+                }
+              },
+              {
+                "identifier": "totalPowerCost",
+                "name": "总电费",
+                "dataType": {
+                  "type": "int",
+                  "specs": {
+                    "min": "0",
+                    "max": "1000000000",
+                    "step": "1"
+                  }
+                }
+              },
+              {
+                "identifier": "totalServCost",
+                "name": "总服务费",
+                "dataType": {
+                  "type": "int",
+                  "specs": {
+                    "min": "0",
+                    "max": "1000000000",
+                    "step": "1"
+                  }
+                }
+              },
+              {
+                "identifier": "chgType",
+                "name": "充电类型",
+                "dataType": {
+                  "type": "int",
+                  "specs": {
+                    "min": "10",
+                    "max": "20",
+                    "step": "1"
+                  }
+                }
+              }
+            ]
+          }
+        },
+        {
+          "identifier": "dcGunIdleIty",
+          "name": "直流充电枪非充电中实时监测属性",
+          "dataType": {
+            "type": "struct",
+            "specs": [
+              {
+                "identifier": "gunNo",
+                "name": "充电枪编号",
+                "dataType": {
+                  "type": "int",
+                  "specs": {
+                    "min": "1",
+                    "max": "255",
+                    "step": "1"
+                  }
+                }
+              },
+              {
+                "identifier": "workStatus",
+                "name": "工作状态",
+                "dataType": {
+                  "type": "int",
+                  "specs": {
+                    "min": "10",
+                    "max": "16",
+                    "step": "1"
+                  }
+                }
+              },
+              {
+                "identifier": "gunStatus",
+                "name": "充电枪连接状态",
+                "dataType": {
+                  "type": "int",
+                  "specs": {
+                    "min": "10",
+                    "max": "17",
+                    "step": "1"
+                  }
+                }
+              },
+              {
+                "identifier": "eLockStatus",
+                "name": "电子锁状态",
+                "dataType": {
+                  "type": "int",
+                  "specs": {
+                    "min": "10",
+                    "max": "12",
+                    "step": "1"
+                  }
+                }
+              },
+              {
+                "identifier": "DCK1Status",
+                "name": "直流输出接触器k1",
+                "dataType": {
+                  "type": "int",
+                  "specs": {
+                    "min": "10",
+                    "max": "12",
+                    "step": "1"
+                  }
+                }
+              },
+              {
+                "identifier": "conTemp1",
+                "name": "充电枪头1温度",
+                "dataType": {
+                  "type": "int",
+                  "specs": {
+                    "min": "-3000",
+                    "max": "400000000",
+                    "step": "1"
+                  }
+                }
+              },
+              {
+                "identifier": "dcVol",
+                "name": "充电机输出电压",
+                "dataType": {
+                  "type": "int",
+                  "specs": {
+                    "min": "0",
+                    "max": "1000000000",
+                    "step": "1"
+                  }
+                }
+              },
+              {
+                "identifier": "dcCur",
+                "name": "充电机输出电流",
+                "dataType": {
+                  "type": "int",
+                  "specs": {
+                    "min": "0",
+                    "max": "10000000",
+                    "step": "1"
+                  }
+                }
+              },
+              {
+                "identifier": "conTemp2",
+                "name": "充电枪头温度2",
+                "dataType": {
+                  "type": "int",
+                  "specs": {
+                    "min": "-3000",
+                    "max": "400000000",
+                    "step": "1"
+                  }
+                }
+              },
+              {
+                "identifier": "DCK2Status",
+                "name": "直流输出接触器k2",
+                "dataType": {
+                  "type": "int",
+                  "specs": {
+                    "min": "10",
+                    "max": "12",
+                    "step": "1"
+                  }
+                }
+              },
+              {
+                "identifier": "DCPlusFuseStatus",
+                "name": "DC正熔断器状态",
+                "dataType": {
+                  "type": "int",
+                  "specs": {
+                    "min": "10",
+                    "max": "12",
+                    "step": "1"
+                  }
+                }
+              },
+              {
+                "identifier": "DCMinusFuseStatus",
+                "name": "DC负熔断器状态",
+                "dataType": {
+                  "type": "int",
+                  "specs": {
+                    "min": "10",
+                    "max": "12",
+                    "step": "1"
+                  }
+                }
+              }
+            ]
+          }
+        },
+        {
+          "identifier": "dcDeRealIty",
+          "name": "直流充电设备实时监测属性",
+          "dataType": {
+            "type": "struct",
+            "specs": [
+              {
+                "identifier": "netType",
+                "name": "网络类型",
+                "dataType": {
+                  "type": "int",
+                  "specs": {
+                    "min": "10",
+                    "max": "18",
+                    "step": "1"
+                  }
+                }
+              },
+              {
+                "identifier": "sigVal",
+                "name": "网络信号等级",
+                "dataType": {
+                  "type": "int",
+                  "specs": {
+                    "min": "0",
+                    "max": "32",
+                    "step": "1"
+                  }
+                }
+              },
+              {
+                "identifier": "netId",
+                "name": "网络运营商",
+                "dataType": {
+                  "type": "int",
+                  "specs": {
+                    "min": "10",
+                    "max": "14",
+                    "step": "1"
+                  }
+                }
+              },
+              {
+                "identifier": "acVolA",
+                "name": "A相采集电压",
+                "dataType": {
+                  "type": "int",
+                  "specs": {
+                    "min": "0",
+                    "max": "100000",
+                    "step": "1"
+                  }
+                }
+              },
+              {
+                "identifier": "acCurA",
+                "name": "A相采集电流",
+                "dataType": {
+                  "type": "int",
+                  "specs": {
+                    "min": "0",
+                    "max": "10000000",
+                    "step": "1"
+                  }
+                }
+              },
+              {
+                "identifier": "acVolB",
+                "name": "B相采集电压",
+                "dataType": {
+                  "type": "int",
+                  "specs": {
+                    "min": "0",
+                    "max": "10000000",
+                    "step": "1"
+                  }
+                }
+              },
+              {
+                "identifier": "acCurB",
+                "name": "B相采集电流",
+                "dataType": {
+                  "type": "int",
+                  "specs": {
+                    "min": "0",
+                    "max": "100000",
+                    "step": "1"
+                  }
+                }
+              },
+              {
+                "identifier": "acVolC",
+                "name": "C相采集电压",
+                "dataType": {
+                  "type": "int",
+                  "specs": {
+                    "min": "0",
+                    "max": "100000",
+                    "step": "1"
+                  }
+                }
+              },
+              {
+                "identifier": "acCurC",
+                "name": "C相采集电流",
+                "dataType": {
+                  "type": "int",
+                  "specs": {
+                    "min": "0",
+                    "max": "10000000",
+                    "step": "1"
+                  }
+                }
+              },
+              {
+                "identifier": "caseTemp",
+                "name": "桩内温度",
+                "dataType": {
+                  "type": "int",
+                  "specs": {
+                    "min": "-20000",
+                    "max": "3000000",
+                    "step": "1"
+                  }
+                }
+              },
+              {
+                "identifier": "eleModelId",
+                "name": "电费模型编号",
+                "dataType": {
+                  "type": "text",
+                  "specs": {
+                    "length": "2048"
+                  }
+                }
+              },
+              {
+                "identifier": "serModelId",
+                "name": "服务模型编号",
+                "dataType": {
+                  "type": "text",
+                  "specs": {
+                    "length": "2048"
+                  }
+                }
+              },
+              {
+                "identifier": "inletTemp",
+                "name": "设备入风口温度",
+                "dataType": {
+                  "type": "int",
+                  "specs": {
+                    "min": "0",
+                    "max": "10000000",
+                    "unit": "°C",
+                    "step": "1"
+                  }
+                }
+              },
+              {
+                "identifier": "outletTemp",
+                "name": "设备出风口温度",
+                "dataType": {
+                  "type": "int",
+                  "specs": {
+                    "min": "0",
+                    "max": "1000000000",
+                    "unit": "°C",
+                    "step": "1"
+                  }
+                }
+              }
+            ]
+          }
+        },
+        {
+          "identifier": "dcOutMeterIty",
+          "name": "直流输出电表底值监测属性",
+          "dataType": {
+            "type": "struct",
+            "specs": [
+              {
+                "identifier": "gunNo",
+                "name": "充电枪编号",
+                "dataType": {
+                  "type": "int",
+                  "specs": {
+                    "min": "1",
+                    "max": "255",
+                    "step": "1"
+                  }
+                }
+              },
+              {
+                "identifier": "acqTime",
+                "name": "采集时间",
+                "dataType": {
+                  "type": "text",
+                  "specs": {
+                    "length": "2048"
+                  }
+                }
+              },
+              {
+                "identifier": "mailAddr",
+                "name": "通信地址",
+                "dataType": {
+                  "type": "text",
+                  "specs": {
+                    "length": "2048"
+                  }
+                }
+              },
+              {
+                "identifier": "meterNo",
+                "name": "表号",
+                "dataType": {
+                  "type": "text",
+                  "specs": {
+                    "length": "2048"
+                  }
+                }
+              },
+              {
+                "identifier": "assetID",
+                "name": "电表资产编码",
+                "dataType": {
+                  "type": "text",
+                  "specs": {
+                    "length": "2048"
+                  }
+                }
+              },
+              {
+                "identifier": "sumMeter",
+                "name": "电表底值",
+                "dataType": {
+                  "type": "text",
+                  "specs": {
+                    "length": "2048"
+                  }
+                }
+              },
+              {
+                "identifier": "lastTrade",
+                "name": "最后交易流水",
+                "dataType": {
+                  "type": "text",
+                  "specs": {
+                    "length": "2048"
+                  }
+                }
+              },
+              {
+                "identifier": "power",
+                "name": "充电中订单的已充电量",
+                "dataType": {
+                  "type": "int",
+                  "specs": {
+                    "min": "0",
+                    "max": "2147483647",
+                    "step": "1"
+                  }
+                }
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "identifier": "confUpdateSrv",
+      "name": "设备配置更新服务",
+      "required": false,
+      "callType": "async",
+      "method": "thing.service.confUpdateSrv",
+      "inputData": [
+        {
+          "identifier": "equipParamFreq",
+          "name": "充电设备实时监测属性上报频率",
+          "dataType": {
+            "type": "int",
+            "specs": {
+              "min": "0",
+              "max": "1000000",
+              "step": "1"
+            }
+          }
+        },
+        {
+          "identifier": "gunElecFeeq",
+          "name": "充电枪充电中实时监测属性上报频率",
+          "dataType": {
+            "type": "int",
+            "specs": {
+              "min": "0",
+              "max": "1000000",
+              "step": "1"
+            }
+          }
+        },
+        {
+          "identifier": "nonElecFreq",
+          "name": "充电枪非充电中实时监测属性上报频率",
+          "dataType": {
+            "type": "int",
+            "specs": {
+              "min": "1",
+              "max": "1000000",
+              "step": "1"
+            }
+          }
+        },
+        {
+          "identifier": "faultWarnings",
+          "name": "故障告警全信息上传频率",
+          "dataType": {
+            "type": "int",
+            "specs": {
+              "min": "1",
+              "max": "19000000",
+              "step": "1"
+            }
+          }
+        },
+        {
+          "identifier": "acMeterFreq",
+          "name": "充电设备交流电表底值监测属性上报频率",
+          "dataType": {
+            "type": "int",
+            "specs": {
+              "min": "1",
+              "max": "10000",
+              "step": "1"
+            }
+          }
+        },
+        {
+          "identifier": "dcMeterFreq",
+          "name": "直流输出电表底值监测属性上报频率",
+          "dataType": {
+            "type": "int",
+            "specs": {
+              "min": "1",
+              "max": "19999999",
+              "step": "1"
+            }
+          }
+        },
+        {
+          "identifier": "offlinChaLen",
+          "name": "离线后可充电时长",
+          "dataType": {
+            "type": "int",
+            "specs": {
+              "min": "1",
+              "max": "1000000",
+              "step": "1"
+            }
+          }
+        },
+        {
+          "identifier": "grndLock",
+          "name": "地锁监测上送频率",
+          "dataType": {
+            "type": "int",
+            "specs": {
+              "min": "1",
+              "max": "19999999",
+              "step": "1"
+            }
+          }
+        },
+        {
+          "identifier": "doorLock",
+          "name": "门锁监测上送频率",
+          "dataType": {
+            "type": "int",
+            "specs": {
+              "min": "1",
+              "max": "199999",
+              "step": "1"
+            }
+          }
+        },
+        {
+          "identifier": "qrCode",
+          "name": "二维码数据",
+          "dataType": {
+            "type": "array",
+            "specs": {
+              "size": "50",
+              "item": {
+                "type": "text"
+              }
+            }
+          }
+        }
+      ],
+      "outputData": []
+    },
+    {
+      "identifier": "startChargeSrv",
+      "name": "直流桩启动充电",
+      "required": false,
+      "callType": "async",
+      "desc": "直流桩启动充电服务模型",
+      "method": "thing.service.startChargeSrv",
+      "inputData": [
+        {
+          "identifier": "gunNo",
+          "name": "充电枪编号",
+          "dataType": {
+            "type": "int",
+            "specs": {
+              "min": "1",
+              "max": "255",
+              "step": "1"
+            }
+          }
+        },
+        {
+          "identifier": "preTradeNo",
+          "name": "平台交易流水号",
+          "dataType": {
+            "type": "text",
+            "specs": {
+              "length": "2048"
+            }
+          }
+        },
+        {
+          "identifier": "tradeNo",
+          "name": "设备交易流水号",
+          "dataType": {
+            "type": "text",
+            "specs": {
+              "length": "2048"
+            }
+          }
+        },
+        {
+          "identifier": "startType",
+          "name": "启动方式",
+          "dataType": {
+            "type": "int",
+            "specs": {
+              "min": "0",
+              "max": "2147483647",
+              "step": "1"
+            }
+          }
+        },
+        {
+          "identifier": "chargeMode",
+          "name": "充电模式",
+          "dataType": {
+            "type": "int",
+            "specs": {
+              "min": "0",
+              "max": "2147483647",
+              "step": "1"
+            }
+          }
+        },
+        {
+          "identifier": "limitData",
+          "name": "限制值",
+          "dataType": {
+            "type": "int",
+            "specs": {
+              "min": "0",
+              "max": "2147483647",
+              "step": "1"
+            }
+          }
+        },
+        {
+          "identifier": "stopCode",
+          "name": "停机码",
+          "dataType": {
+            "type": "int",
+            "specs": {
+              "min": "0",
+              "max": "2147483647",
+              "step": "1"
+            }
+          }
+        },
+        {
+          "identifier": "startMode",
+          "name": "启动模式",
+          "dataType": {
+            "type": "int",
+            "specs": {
+              "min": "0",
+              "max": "2147483647",
+              "step": "1"
+            }
+          }
+        },
+        {
+          "identifier": "insertGunTime",
+          "name": "插枪事件时间戳",
+          "dataType": {
+            "type": "int",
+            "specs": {
+              "min": "0",
+              "max": "2147483647",
+              "step": "1"
+            }
+          }
+        }
+      ],
+      "outputData": [
+        {
+          "identifier": "gunNo",
+          "name": "充电枪编号",
+          "dataType": {
+            "type": "int",
+            "specs": {
+              "min": "1",
+              "max": "255",
+              "step": "1"
+            }
+          }
+        },
+        {
+          "identifier": "preTradeNo",
+          "name": "平台交易流水号",
+          "dataType": {
+            "type": "text",
+            "specs": {
+              "length": "2048"
+            }
+          }
+        },
+        {
+          "identifier": "tradeNo",
+          "name": "设备交易流水号",
+          "dataType": {
+            "type": "text",
+            "specs": {
+              "length": "2048"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "identifier": "dcOrderlyChargeSrv",
+      "name": "功率控制服务",
+      "required": false,
+      "callType": "async",
+      "method": "thing.service.dcOrderlyChargeSrv",
+      "inputData": [
+        {
+          "identifier": "preTradeNo",
+          "name": "订单流水号",
+          "dataType": {
+            "type": "text",
+            "specs": {
+              "length": "2048"
+            }
+          }
+        },
+        {
+          "identifier": "validTime",
+          "name": "策略生效时间",
+          "dataType": {
+            "type": "array",
+            "specs": {
+              "size": "200",
+              "item": {
+                "type": "text"
+              }
+            }
+          }
+        },
+        {
+          "identifier": "kw",
+          "name": "策略配置功率",
+          "dataType": {
+            "type": "array",
+            "specs": {
+              "size": "200",
+              "item": {
+                "type": "int"
+              }
+            }
+          }
+        },
+        {
+          "identifier": "num",
+          "name": "策略时间段数量",
+          "dataType": {
+            "type": "int",
+            "specs": {
+              "min": "0",
+              "max": "100",
+              "step": "1"
+            }
+          }
+        }
+      ],
+      "outputData": [
+        {
+          "identifier": "tradeNo",
+          "name": "订单流水号",
+          "dataType": {
+            "type": "text",
+            "specs": {
+              "length": "2048"
+            }
+          }
+        },
+        {
+          "identifier": "result",
+          "name": "返回结果",
+          "dataType": {
+            "type": "int",
+            "specs": {
+              "min": "10",
+              "max": "12",
+              "step": "1"
+            }
+          }
+        },
+        {
+          "identifier": "reason",
+          "name": "失败原因",
+          "dataType": {
+            "type": "int",
+            "specs": {
+              "min": "10",
+              "max": "12",
+              "step": "1"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "identifier": "feeModelUpdateSrv",
+      "name": "计量计费模型更新",
+      "required": false,
+      "callType": "async",
+      "method": "thing.service.feeModelUpdateSrv",
+      "inputData": [
+        {
+          "identifier": "eleModelId",
+          "name": "电费模型Id",
+          "dataType": {
+            "type": "text",
+            "specs": {
+              "length": "2048"
+            }
+          }
+        },
+        {
+          "identifier": "timeNum",
+          "name": "时段数",
+          "dataType": {
+            "type": "int",
+            "specs": {
+              "min": "1",
+              "max": "48",
+              "step": "1"
+            }
+          }
+        },
+        {
+          "identifier": "timeSeg",
+          "name": "时段开始时间点",
+          "dataType": {
+            "type": "array",
+            "specs": {
+              "size": "50",
+              "item": {
+                "type": "text"
+              }
+            }
+          }
+        },
+        {
+          "identifier": "segFlag",
+          "name": "时段标志",
+          "dataType": {
+            "type": "array",
+            "specs": {
+              "size": "50",
+              "item": {
+                "type": "int"
+              }
+            }
+          }
+        },
+        {
+          "identifier": "serModelId",
+          "name": "服务费模型Id",
+          "dataType": {
+            "type": "text",
+            "specs": {
+              "length": "2048"
+            }
+          }
+        },
+        {
+          "identifier": "chargeFee",
+          "name": "电费",
+          "dataType": {
+            "type": "array",
+            "specs": {
+              "size": "50",
+              "item": {
+                "type": "int"
+              }
+            }
+          }
+        },
+        {
+          "identifier": "serviceFee",
+          "name": "服务费",
+          "dataType": {
+            "type": "array",
+            "specs": {
+              "size": "50",
+              "item": {
+                "type": "int"
+              }
+            }
+          }
+        }
+      ],
+      "outputData": [
+        {
+          "identifier": "eleModelId",
+          "name": "电费模型编号",
+          "dataType": {
+            "type": "text",
+            "specs": {
+              "length": "2048"
+            }
+          }
+        },
+        {
+          "identifier": "serModelId",
+          "name": "服务费模型编号",
+          "dataType": {
+            "type": "text",
+            "specs": {
+              "length": "2048"
+            }
+          }
+        },
+        {
+          "identifier": "res",
+          "name": "响应结果",
+          "dataType": {
+            "type": "int",
+            "specs": {
+              "min": "1",
+              "max": "255",
+              "step": "1"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "identifier": "orderCheckSrv",
+      "name": "交易记录确认服务",
+      "required": false,
+      "callType": "async",
+      "method": "thing.service.orderCheckSrv",
+      "inputData": [
+        {
+          "identifier": "gunNo",
+          "name": "充电枪编号",
+          "dataType": {
+            "type": "int",
+            "specs": {
+              "min": "1",
+              "max": "255",
+              "step": "1"
+            }
+          }
+        },
+        {
+          "identifier": "preTradeNo",
+          "name": "平台交易流水号",
+          "dataType": {
+            "type": "text",
+            "specs": {
+              "length": "2048"
+            }
+          }
+        },
+        {
+          "identifier": "tradeNo",
+          "name": "设备交易流水号",
+          "dataType": {
+            "type": "text",
+            "specs": {
+              "length": "2048"
+            }
+          }
+        },
+        {
+          "identifier": "errCode",
+          "name": "交易记录上传结果",
+          "dataType": {
+            "type": "int",
+            "specs": {
+              "min": "0",
+              "max": "2147483647",
+              "step": "1"
+            }
+          }
+        }
+      ],
+      "outputData": []
+    },
+    {
+      "identifier": "devMaintainSrv",
+      "name": "设备维护服务",
+      "required": false,
+      "callType": "async",
+      "method": "thing.service.devMaintainSrv",
+      "inputData": [
+        {
+          "identifier": "ctrlType",
+          "name": "控制类型",
+          "dataType": {
+            "type": "int",
+            "specs": {
+              "min": "0",
+              "max": "100",
+              "step": "1"
+            }
+          }
+        }
+      ],
+      "outputData": [
+        {
+          "identifier": "ctrlType",
+          "name": "当前控制类型",
+          "dataType": {
+            "type": "int",
+            "specs": {
+              "min": "0",
+              "max": "100",
+              "step": "1"
+            }
+          }
+        },
+        {
+          "identifier": "reason",
+          "name": "失败原因",
+          "dataType": {
+            "type": "int",
+            "specs": {
+              "min": "0",
+              "max": "199",
+              "step": "1"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "identifier": "authResultSrv",
+      "name": "启动充电鉴权结果",
+      "required": false,
+      "callType": "async",
+      "method": "thing.service.authResultSrv",
+      "inputData": [
+        {
+          "identifier": "gunNo",
+          "name": "充电枪编号",
+          "dataType": {
+            "type": "int",
+            "specs": {
+              "min": "1",
+              "max": "255",
+              "step": "1"
+            }
+          }
+        },
+        {
+          "identifier": "preTradeNo",
+          "name": "平台交易流水号",
+          "dataType": {
+            "type": "text",
+            "specs": {
+              "length": "2048"
+            }
+          }
+        },
+        {
+          "identifier": "tradeNo",
+          "name": "设备交易流水号",
+          "dataType": {
+            "type": "text",
+            "specs": {
+              "length": "2048"
+            }
+          }
+        },
+        {
+          "identifier": "vinCode",
+          "name": "VIN码",
+          "dataType": {
+            "type": "text",
+            "specs": {
+              "length": "2048"
+            }
+          }
+        },
+        {
+          "identifier": "oppoCode",
+          "name": "反向扫码二维码",
+          "dataType": {
+            "type": "text",
+            "specs": {
+              "length": "2048"
+            }
+          }
+        },
+        {
+          "identifier": "result",
+          "name": "鉴权结果",
+          "dataType": {
+            "type": "int",
+            "specs": {
+              "min": "0",
+              "max": "2147483647",
+              "step": "1"
+            }
+          }
+        },
+        {
+          "identifier": "chargeMode",
+          "name": "充电模式",
+          "dataType": {
+            "type": "int",
+            "specs": {
+              "min": "0",
+              "max": "2147483647",
+              "step": "1"
+            }
+          }
+        },
+        {
+          "identifier": "limitData",
+          "name": "限制值",
+          "dataType": {
+            "type": "int",
+            "specs": {
+              "min": "0",
+              "max": "2147483647",
+              "step": "1"
+            }
+          }
+        },
+        {
+          "identifier": "stopCode",
+          "name": "停机码",
+          "dataType": {
+            "type": "int",
+            "specs": {
+              "min": "0",
+              "max": "2147483647",
+              "step": "1"
+            }
+          }
+        },
+        {
+          "identifier": "insertGunTime",
+          "name": "插枪事件时间戳",
+          "dataType": {
+            "type": "int",
+            "specs": {
+              "min": "0",
+              "max": "2147483647",
+              "step": "1"
+            }
+          }
+        }
+      ],
+      "outputData": [
+        {
+          "identifier": "gunNo",
+          "name": "充电枪编号",
+          "dataType": {
+            "type": "int",
+            "specs": {
+              "min": "1",
+              "max": "255",
+              "step": "1"
+            }
+          }
+        },
+        {
+          "identifier": "preTradeNo",
+          "name": "平台交易流水号",
+          "dataType": {
+            "type": "text",
+            "specs": {
+              "length": "2048"
+            }
+          }
+        },
+        {
+          "identifier": "tradeNo",
+          "name": "设备交易流水号",
+          "dataType": {
+            "type": "text",
+            "specs": {
+              "length": "2048"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "identifier": "getConfSrv",
+      "name": "查询设备配置信息",
+      "required": false,
+      "callType": "async",
+      "desc": "平台查询设备配置信息",
+      "method": "thing.service.getConfSrv",
+      "inputData": [
+        {
+          "identifier": "deviceName",
+          "name": "设备名称",
+          "dataType": {
+            "type": "text",
+            "specs": {
+              "length": "2048"
+            }
+          }
+        }
+      ],
+      "outputData": [
+        {
+          "identifier": "data",
+          "name": "配置信息",
+          "dataType": {
+            "type": "struct",
+            "specs": [
+              {
+                "identifier": "equipParamFreq",
+                "name": "充电设备实时监测属性上报频率",
+                "dataType": {
+                  "type": "int",
+                  "specs": {
+                    "min": "0",
+                    "max": "2147483647",
+                    "unit": "Hz",
+                    "step": "1"
+                  }
+                }
+              },
+              {
+                "identifier": "elecFreq",
+                "name": "充电枪充电中实时监测属性上报频率",
+                "dataType": {
+                  "type": "int",
+                  "specs": {
+                    "min": "0",
+                    "max": "2147483647",
+                    "unit": "Hz",
+                    "step": "1"
+                  }
+                }
+              },
+              {
+                "identifier": "nonElecFreq",
+                "name": "充电枪非充电中实时监测属性上报频率",
+                "dataType": {
+                  "type": "int",
+                  "specs": {
+                    "min": "0",
+                    "max": "2147483647",
+                    "unit": "Hz",
+                    "step": "1"
+                  }
+                }
+              },
+              {
+                "identifier": "faultWarnings",
+                "name": "故障告警全信息上传频率",
+                "dataType": {
+                  "type": "int",
+                  "specs": {
+                    "min": "0",
+                    "max": "2147483647",
+                    "unit": "Hz",
+                    "step": "1"
+                  }
+                }
+              },
+              {
+                "identifier": "equipParamFreqs",
+                "name": "充电设备关口直流电表底值监测属性上报频率",
+                "dataType": {
+                  "type": "int",
+                  "specs": {
+                    "min": "0",
+                    "max": "2147483647",
+                    "unit": "Hz",
+                    "step": "1"
+                  }
+                }
+              },
+              {
+                "identifier": "elecFreqs",
+                "name": "直流输出电表底值监测属性上报频率",
+                "dataType": {
+                  "type": "int",
+                  "specs": {
+                    "min": "0",
+                    "max": "2147483647",
+                    "unit": "Hz",
+                    "step": "1"
+                  }
+                }
+              },
+              {
+                "identifier": "grndLock",
+                "name": "地锁监测上送频率",
+                "dataType": {
+                  "type": "int",
+                  "specs": {
+                    "min": "0",
+                    "max": "2147483647",
+                    "unit": "Hz",
+                    "step": "1"
+                  }
+                }
+              },
+              {
+                "identifier": "doorLock",
+                "name": "门锁监测上送频率",
+                "dataType": {
+                  "type": "int",
+                  "specs": {
+                    "min": "0",
+                    "max": "2147483647",
+                    "unit": "Hz",
+                    "step": "1"
+                  }
+                }
+              },
+              {
+                "identifier": "encodeCon",
+                "name": "报文加密",
+                "dataType": {
+                  "type": "int",
+                  "specs": {
+                    "min": "0",
+                    "max": "2147483647",
+                    "unit": "Hz",
+                    "step": "1"
+                  }
+                }
+              },
+              {
+                "identifier": "qrCode",
+                "name": "二维码数据",
+                "dataType": {
+                  "type": "int",
+                  "specs": {
+                    "min": "0",
+                    "max": "2147483647",
+                    "unit": "Hz",
+                    "step": "1"
+                  }
+                }
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "identifier": "stopChargeSrv",
+      "name": "平台停止充电",
+      "required": false,
+      "callType": "async",
+      "method": "thing.service.stopChargeSrv",
+      "inputData": [
+        {
+          "identifier": "gunNo",
+          "name": "充电枪编号",
+          "dataType": {
+            "type": "int",
+            "specs": {
+              "min": "1",
+              "max": "255",
+              "step": "1"
+            }
+          }
+        },
+        {
+          "identifier": "preTradeNo",
+          "name": "平台交易流水号",
+          "dataType": {
+            "type": "text",
+            "specs": {
+              "length": "2048"
+            }
+          }
+        },
+        {
+          "identifier": "tradeNo",
+          "name": "设备交易流水号",
+          "dataType": {
+            "type": "text",
+            "specs": {
+              "length": "2048"
+            }
+          }
+        },
+        {
+          "identifier": "stopReason",
+          "name": "停止原因",
+          "dataType": {
+            "type": "int",
+            "specs": {
+              "min": "0",
+              "max": "2147483647",
+              "step": "1"
+            }
+          }
+        }
+      ],
+      "outputData": [
+        {
+          "identifier": "gunNo",
+          "name": "充电枪编号",
+          "dataType": {
+            "type": "int",
+            "specs": {
+              "min": "1",
+              "max": "255",
+              "step": "1"
+            }
+          }
+        },
+        {
+          "identifier": "preTradeNo",
+          "name": "平台交易流水号",
+          "dataType": {
+            "type": "text",
+            "specs": {
+              "length": "2048"
+            }
+          }
+        },
+        {
+          "identifier": "tradeNo",
+          "name": "设备交易流水号",
+          "dataType": {
+            "type": "text",
+            "specs": {
+              "length": "2048"
+            }
+          }
+        }
+      ]
+    }
+  ]
+}
