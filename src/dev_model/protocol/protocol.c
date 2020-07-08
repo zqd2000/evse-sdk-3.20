@@ -1499,6 +1499,7 @@ static int send_property_ac_work(evs_property_ac_work *data)
     cJSON_AddNumberToObject(body, "totalCost", data->totalCost);
     cJSON_AddNumberToObject(body, "totalPowerCost", data->totalPowerCost);
     cJSON_AddNumberToObject(body, "totalServCost", data->totalServCost);
+    cJSON_AddNumberToObject(body, "PwmDutyRadio", data->PwmDutyRadio);
     payload = cJSON_PrintUnformatted(root);
     res = IOT_Linkkit_Report(evs_g_user_ctx.master_devid, ITM_MSG_POST_PROPERTY, (unsigned char *)payload, strlen(payload));
     if (root != NULL)
@@ -2346,6 +2347,41 @@ static int send_event_dcPile_change(evs_event_pile_stutus_change *data)
     return res;
 }
 
+static int send_event_car_info(evs_event_car_info *data)
+{
+    int res = 0;
+    cJSON *root;
+    char *payload;
+
+    root = cJSON_CreateObject();
+    cJSON_AddNumberToObject(root, "gunNo", data->gunNo);
+    cJSON_AddNumberToObject(root, "batterySOC", data->batterySOC);
+    cJSON_AddNumberToObject(root, "batteryCap", data->batteryCap);
+    cJSON_AddStringToObject(root, "gunNo", data->vinCode);
+    cJSON_AddNumberToObject(root, "state", data->state);
+
+    payload = cJSON_PrintUnformatted(root);
+
+    res = IOT_Linkkit_TriggerEvent(evs_g_user_ctx.master_devid, "acCarInfoEvt", strlen("acCarInfoEvt"), (char *)payload, strlen(payload));
+
+    if (root != NULL)
+    {
+        cJSON_Delete(root);
+    }
+
+    if (payload != NULL)
+    {
+        HAL_Free(payload);
+    }
+
+    PROTOCOL_TRACE("Post Event Message ID: %d", res);
+    if (res < 0)
+    {
+        return -1;
+    }
+    return res;
+}
+
 int evs_linkkit_time_sync(void)
 {
     int ret = 0;
@@ -2645,6 +2681,10 @@ void evs_send_event(evs_cmd_event_enum event_type, void *param)
         break;
     case EVS_CMD_EVENT_ASK_DEV_CONFIG:
         send_event_ask_dev_config();
+        /* code */
+        break;
+    case EVS_CMD_EVENT_CAR_INFO:
+        send_event_car_info((evs_event_car_info *)param);
         /* code */
         break;
     default:

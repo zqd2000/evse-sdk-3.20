@@ -51,6 +51,7 @@ typedef enum
 	EVS_CMD_EVENT_GROUNDLOCK_CHANGE,
 	EVS_CMD_EVENT_GATELOCK_CHANGE,
 	EVS_CMD_EVENT_ASK_DEV_CONFIG,
+	EVS_CMD_EVENT_CAR_INFO,
 
 } evs_cmd_event_enum;
 
@@ -482,6 +483,16 @@ typedef struct
 	unsigned char connCheckStatus; // 3	变位点数据
 } evs_event_pile_stutus_change;
 
+//交直流充电设备充电前车辆信息上报事件上传参数
+
+typedef struct
+{
+	unsigned char gunNo;			    // 1	充电枪编号
+	unsigned char batterySOC;		    // 2	电池SOC
+	unsigned int batteryCap;		    // 3	电车容量
+	char vinCode[EVS_MAX_CAR_VIN_LEN];	// 4	vin码
+	unsigned char state;			    // 5	获取车辆信息状态
+} evs_event_car_info;
 /*********************************************交流业务相关************************************************************/
 //交流设备属性上报参数
 
@@ -529,6 +540,7 @@ typedef struct
 	unsigned int totalCost;				// 23	总金额
 	unsigned int totalPowerCost;		// 24	总电费
 	unsigned int totalServCost;			// 25	总服务费
+	unsigned int PwmDutyRadio;			// 26	PWM占空比
 } evs_property_ac_work;
 
 //交流充电枪非充电中实时监测属性
