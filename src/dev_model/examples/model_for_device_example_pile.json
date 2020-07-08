@@ -369,6 +369,73 @@
       ]
     },
     {
+      "identifier": "acCarInfoEvt",
+      "name": "充电前车辆信息上报",
+      "type": "info",
+      "required": false,
+      "method": "thing.event.acCarInfoEvt.post",
+      "outputData": [
+        {
+          "identifier": "batterySOC",
+          "name": "电池SOC",
+          "dataType": {
+            "type": "int",
+            "specs": {
+              "min": "1",
+              "max": "100",
+              "step": "1"
+            }
+          }
+        },
+        {
+          "identifier": "batteryCap",
+          "name": "电车容量",
+          "dataType": {
+            "type": "int",
+            "specs": {
+              "min": "0",
+              "max": "65535",
+              "step": "1"
+            }
+          }
+        },
+        {
+          "identifier": "vinCode",
+          "name": "VIN码",
+          "dataType": {
+            "type": "text",
+            "specs": {
+              "length": "20"
+            }
+          }
+        },
+        {
+          "identifier": "state",
+          "name": "获取车辆信息状态",
+          "dataType": {
+            "type": "int",
+            "specs": {
+              "min": "0",
+              "max": "255",
+              "step": "1"
+            }
+          }
+        },
+        {
+          "identifier": "gunNo",
+          "name": "充电枪编号",
+          "dataType": {
+            "type": "int",
+            "specs": {
+              "min": "1",
+              "max": "255",
+              "step": "1"
+            }
+          }
+        }
+      ]
+    },
+    {
       "identifier": "firmwareEvt",
       "name": "固件信息上送",
       "type": "info",

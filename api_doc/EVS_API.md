@@ -20,6 +20,7 @@
     * [EVS_CMD_EVENT_GROUNDLOCK_CHANGE](#EVS_CMD_EVENT_GROUNDLOCK_CHANGE)
     * [EVS_CMD_EVENT_GATELOCK_CHANGE](#EVS_CMD_EVENT_GATELOCK_CHANGE)
     * [EVS_CMD_EVENT_ASK_DEV_CONFIG](#EVS_CMD_EVENT_ASK_DEV_CONFIG)
+    * [EVS_CMD_EVENT_CAR_INFO](#EVS_CMD_EVENT_CAR_INFO)
 + [Poperty列表详解](#Poperty列表详解)
     * [EVS_CMD_PROPERTY_DCPILE](#EVS_CMD_PROPERTY_DCPILE)
     * [EVS_CMD_PROPERTY_ACPILE](#EVS_CMD_PROPERTY_ACPILE)
@@ -484,7 +485,7 @@ typedef struct
 } evs_event_groundLock_change;
 ```
 ### <a name="EVS_CMD_EVENT_GATELOCK_CHANGE">EVS_CMD_EVENT_GATELOCK_CHANGE</a>
-+ : 智能门锁状态变更信息上报参数详情
++ 智能门锁状态变更信息上报参数详情
 ```
 typedef struct
 {
@@ -492,14 +493,37 @@ typedef struct
 	unsigned char lockState; // 2	智能门锁状态
 } evs_event_gateLock_change;
 ```
+
+
 ### <a name="EVS_CMD_EVENT_ASK_DEV_CONFIG">EVS_CMD_EVENT_ASK_DEV_CONFIG</a>
+
 + 获取设备配置信息请求上报
 ```
 无
 ```
------
+
+
+### <a name="EVS_CMD_EVENT_CAR_INFO">EVS_CMD_EVENT_CAR_INFO</a>
+
++ 充电前车辆信息上报事件
+
+```
+typedef struct
+{
+	unsigned char gunNo;			    // 1	充电枪编号
+	unsigned char batterySOC;		    // 2	电池SOC
+	unsigned int batteryCap;		    // 3	电车容量
+	char vinCode[EVS_MAX_CAR_VIN_LEN];	// 4	vin码
+	unsigned char state;			    // 5	获取车辆信息状态
+} evs_event_car_info;
+```
+
+
+
+
 
 # <a name="Poperty列表详解">Poperty列表详解</a>
+
 ### <a name="EVS_CMD_PROPERTY_DCPILE">EVS_CMD_PROPERTY_DCPILE</a>
 + 直流设备属性上报参数详情
 
@@ -570,6 +594,7 @@ typedef struct
 	unsigned int totalCost;				// 23	总金额
 	unsigned int totalPowerCost;		// 24	总电费
 	unsigned int totalServCost;			// 25	总服务费
+	unsigned int PwmDutyRadio;			// 26	PWM占空比
 } evs_property_ac_work;
 ```
 ### <a name="EVS_CMD_PROPERTY_AC_NONWORK">EVS_CMD_PROPERTY_AC_NONWORK</a>

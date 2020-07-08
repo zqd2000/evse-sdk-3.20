@@ -654,6 +654,12 @@ int main()
 	memcpy(fireware_info.stakeModel, "222111111111111111", strlen("222111111111111111"));
 	fireware_info.vendorCode = 1287;
 
+	evs_event_car_info car_info;
+	car_info.gunNo = 1;
+	car_info.batteryCap = 20;
+	car_info.batterySOC = 80;
+	car_info.state = 10;
+	memcpy(car_info.vinCode, "12345678909876543", strlen("12345678909876543"));
 	while (1)
 	{
 		evs_mainloop();
@@ -667,7 +673,7 @@ int main()
 		}
 		if ((cnt % 300) == 0)
 		{
-			//evs_send_event(EVS_CMD_EVENT_STARTRESULT, &event_startResult_data);
+			evs_send_event(EVS_CMD_EVENT_CAR_INFO, &car_info);
 		}
 		HAL_SleepMs(100);
 		cnt++;

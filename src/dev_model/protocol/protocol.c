@@ -2357,7 +2357,7 @@ static int send_event_car_info(evs_event_car_info *data)
     cJSON_AddNumberToObject(root, "gunNo", data->gunNo);
     cJSON_AddNumberToObject(root, "batterySOC", data->batterySOC);
     cJSON_AddNumberToObject(root, "batteryCap", data->batteryCap);
-    cJSON_AddStringToObject(root, "gunNo", data->vinCode);
+    cJSON_AddStringToObject(root, "vinCode", data->vinCode);
     cJSON_AddNumberToObject(root, "state", data->state);
 
     payload = cJSON_PrintUnformatted(root);
