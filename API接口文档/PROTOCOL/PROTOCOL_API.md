@@ -1,47 +1,50 @@
 # <a name="目录">目录</a>
-+ [SDk协议API详解](#SDk协议API详解)
-    * [evs_linkkit_new](#evs_linkkit_new)
-    * [evs_linkkit_time_sync](#evs_linkkit_time_sync)
-    * [evs_linkkit_fota](#evs_linkkit_fota)
-    * [evs_linkkit_free](#evs_linkkit_free)
-    * [evs_mainloop](#evs_mainloop)
-    * [evs_send_event](#evs_send_event)
-    * [evs_send_property](#evs_send_property)
-+ [Event列表详解](#Event列表详解)
-    * [EVS_CMD_EVENT_FIREWARE_INFO](#EVS_CMD_EVENT_FIREWARE_INFO)
-    * [EVS_CMD_EVENT_ASK_FEEMODEL](#EVS_CMD_EVENT_ASK_FEEMODEL)
-    * [EVS_CMD_EVENT_STARTCHARGE](#EVS_CMD_EVENT_STARTCHARGE)
-    * [EVS_CMD_EVENT_STARTRESULT](#EVS_CMD_EVENT_STARTRESULT)
-    * [EVS_CMD_EVENT_STOPCHARGE](#EVS_CMD_EVENT_STOPCHARGE)
-    * [EVS_CMD_EVENT_TRADEINFO](#EVS_CMD_EVENT_TRADEINFO)
-    * [EVS_CMD_EVENT_ALARM](#EVS_CMD_EVENT_ALARM)
-    * [EVS_CMD_EVENT_ACPILE_CHANGE](#EVS_CMD_EVENT_ACPILE_CHANGE)
-    * [EVS_CMD_EVENT_DCPILE_CHANGE](#EVS_CMD_EVENT_DCPILE_CHANGE)
-    * [EVS_CMD_EVENT_GROUNDLOCK_CHANGE](#EVS_CMD_EVENT_GROUNDLOCK_CHANGE)
-    * [EVS_CMD_EVENT_GATELOCK_CHANGE](#EVS_CMD_EVENT_GATELOCK_CHANGE)
-    * [EVS_CMD_EVENT_ASK_DEV_CONFIG](#EVS_CMD_EVENT_ASK_DEV_CONFIG)
-    * [EVS_CMD_EVENT_CAR_INFO](#EVS_CMD_EVENT_CAR_INFO)
-+ [Poperty列表详解](#Poperty列表详解)
-    * [EVS_CMD_PROPERTY_DCPILE](#EVS_CMD_PROPERTY_DCPILE)
-    * [EVS_CMD_PROPERTY_ACPILE](#EVS_CMD_PROPERTY_ACPILE)
-    * [EVS_CMD_PROPERTY_AC_WORK](#EVS_CMD_PROPERTY_AC_WORK)
-    * [EVS_CMD_PROPERTY_AC_NONWORK](#EVS_CMD_PROPERTY_AC_NONWORK)
-    * [EVS_CMD_PROPERTY_DC_WORK](#EVS_CMD_PROPERTY_DC_WORK)
-    * [EVS_CMD_PROPERTY_DC_NONWORK](#EVS_CMD_PROPERTY_DC_NONWORK)
-    * [EVS_CMD_PROPERTY_DC_OUTMETER](#EVS_CMD_PROPERTY_DC_OUTMETER)
-    * [EVS_CMD_PROPERTY_AC_OUTMETER](#EVS_CMD_PROPERTY_AC_OUTMETER)
-    * [EVS_CMD_PROPERTY_BMS](#EVS_CMD_PROPERTY_BMS)
-    * [EVS_CMD_PROPERTY_DC_INPUT_METER](#EVS_CMD_PROPERTY_DC_INPUT_METER)
-+ [Service回调列表](#Service回调列表)
+
+* [SDk协议API详解](#SDk协议API详解)
+    - [evs_linkkit_new](#evs_linkkit_new)
+    - [evs_linkkit_time_sync](#evs_linkkit_time_sync)
+    - [evs_linkkit_fota](#evs_linkkit_fota)
+    - [evs_linkkit_free](#evs_linkkit_free)
+    - [evs_mainloop](#evs_mainloop)
+    - [evs_send_event](#evs_send_event)
+    - [evs_send_property](#evs_send_property)
+* [Event列表详解](#Event列表详解)
+    - [EVS_CMD_EVENT_FIREWARE_INFO](#EVS_CMD_EVENT_FIREWARE_INFO)
+    - [EVS_CMD_EVENT_ASK_FEEMODEL](#EVS_CMD_EVENT_ASK_FEEMODEL)
+    - [EVS_CMD_EVENT_STARTCHARGE](#EVS_CMD_EVENT_STARTCHARGE)
+    - [EVS_CMD_EVENT_STARTRESULT](#EVS_CMD_EVENT_STARTRESULT)
+    - [EVS_CMD_EVENT_STOPCHARGE](#EVS_CMD_EVENT_STOPCHARGE)
+    - [EVS_CMD_EVENT_TRADEINFO](#EVS_CMD_EVENT_TRADEINFO)
+    - [EVS_CMD_EVENT_ALARM](#EVS_CMD_EVENT_ALARM)
+    - [EVS_CMD_EVENT_ACPILE_CHANGE](#EVS_CMD_EVENT_ACPILE_CHANGE)
+    - [EVS_CMD_EVENT_DCPILE_CHANGE](#EVS_CMD_EVENT_DCPILE_CHANGE)
+    - [EVS_CMD_EVENT_GROUNDLOCK_CHANGE](#EVS_CMD_EVENT_GROUNDLOCK_CHANGE)
+    - [EVS_CMD_EVENT_GATELOCK_CHANGE](#EVS_CMD_EVENT_GATELOCK_CHANGE)
+    - [EVS_CMD_EVENT_ASK_DEV_CONFIG](#EVS_CMD_EVENT_ASK_DEV_CONFIG)
+    - [EVS_CMD_EVENT_CAR_INFO](#EVS_CMD_EVENT_CAR_INFO)
+* [Poperty列表详解](#Poperty列表详解)
+    - [EVS_CMD_PROPERTY_DCPILE](#EVS_CMD_PROPERTY_DCPILE)
+    - [EVS_CMD_PROPERTY_ACPILE](#EVS_CMD_PROPERTY_ACPILE)
+    - [EVS_CMD_PROPERTY_AC_WORK](#EVS_CMD_PROPERTY_AC_WORK)
+    - [EVS_CMD_PROPERTY_AC_NONWORK](#EVS_CMD_PROPERTY_AC_NONWORK)
+    - [EVS_CMD_PROPERTY_DC_WORK](#EVS_CMD_PROPERTY_DC_WORK)
+    - [EVS_CMD_PROPERTY_DC_NONWORK](#EVS_CMD_PROPERTY_DC_NONWORK)
+    - [EVS_CMD_PROPERTY_DC_OUTMETER](#EVS_CMD_PROPERTY_DC_OUTMETER)
+    - [EVS_CMD_PROPERTY_AC_OUTMETER](#EVS_CMD_PROPERTY_AC_OUTMETER)
+    - [EVS_CMD_PROPERTY_BMS](#EVS_CMD_PROPERTY_BMS)
+    - [EVS_CMD_PROPERTY_DC_INPUT_METER](#EVS_CMD_PROPERTY_DC_INPUT_METER)
+* [Service回调列表](#Service回调列表)
 
 # <a name="SDk协议API详解">SDk协议API详解</a>
-> 补充说明: JSON报文中, 消息id取值范围`0~4294967295`, id是String类型的数字，如"12345"
+
+> 补充说明: JSON报文中, 消息id取值范围 `0~4294967295` , id是String类型的数字，如"12345"
 
 ## <a name="evs_linkkit_new">evs_linkkit_new</a>
 
 原型
 ---
-```
+
+``` 
 int evs_linkkit_new(const int evs_is_ready,const int is_device_uid);
 ```
 
@@ -54,8 +57,8 @@ int evs_linkkit_new(const int evs_is_ready,const int is_device_uid);
 
 | 参数            | 数据类型   | 方向    | 说明
 |-----------------|-----------|---------|-------------------------------------------
-| evs_is_ready    | const int | 输入    | 1:设备准备就绪 0:设备未准备就绪
-| is_device_uid   | const int | 输入    | 0:使用注册码获取证书 1:使用设备唯一编码获取证书
+| evs_is_ready    | const int | 输入    | 1: 设备准备就绪 0: 设备未准备就绪
+| is_device_uid   | const int | 输入    | 0: 使用注册码获取证书 1: 使用设备唯一编码获取证书
 
 返回值说明
 ---
@@ -72,7 +75,8 @@ int evs_linkkit_new(const int evs_is_ready,const int is_device_uid);
 
 原型
 ---
-```
+
+``` 
 int evs_linkkit_time_sync(void);
 ```
 
@@ -93,7 +97,8 @@ int evs_linkkit_time_sync(void);
 
 原型
 ---
-```
+
+``` 
 void evs_linkkit_fota(unsigned char *buffer, int buffer_length);
 ```
 
@@ -121,7 +126,8 @@ void evs_linkkit_fota(unsigned char *buffer, int buffer_length);
 
 原型
 ---
-```
+
+``` 
 int evs_linkkit_free(void);
 ```
 
@@ -146,7 +152,8 @@ int evs_linkkit_free(void);
 
 原型
 ---
-```
+
+``` 
 int evs_mainloop(void);
 ```
 
@@ -173,7 +180,8 @@ SDK功能运行函数
 
 原型
 ---
-```
+
+``` 
 void evs_send_event(evs_cmd_event_enum event_type, void *param);
 ```
 
@@ -195,7 +203,8 @@ void evs_send_event(evs_cmd_event_enum event_type, void *param);
 
 参数附加说明
 ---
-```
+
+``` 
 typedef enum
 {
 	EVS_CMD_EVENT_FIREWARE_INFO,
@@ -213,12 +222,15 @@ typedef enum
 } evs_cmd_event_enum;
 
 ```
+
 ----
+
 ## <a name="evs_send_property">evs_send_property</a>
 
 原型
 ---
-```
+
+``` 
 void evs_send_property(evs_cmd_property_enum property_type, void *param);
 ```
 
@@ -240,7 +252,8 @@ void evs_send_property(evs_cmd_property_enum property_type, void *param);
 
 参数附加说明
 ---
-```
+
+``` 
 typedef enum
 {
 	EVS_CMD_PROPERTY_DCPILE,
@@ -255,12 +268,15 @@ typedef enum
 	EVS_CMD_PROPERTY_DC_INPUT_METER,
 } evs_cmd_property_enum;
 ```
+
 -----
+
 ## <a name="EVS_RegisterCallback">EVS_RegisterCallback</a>
 
 原型
 ---
-```
+
+``` 
 define EVS_RegisterCallback(evt, cb)           EVS_RegisterCallback##evt(cb);
 ```
 
@@ -283,7 +299,8 @@ define EVS_RegisterCallback(evt, cb)           EVS_RegisterCallback##evt(cb);
 
 参数附加说明
 ---
-```
+
+``` 
 typedef enum
 {
     EVS_CONF_GET_SRV,
@@ -315,11 +332,14 @@ typedef enum
 
 } evs_service_type_t;
 ```
+
 # <a name="Event列表详解">Event列表详解</a>
+
 ### <a name="EVS_CMD_EVENT_FIREWARE_INFO">EVS_CMD_EVENT_FIREWARE_INFO</a>
 
-+ 设备固件信息数据上报参数详情
-```
+* 设备固件信息数据上报参数详情
+
+``` 
 typedef struct
 {
 	char simNo[EVS_MAX_ICCID_LEN];								   // 1		SIM卡号
@@ -348,9 +368,12 @@ typedef struct
 	unsigned char isGroundLock;									   // 24		是否有地锁
 } evs_event_fireware_info;
 ```
+
 ### <a name="EVS_CMD_EVENT_ASK_FEEMODEL">EVS_CMD_EVENT_ASK_FEEMODEL</a>
-+ 设备计费模型请求上报参数详情
-```
+
+* 设备计费模型请求上报参数详情
+
+``` 
 typedef struct
 {
 	unsigned char gunNo;				   // 1	充电枪编号
@@ -358,9 +381,12 @@ typedef struct
 	char serModeId[EVS_MAX_MODEL_ID_LEN];  // 2	服务费模型编号
 } evs_event_ask_feeModel;
 ```
+
 ### <a name="EVS_CMD_EVENT_STARTCHARGE">EVS_CMD_EVENT_STARTCHARGE</a>
-+ 设备启动充电请求上报参数详情
-```
+
+* 设备启动充电请求上报参数详情
+
+``` 
 typedef struct
 {
 	unsigned char gunNo;				// 1	充电枪编号
@@ -374,9 +400,12 @@ typedef struct
 	unsigned int batteryVol;			// 9	当前电池电压
 } evs_event_startCharge;
 ```
+
 ### <a name="EVS_CMD_EVENT_STARTRESULT">EVS_CMD_EVENT_STARTRESULT</a>
-+ 设备启动充电结果上报参数详情
-```
+
+* 设备启动充电结果上报参数详情
+
+``` 
 typedef struct
 {
 	unsigned char gunNo;				// 1	充电枪编号
@@ -387,9 +416,12 @@ typedef struct
 	char vinCode[EVS_MAX_CAR_VIN_LEN];	// 6	vin码
 } evs_event_startResult;
 ```
+
 ### <a name="EVS_CMD_EVENT_STOPCHARGE">EVS_CMD_EVENT_STOPCHARGE</a>
-+ 设备停止充电结果上报参数详情
-```
+
+* 设备停止充电结果上报参数详情
+
+``` 
 typedef struct
 {
 	unsigned char gunNo;				// 1	充电枪编号
@@ -400,9 +432,12 @@ typedef struct
 	unsigned char stopFailReson;		// 6	停止失败原因
 } evs_event_stopCharge;
 ```
+
 ### <a name="EVS_CMD_EVENT_TRADEINFO">EVS_CMD_EVENT_TRADEINFO</a>
-+ 交易记录事件上传参数详情
-```
+
+* 交易记录事件上传参数详情
+
+``` 
 typedef struct
 {
 	unsigned char gunNo;				   // 1	充电枪编号
@@ -436,9 +471,12 @@ typedef struct
 	unsigned int valleyServCost;		   // 28	谷服务费
 } evs_event_tradeInfo;
 ```
+
 ### <a name="EVS_CMD_EVENT_ALARM">EVS_CMD_EVENT_ALARM</a>
-+ 故障告警事件上报参数详情
-```
+
+* 故障告警事件上报参数详情
+
+``` 
 typedef struct
 {
 	unsigned char gunNo;						  // 1	枪编号
@@ -448,9 +486,12 @@ typedef struct
 	unsigned short warnValue[EVS_MAX_ALARM_LEN];  // 5	告警点数据
 } evs_event_alarm;
 ```
+
 ### <a name="EVS_CMD_EVENT_ACPILE_CHANGE">EVS_CMD_EVENT_ACPILE_CHANGE</a>
-+ 交流设备状态变更信息上报参数详情
-```
+
+* 交流设备状态变更信息上报参数详情
+
+``` 
 typedef struct
 {
 	unsigned char gunNo;		   // 1	充电枪编号
@@ -458,9 +499,12 @@ typedef struct
 	unsigned char connCheckStatus; // 3	变位点数据
 } evs_event_pile_stutus_change;
 ```
+
 ### <a name="EVS_CMD_EVENT_DCPILE_CHANGE">EVS_CMD_EVENT_DCPILE_CHANGE</a>
-+ 直流设备状态变更信息上报详情
-```
+
+* 直流设备状态变更信息上报详情
+
+``` 
 typedef struct
 {
 	unsigned char gunNo;		   // 1	充电枪编号
@@ -468,9 +512,12 @@ typedef struct
 	unsigned char connCheckStatus; // 3	变位点数据
 } evs_event_pile_stutus_change;
 ```
+
 ### <a name="EVS_CMD_EVENT_GROUNDLOCK_CHANGE">EVS_CMD_EVENT_GROUNDLOCK_CHANGE</a>
-+ 智能地锁状态变更信息上报参数详情
-```
+
+* 智能地锁状态变更信息上报参数详情
+
+``` 
 typedef struct
 {
 	unsigned char gunNo;		// 1	充电枪编号
@@ -484,9 +531,12 @@ typedef struct
 	unsigned int openCnt;		// 9	开闭次数
 } evs_event_groundLock_change;
 ```
+
 ### <a name="EVS_CMD_EVENT_GATELOCK_CHANGE">EVS_CMD_EVENT_GATELOCK_CHANGE</a>
-+ 智能门锁状态变更信息上报参数详情
-```
+
+* 智能门锁状态变更信息上报参数详情
+
+``` 
 typedef struct
 {
 	unsigned char lockNo;	 // 1	充电枪编号
@@ -494,20 +544,19 @@ typedef struct
 } evs_event_gateLock_change;
 ```
 
-
 ### <a name="EVS_CMD_EVENT_ASK_DEV_CONFIG">EVS_CMD_EVENT_ASK_DEV_CONFIG</a>
 
-+ 获取设备配置信息请求上报
-```
+* 获取设备配置信息请求上报
+
+``` 
 无
 ```
 
-
 ### <a name="EVS_CMD_EVENT_CAR_INFO">EVS_CMD_EVENT_CAR_INFO</a>
 
-+ 充电前车辆信息上报事件
+* 充电前车辆信息上报事件
 
-```
+``` 
 typedef struct
 {
 	unsigned char gunNo;			    // 1	充电枪编号
@@ -518,16 +567,13 @@ typedef struct
 } evs_event_car_info;
 ```
 
-
-
-
-
 # <a name="Poperty列表详解">Poperty列表详解</a>
 
 ### <a name="EVS_CMD_PROPERTY_DCPILE">EVS_CMD_PROPERTY_DCPILE</a>
-+ 直流设备属性上报参数详情
 
-```
+* 直流设备属性上报参数详情
+
+``` 
 typedef struct
 {
 	unsigned char netType;				   // 1	网络类型
@@ -546,9 +592,12 @@ typedef struct
 	char serModelId[EVS_MAX_MODEL_ID_LEN]; // 14 服务费模型编号
 } evs_property_dcPile;
 ```
+
 ### <a name="EVS_CMD_PROPERTY_ACPILE">EVS_CMD_PROPERTY_ACPILE</a>
-+ 交流设备属性上报参数详情
-```
+
+* 交流设备属性上报参数详情
+
+``` 
 typedef struct
 {
 	unsigned char netType;				   // 1	网络类型
@@ -565,9 +614,12 @@ typedef struct
 	char serModelId[EVS_MAX_MODEL_ID_LEN]; // 12 服务费模型编号
 } evs_property_acPile;
 ```
+
 ### <a name="EVS_CMD_PROPERTY_AC_WORK">EVS_CMD_PROPERTY_AC_WORK</a>
-+ :交流设备充电过程实时属性上报参数详情
-```
+
+* : 交流设备充电过程实时属性上报参数详情
+
+``` 
 typedef struct
 {
 	unsigned char gunNo;				// 1	充电枪编号
@@ -597,9 +649,12 @@ typedef struct
 	unsigned int PwmDutyRadio;			// 26	PWM占空比
 } evs_property_ac_work;
 ```
+
 ### <a name="EVS_CMD_PROPERTY_AC_NONWORK">EVS_CMD_PROPERTY_AC_NONWORK</a>
-+ 交流设备非充电过程实时属性上报参数详情
-```
+
+* 交流设备非充电过程实时属性上报参数详情
+
+``` 
 typedef struct
 {
 	unsigned char gunNo;		  // 1	充电枪编号
@@ -616,9 +671,12 @@ typedef struct
 	unsigned int acCurC;		  // 13	充电设备C相输出电流
 } evs_property_ac_nonWork;
 ```
+
 ### <a name="EVS_CMD_PROPERTY_DC_WORK">EVS_CMD_PROPERTY_DC_WORK</a>
-+ 直流设备充电过程实时属性上报详情
-```
+
+* 直流设备充电过程实时属性上报详情
+
+``` 
 typedef struct
 {
 	unsigned char gunNo;				// 充电枪编号
@@ -658,9 +716,12 @@ typedef struct
 	unsigned int totalServCost;			// 总服务费
 } evs_property_dc_work;
 ```
+
 ### <a name="EVS_CMD_PROPERTY_DC_NONWORK">EVS_CMD_PROPERTY_DC_NONWORK</a>
-+ 直流设备非充电过程实时属性上报参数详情
-```
+
+* 直流设备非充电过程实时属性上报参数详情
+
+``` 
 typedef struct
 {
 	unsigned char gunNo;			 // 充电枪编号
@@ -677,9 +738,12 @@ typedef struct
 	unsigned int dcCur;				 // 输出电流
 } evs_property_dc_nonWork;
 ```
+
 ### <a name="EVS_CMD_PROPERTY_AC_OUTMETER">EVS_CMD_PROPERTY_AC_OUTMETER</a>
-+ 交流设备输出电表实时属性上报参数详情
-```
+
+* 交流设备输出电表实时属性上报参数详情
+
+``` 
 typedef struct
 {
 	unsigned char gunNo;							// 1	充电枪编号
@@ -692,9 +756,12 @@ typedef struct
 	unsigned int elec;								// 8	充电中订单的已充电量
 } evs_property_meter;
 ```
+
 ### <a name="EVS_CMD_PROPERTY_DC_OUTMETER">EVS_CMD_PROPERTY_DC_OUTMETER</a>
-+ 直流设备输出电表实时属性上报参数详情
-```
+
+* 直流设备输出电表实时属性上报参数详情
+
+``` 
 typedef struct
 {
 	unsigned char gunNo;							// 1	充电枪编号
@@ -707,9 +774,12 @@ typedef struct
 	unsigned int elec;								// 8	充电中订单的已充电量
 } evs_property_meter;
 ```
+
 ### <a name="EVS_CMD_PROPERTY_BMS">EVS_CMD_PROPERTY_BMS</a>
-+ 直流设备充电过程BMS实时属性上报参数详情
-```
+
+* 直流设备充电过程BMS实时属性上报参数详情
+
+``` 
 typedef struct
 {
 	unsigned char gunNo;				// 1	充电枪编号
@@ -729,9 +799,12 @@ typedef struct
 	unsigned short batCurVol;			// 15	整车动力蓄电池当前电池电压
 } evs_property_BMS;
 ```
+
 ### <a name="EVS_CMD_PROPERTY_DC_INPUT_METER">EVS_CMD_PROPERTY_DC_INPUT_METER</a>
-+ 直流设备输入侧交流电表属性上报
-```
+
+* 直流设备输入侧交流电表属性上报
+
+``` 
 typedef struct
 {
 	unsigned char gunNo;							// 充电枪编号
@@ -745,45 +818,48 @@ typedef struct
 	unsigned int CpElect;							// C相正向总电量
 } evs_property_dc_input_meter;
 ```
+
 -----
 
 # <a name="Service回调列表">Service回调列表</a>
 
 | 服务消息类型                                                    | 回调函数原型                                                                                                                                                    | 触发条件说明
 |---------------------------------------------------------|-------------------------------------------------------------------------------------------|--------------------------------------------------------------
-| [EVS_CONF_GET_SRV](#EVS_CONF_GET_SRV)                   | int callback(evs_data_dev_config *result);                                                                                                                                          | 收到云端下发的配置信息获取请求
-| [EVS_CONF_UPDATE_SRV](#EVS_CONF_UPDATE_SRV)                   | int callback(evs_data_dev_config *param, int *result);                                                                                                                                             | 收到云端下发的配置信息更新请求
-| [EVS_QUE_DATA_SRV](#EVS_QUE_DATA_SRV)                   | int callback(evs_service_query_log *param, evs_service_feedback_query_log *result);                                                         | 收到云端下发的日志查询请求
-| [EVS_DEV_MAINTAIN_SRV](#EVS_DEV_MAINTAIN_SRV)     | int callback(evs_service_dev_maintain *param, evs_service_feedback_dev_maintain *result);         | 收到云端下发的设备维护请求
-| [EVS_CTRL_LOCK_SRV](#EVS_CTRL_LOCK_SRV)                         | int callback(evs_service_lockCtrl *param, evs_service_feedback_lockCtrl *result);                                                                                                                            | 收到云端下发的电子锁控制请求
-| [EVS_FEE_MODEL_UPDATA_SRV](#EVS_FEE_MODEL_UPDATA_SRV)                       | int callback(evs_service_issue_feeModel *param, evs_service_feedback_feeModel *result);                                                                                                                    |收到云端下发的计费模型更新请求
-| [EVS_START_CHARGE_SRV](#EVS_START_CHARGE_SRV)                   | int callback(evs_service_startCharge *param, evs_service_feedback_startCharge *result);                                                                                                                                            | 收到云端下发的启动充电请求
-| [EVS_AUTH_RESULT_SRV](#EVS_AUTH_RESULT_SRV)                   | int callback(evs_service_authCharge *param, evs_service_feedback_authCharge *result);                                                                                                                                             | 收到云端下发的鉴权启动充电结果
-| [EVS_STOP_CHARGE_SRV](#EVS_STOP_CHARGE_SRV)                   | int callback(evs_service_stopCharge *param, evs_service_feedback_stopCharge *result);                                                         | 收到云端下发的停止充电请求
-| [EVS_ORDER_CHECK_SRV](#EVS_ORDER_CHECK_SRV)                   | int callback(evs_service_confirmTrade *param, void *result);                                                                                                                                             | 收到云端下发的交易记录确认事件
-| [EVS_RSV_CHARGE_SRV](#EVS_RSV_CHARGE_SRV)     | int callback(evs_service_rsvCharge *param, evs_service_feedback_rsvCharge *result);         | 搜到云端下发的预约充电请求
-| [EVS_GROUND_LOCK_SRV](#EVS_GROUND_LOCK_SRV)                         | int callback(evs_service_groundLock_ctrl *param, evs_service_feedback_groundLock_ctrl *result);                                                                                                                            | 收到云端下发的智能地锁控制请求
-| [EVS_GATE_LOCK_SRV](#EVS_GATE_LOCK_SRV)                   | int callback(evs_service_gateLock_ctrl *param, evs_service_feedback_gateLock_ctrl *result);                                                                                                                                             | 收到云端下发的智能门锁控制请求
-| [EVS_ORDERLY_CHARGE_SRV](#EVS_ORDERLY_CHARGE_SRV)                   | int callback(evs_service_orderCharge *param, evs_service_feedback_orderCharge *result);                                                         |收到云端下发的有序充电请求
-| [EVS_STATE_EVERYTHING](#EVS_STATE_EVERYTHING)                       | int callback(int ev, const char *msg);                                                                                                                    | SDK内部运行状态
-| [EVS_CONNECT_SUCC](#EVS_CONNECT_SUCC)                   | int callback(void);                                                                                                                                             | 与云端连接成功时
-| [EVS_DISCONNECTED](#EVS_DISCONNECTED)                   | int callback(void);                                                                                                                                             | 与云端连接断开时
-| [EVS_REPORT_REPLY](#EVS_REPORT_REPLY)                   | int callback(const int devid, const int msgid, const int code, const char *reply, const int reply_len);                                                         | 收到上报消息的应答时
-| [EVS_TRIGGER_EVENT_REPLY](#EVS_TRIGGER_EVENT_REPLY)     | int callback(const int devid, const int msgid, const int code, const char *eventid, const int eventid_len, const char *message, const int message_len);         | 收到事件上报消息的应答时
-| [EVS_CERT_GET](#EVS_CERT_GET)                         | int callback(evs_device_meta *meta);                                                                                                            | 当SDK获取设备证书组时
-| [EVS_CERT_SET](#EVS_CERT_SET)                       | int callback(const evs_device_meta meta);                                                                                                         | 当SDK设置设备证书组时
-| [EVS_DEVICE_REG_CODE_GET](#EVS_DEVICE_REG_CODE_GET)     | int callback(char *device_reg_code);         | 当SDK获取注册码时
-| [EVS_DEVICE_UID_GET](#EVS_DEVICE_UID_GET)     | int callback(char *device_uid);         | 收SDK获取设备唯一识别码时
-| [EVS_TIME_SYNC](#EVS_TIME_SYNC)                         | int callback(const char *timestamp);                                                                                                                            | 当收到查询时间戳请求的应答时
-| [EVS_OTA_UPDATE](#EVS_OTA_UPDATE)                       | int callback(int type, const char *version);                                                                                                                    | 可用固件的通知时
+| [EVS_CONF_GET_SRV](#EVS_CONF_GET_SRV)                   | int callback(evs_data_dev_config *result); | 收到云端下发的配置信息获取请求
+| [EVS_CONF_UPDATE_SRV](#EVS_CONF_UPDATE_SRV)                   | int callback(evs_data_dev_config *param, int *result); | 收到云端下发的配置信息更新请求
+| [EVS_QUE_DATA_SRV](#EVS_QUE_DATA_SRV)                   | int callback(evs_service_query_log *param, evs_service_feedback_query_log *result); | 收到云端下发的日志查询请求
+| [EVS_DEV_MAINTAIN_SRV](#EVS_DEV_MAINTAIN_SRV)     | int callback(evs_service_dev_maintain *param, evs_service_feedback_dev_maintain *result); | 收到云端下发的设备维护请求
+| [EVS_CTRL_LOCK_SRV](#EVS_CTRL_LOCK_SRV)                         | int callback(evs_service_lockCtrl *param, evs_service_feedback_lockCtrl *result); | 收到云端下发的电子锁控制请求
+| [EVS_FEE_MODEL_UPDATA_SRV](#EVS_FEE_MODEL_UPDATA_SRV)                       | int callback(evs_service_issue_feeModel *param, evs_service_feedback_feeModel *result); |收到云端下发的计费模型更新请求
+| [EVS_START_CHARGE_SRV](#EVS_START_CHARGE_SRV)                   | int callback(evs_service_startCharge *param, evs_service_feedback_startCharge *result); | 收到云端下发的启动充电请求
+| [EVS_AUTH_RESULT_SRV](#EVS_AUTH_RESULT_SRV)                   | int callback(evs_service_authCharge *param, evs_service_feedback_authCharge *result); | 收到云端下发的鉴权启动充电结果
+| [EVS_STOP_CHARGE_SRV](#EVS_STOP_CHARGE_SRV)                   | int callback(evs_service_stopCharge *param, evs_service_feedback_stopCharge *result); | 收到云端下发的停止充电请求
+| [EVS_ORDER_CHECK_SRV](#EVS_ORDER_CHECK_SRV)                   | int callback(evs_service_confirmTrade *param, void *result); | 收到云端下发的交易记录确认事件
+| [EVS_RSV_CHARGE_SRV](#EVS_RSV_CHARGE_SRV)     | int callback(evs_service_rsvCharge *param, evs_service_feedback_rsvCharge *result); | 搜到云端下发的预约充电请求
+| [EVS_GROUND_LOCK_SRV](#EVS_GROUND_LOCK_SRV)                         | int callback(evs_service_groundLock_ctrl *param, evs_service_feedback_groundLock_ctrl *result); | 收到云端下发的智能地锁控制请求
+| [EVS_GATE_LOCK_SRV](#EVS_GATE_LOCK_SRV)                   | int callback(evs_service_gateLock_ctrl *param, evs_service_feedback_gateLock_ctrl *result); | 收到云端下发的智能门锁控制请求
+| [EVS_ORDERLY_CHARGE_SRV](#EVS_ORDERLY_CHARGE_SRV)                   | int callback(evs_service_orderCharge *param, evs_service_feedback_orderCharge *result); |收到云端下发的有序充电请求
+| [EVS_STATE_EVERYTHING](#EVS_STATE_EVERYTHING)                       | int callback(int ev, const char *msg); | SDK内部运行状态
+| [EVS_CONNECT_SUCC](#EVS_CONNECT_SUCC)                   | int callback(void); | 与云端连接成功时
+| [EVS_DISCONNECTED](#EVS_DISCONNECTED)                   | int callback(void); | 与云端连接断开时
+| [EVS_REPORT_REPLY](#EVS_REPORT_REPLY)                   | int callback(const int devid, const int msgid, const int code, const char *reply, const int reply_len); | 收到上报消息的应答时
+| [EVS_TRIGGER_EVENT_REPLY](#EVS_TRIGGER_EVENT_REPLY)     | int callback(const int devid, const int msgid, const int code, const char *eventid, const int eventid_len, const char *message, const int message_len); | 收到事件上报消息的应答时
+| [EVS_CERT_GET](#EVS_CERT_GET)                         | int callback(evs_device_meta *meta); | 当SDK获取设备证书组时
+| [EVS_CERT_SET](#EVS_CERT_SET)                       | int callback(const evs_device_meta meta); | 当SDK设置设备证书组时
+| [EVS_DEVICE_REG_CODE_GET](#EVS_DEVICE_REG_CODE_GET)     | int callback(char *device_reg_code); | 当SDK获取注册码时
+| [EVS_DEVICE_UID_GET](#EVS_DEVICE_UID_GET)     | int callback(char *device_uid); | 收SDK获取设备唯一识别码时
+| [EVS_TIME_SYNC](#EVS_TIME_SYNC)                         | int callback(const char *timestamp); | 当收到查询时间戳请求的应答时
+| [EVS_OTA_UPDATE](#EVS_OTA_UPDATE)                       | int callback(int type, const char *version); | 可用固件的通知时
 -----
 
 # <a name="Service服务回调列表详解">Service服务回调列表详解</a>
+
 ## <a name="EVS_CONF_GET_SRV">EVS_CONF_GET_SRV</a>
 
 原型
 ---
-```
+
+``` 
 int callback(evs_data_dev_config *result);
 ```
 
@@ -810,7 +886,8 @@ int callback(evs_data_dev_config *result);
 
 原型
 ---
-```
+
+``` 
 int callback(evs_data_dev_config *param, int *result);
 ```
 
@@ -827,7 +904,8 @@ int callback(evs_data_dev_config *param, int *result);
 
 参数附加说明
 ---
-```
+
+``` 
 typedef struct
 {
 	unsigned int equipParamFreq;					   // 1		充电设备实时监测属性上报频率
@@ -843,6 +921,7 @@ typedef struct
 	char qrCode[EVS_MAX_PORT_NUM][EVS_MAX_QRCODE_LEN]; // 10	二维码数据
 } evs_data_dev_config;
 ```
+
 返回值说明
 ---
 | 值  | 说明
@@ -856,7 +935,8 @@ typedef struct
 
 原型
 ---
-```
+
+``` 
 int callback(evs_service_query_log *param, evs_service_feedback_query_log *result);
 ```
 
@@ -873,7 +953,8 @@ int callback(evs_service_query_log *param, evs_service_feedback_query_log *resul
 
 参数附加说明
 ---
-```
+
+``` 
 typedef struct
 {
 	unsigned char gunNo;	// 枪号	gunNo
@@ -882,7 +963,8 @@ typedef struct
 	unsigned char askType;	// 查询类型	askType
 } evs_service_query_log;
 ```
-```
+
+``` 
 typedef struct
 {
 	unsigned char gunNo;			 // 1	枪号
@@ -894,6 +976,7 @@ typedef struct
 	char dataArea[EVS_MAX_DATA_LEN]; // 7	响应数据区
 } evs_service_feedback_query_log;
 ```
+
 返回值说明
 ---
 | 值  | 说明
@@ -907,7 +990,8 @@ typedef struct
 
 原型
 ---
-```
+
+``` 
 int callback(evs_service_dev_maintain *param, evs_service_feedback_dev_maintain *result);
 ```
 
@@ -924,19 +1008,22 @@ int callback(evs_service_dev_maintain *param, evs_service_feedback_dev_maintain 
 
 参数附加说明
 ---
-```
+
+``` 
 typedef struct
 {
 	unsigned char ctrlType; // 控制类型
 } evs_service_dev_maintain;
 ```
-```
+
+``` 
 typedef struct
 {
 	unsigned char ctrlType; // 1	当前控制类型
 	unsigned int reason;	// 2	失败原因
 } evs_service_feedback_dev_maintain;
 ```
+
 返回值说明
 ---
 | 值  | 说明
@@ -950,7 +1037,8 @@ typedef struct
 
 原型
 ---
-```
+
+``` 
 int callback(evs_service_lockCtrl *param, evs_service_feedback_lockCtrl *result);
 ```
 
@@ -967,14 +1055,16 @@ int callback(evs_service_lockCtrl *param, evs_service_feedback_lockCtrl *result)
 
 参数附加说明
 ---
-```
+
+``` 
 typedef struct
 {
 	unsigned char gunNo;	 // 1	充电枪编号
 	unsigned char lockParam; // 2	控制
 } evs_service_lockCtrl;
 ```
-```
+
+``` 
 typedef struct
 {
 	unsigned char gunNo;	  // 1	充电枪编号
@@ -982,6 +1072,7 @@ typedef struct
 	unsigned int resCode;	  // 3	结果
 } evs_service_feedback_lockCtrl;
 ```
+
 返回值说明
 ---
 | 值  | 说明
@@ -995,7 +1086,8 @@ typedef struct
 
 原型
 ---
-```
+
+``` 
 int callback(evs_service_issue_feeModel *param, evs_service_feedback_feeModel *result)
 ```
 
@@ -1012,7 +1104,8 @@ int callback(evs_service_issue_feeModel *param, evs_service_feedback_feeModel *r
 
 参数附加说明
 ---
-```
+
+``` 
 typedef struct
 {
 	char eleModelId[EVS_MAX_MODEL_ID_LEN]; // 1		电费计费模型编号
@@ -1024,7 +1117,8 @@ typedef struct
 	unsigned int serviceFee[4];			   // 10	服务费费模型
 } evs_service_issue_feeModel;
 ```
-```
+
+``` 
 typedef struct
 {
 	char eleModelId[EVS_MAX_MODEL_ID_LEN]; // 1		电费计费模型编号
@@ -1032,6 +1126,7 @@ typedef struct
 	unsigned char result;				   // 3		失败原因
 } evs_service_feedback_feeModel;
 ```
+
 返回值说明
 ---
 | 值  | 说明
@@ -1045,7 +1140,8 @@ typedef struct
 
 原型
 ---
-```
+
+``` 
 int callback(evs_service_startCharge *param, evs_service_feedback_startCharge *result)
 ```
 
@@ -1062,7 +1158,8 @@ int callback(evs_service_startCharge *param, evs_service_feedback_startCharge *r
 
 参数附加说明
 ---
-```
+
+``` 
 typedef struct
 {
 	unsigned char gunNo;				// 1	充电枪编号
@@ -1076,7 +1173,8 @@ typedef struct
 	unsigned int insertGunTime;			// 10	插枪事件时间戳
 } evs_service_startCharge;
 ```
-```
+
+``` 
 typedef struct
 {
 	unsigned char gunNo;				// 1	充电枪编号
@@ -1084,6 +1182,7 @@ typedef struct
 	char tradeNo[EVS_MAX_TRADE_LEN];	// 3	设备交易流水号
 } evs_service_feedback_startCharge;
 ```
+
 返回值说明
 ---
 | 值  | 说明
@@ -1097,7 +1196,8 @@ typedef struct
 
 原型
 ---
-```
+
+``` 
 int callback(evs_service_authCharge *param, evs_service_feedback_authCharge *result)
 ```
 
@@ -1114,7 +1214,8 @@ int callback(evs_service_authCharge *param, evs_service_feedback_authCharge *res
 
 参数附加说明
 ---
-```
+
+``` 
 typedef struct
 {
 	unsigned char gunNo;				// 1	充电枪编号
@@ -1130,7 +1231,8 @@ typedef struct
 	unsigned int insertGunTime;			// 11	插枪事件时间戳
 } evs_service_authCharge;
 ```
-```
+
+``` 
 typedef struct
 {
 	unsigned char gunNo;				// 1	充电枪编号
@@ -1138,6 +1240,7 @@ typedef struct
 	char tradeNo[EVS_MAX_TRADE_LEN];	// 3	设备交易流水号
 } evs_service_feedback_authCharge;
 ```
+
 返回值说明
 ---
 | 值  | 说明
@@ -1151,7 +1254,8 @@ typedef struct
 
 原型
 ---
-```
+
+``` 
 int callback(evs_service_stopCharge *param, evs_service_feedback_stopCharge *result)
 ```
 
@@ -1168,7 +1272,8 @@ int callback(evs_service_stopCharge *param, evs_service_feedback_stopCharge *res
 
 参数附加说明
 ---
-```
+
+``` 
 typedef struct
 {
 	unsigned char gunNo;				// 1	充电枪编号
@@ -1177,7 +1282,8 @@ typedef struct
 	unsigned char stopReason;			// 4	停止原因
 } evs_service_stopCharge;
 ```
-```
+
+``` 
 typedef struct
 {
 	unsigned char gunNo;				// 1	充电枪编号
@@ -1185,6 +1291,7 @@ typedef struct
 	char tradeNo[EVS_MAX_TRADE_LEN];	// 3	设备交易流水号
 } evs_service_feedback_stopCharge;
 ```
+
 返回值说明
 ---
 | 值  | 说明
@@ -1198,7 +1305,8 @@ typedef struct
 
 原型
 ---
-```
+
+``` 
 int callback(evs_service_confirmTrade *param, void *result)
 ```
 
@@ -1215,7 +1323,8 @@ int callback(evs_service_confirmTrade *param, void *result)
 
 参数附加说明
 ---
-```
+
+``` 
 typedef struct
 {
 	unsigned char gunNo;				// 1	充电枪编号
@@ -1238,7 +1347,8 @@ typedef struct
 
 原型
 ---
-```
+
+``` 
 int callback(evs_service_rsvCharge *param, evs_service_feedback_rsvCharge *result)
 ```
 
@@ -1255,7 +1365,8 @@ int callback(evs_service_rsvCharge *param, evs_service_feedback_rsvCharge *resul
 
 参数附加说明
 ---
-```
+
+``` 
 typedef struct
 {
 	unsigned char gunNo;	  // 1	充电枪编号
@@ -1263,7 +1374,8 @@ typedef struct
 	unsigned short appoDelay; // 3	预约等候时长  分钟数，大于0，且不大于1440
 } evs_service_rsvCharge;
 ```
-```
+
+``` 
 typedef struct
 {
 	unsigned char gunNo;	  // 1	充电枪编号
@@ -1272,6 +1384,7 @@ typedef struct
 	unsigned char reason;	  // 4	失败原因
 } evs_service_feedback_rsvCharge;
 ```
+
 返回值说明
 ---
 | 值  | 说明
@@ -1285,7 +1398,8 @@ typedef struct
 
 原型
 ---
-```
+
+``` 
 int callback(evs_service_groundLock_ctrl *param, evs_service_feedback_groundLock_ctrl *result)
 ```
 
@@ -1302,14 +1416,16 @@ int callback(evs_service_groundLock_ctrl *param, evs_service_feedback_groundLock
 
 参数附加说明
 ---
-```
+
+``` 
 typedef struct
 {
 	unsigned char gunNo;	// 1	充电枪编号
 	unsigned char ctrlFlag; // 2	控制指令
 } evs_service_groundLock_ctrl;
 ```
-```
+
+``` 
 typedef struct
 {
 	unsigned char gunNo;  // 1	充电枪编号
@@ -1317,6 +1433,7 @@ typedef struct
 	unsigned char reason; // 3	失败原因
 } evs_service_feedback_groundLock_ctrl;
 ```
+
 返回值说明
 ---
 | 值  | 说明
@@ -1330,7 +1447,8 @@ typedef struct
 
 原型
 ---
-```
+
+``` 
 int callback(evs_service_gateLock_ctrl *param, evs_service_feedback_gateLock_ctrl *result)
 ```
 
@@ -1347,20 +1465,23 @@ int callback(evs_service_gateLock_ctrl *param, evs_service_feedback_gateLock_ctr
 
 参数附加说明
 ---
-```
+
+``` 
 typedef struct
 {
 	unsigned char lockNo;	// 1	门锁编号
 	unsigned char ctrlFlag; // 2	控制指令
 } evs_service_gateLock_ctrl;
 ```
-```
+
+``` 
 typedef struct
 {
 	unsigned char lockNo; // 1	充电枪编号
 	unsigned char result; // 2	控制结果
 } evs_service_feedback_gateLock_ctrl;
 ```
+
 返回值说明
 ---
 | 值  | 说明
@@ -1374,7 +1495,8 @@ typedef struct
 
 原型
 ---
-```
+
+``` 
 int callback(evs_service_orderCharge *param, evs_service_feedback_orderCharge *result)
 ```
 
@@ -1391,7 +1513,8 @@ int callback(evs_service_orderCharge *param, evs_service_feedback_orderCharge *r
 
 参数附加说明
 ---
-```
+
+``` 
 typedef struct
 {
 	char preTradeNo[EVS_MAX_TRADE_LEN];			 // 1	订单流水号
@@ -1401,7 +1524,8 @@ typedef struct
 
 } evs_service_orderCharge;
 ```
-```
+
+``` 
 typedef struct
 {
 	char preTradeNo[EVS_MAX_TRADE_LEN]; // 1	订单流水号
@@ -1409,6 +1533,7 @@ typedef struct
 	unsigned char reason;				// 3	失败原因
 } evs_service_feedback_orderCharge;
 ```
+
 返回值说明
 ---
 | 值  | 说明
@@ -1422,7 +1547,8 @@ typedef struct
 
 原型
 ---
-```
+
+``` 
 int callback(int ev, const char *msg);
 ```
 
@@ -1450,7 +1576,8 @@ int callback(int ev, const char *msg);
 
 原型
 ---
-```
+
+``` 
 int callback(void);
 ```
 
@@ -1475,7 +1602,8 @@ int callback(void);
 
 原型
 ---
-```
+
+``` 
 int callback(void);
 ```
 
@@ -1500,7 +1628,8 @@ int callback(void);
 
 原型
 ---
-```
+
+``` 
 int callback(const int devid, const int msgid, const int code, const char *reply, const int reply_len);
 ```
 
@@ -1532,7 +1661,8 @@ int callback(const int devid, const int msgid, const int code, const char *reply
 
 原型
 ---
-```
+
+``` 
 int callback(const int devid, const int msgid, const int code, const char *eventid, const int eventid_len, const char *message, const int message_len);
 ```
 
@@ -1566,7 +1696,8 @@ int callback(const int devid, const int msgid, const int code, const char *event
 
 原型
 ---
-```
+
+``` 
 int callback(evs_device_meta *meta);
 ```
 
@@ -1582,7 +1713,8 @@ int callback(evs_device_meta *meta);
 
 附加参数说明
 ---
-```
+
+``` 
 typedef struct
 {
 	char product_key[IOTX_PRODUCT_KEY_LEN + 1];			//设备品类标识字符串
@@ -1593,6 +1725,7 @@ typedef struct
 	char device_uid[IOTX_DEVICE_UID_LEN + 1];			//某台设备的出厂编号
 } evs_device_meta;
 ```
+
 返回值说明
 ---
 
@@ -1607,7 +1740,8 @@ typedef struct
 
 原型
 ---
-```
+
+``` 
 int callback(evs_device_meta *meta);
 ```
 
@@ -1623,7 +1757,8 @@ int callback(evs_device_meta *meta);
 
 附加参数说明
 ---
-```
+
+``` 
 typedef struct
 {
 	char product_key[IOTX_PRODUCT_KEY_LEN + 1];			//设备品类标识字符串
@@ -1634,6 +1769,7 @@ typedef struct
 	char device_uid[IOTX_DEVICE_UID_LEN + 1];			//某台设备的出厂编号
 } evs_device_meta;
 ```
+
 返回值说明
 ---
 
@@ -1648,7 +1784,8 @@ typedef struct
 
 原型
 ---
-```
+
+``` 
 int callback(char *device_reg_code);
 ```
 
@@ -1676,7 +1813,8 @@ int callback(char *device_reg_code);
 
 原型
 ---
-```
+
+``` 
 int callback(char *device_uid); 
 ```
 
@@ -1704,7 +1842,8 @@ int callback(char *device_uid);
 
 原型
 ---
-```
+
+``` 
 int callback(const unsigned int timestamp);
 ```
 
@@ -1732,13 +1871,14 @@ int callback(const unsigned int timestamp);
 
 原型
 ---
-```
+
+``` 
 int callback(const char *version);
 ```
 
 接口说明
 ---
-当SDK收到可用固件的通知时, 会触发此事件并调用回调函数. 用户在收到新固件通知后, 可使用`evs_linkkit_fota`消息获取新固件
+当SDK收到可用固件的通知时, 会触发此事件并调用回调函数. 用户在收到新固件通知后, 可使用 `evs_linkkit_fota` 消息获取新固件
 
 参数说明
 ---
