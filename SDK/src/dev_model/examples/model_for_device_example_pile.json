@@ -1,0 +1,1249 @@
+{
+  "schema": "https://iotx-tsl.oss-ap-southeast-1.aliyuncs.com/schema.json",
+  "profile": {
+    "productKey": "a1X3BP5v0vn"
+  },
+  "properties": [
+    {
+      "identifier": "dcDeRealIty",
+      "name": "直流充电设备实时监测属性",
+      "accessMode": "rw",
+      "required": false,
+      "dataType": {
+        "type": "struct",
+        "specs": [
+          {
+            "identifier": "netType",
+            "name": "网络类型",
+            "dataType": {
+              "type": "int",
+              "specs": {
+                "min": "10",
+                "max": "18",
+                "step": "1"
+              }
+            }
+          },
+          {
+            "identifier": "sigVal",
+            "name": "网络信号等级",
+            "dataType": {
+              "type": "int",
+              "specs": {
+                "min": "0",
+                "max": "32",
+                "step": "1"
+              }
+            }
+          },
+          {
+            "identifier": "netId",
+            "name": "网络运营商",
+            "dataType": {
+              "type": "int",
+              "specs": {
+                "min": "10",
+                "max": "14",
+                "step": "1"
+              }
+            }
+          },
+          {
+            "identifier": "acVolA",
+            "name": "A相采集电压",
+            "dataType": {
+              "type": "int",
+              "specs": {
+                "min": "0",
+                "max": "100000",
+                "step": "1"
+              }
+            }
+          },
+          {
+            "identifier": "acCurA",
+            "name": "A相采集电流",
+            "dataType": {
+              "type": "int",
+              "specs": {
+                "min": "0",
+                "max": "10000000",
+                "step": "1"
+              }
+            }
+          },
+          {
+            "identifier": "acVolB",
+            "name": "B相采集电压",
+            "dataType": {
+              "type": "int",
+              "specs": {
+                "min": "0",
+                "max": "10000000",
+                "step": "1"
+              }
+            }
+          },
+          {
+            "identifier": "acCurB",
+            "name": "B相采集电流",
+            "dataType": {
+              "type": "int",
+              "specs": {
+                "min": "0",
+                "max": "100000",
+                "step": "1"
+              }
+            }
+          },
+          {
+            "identifier": "acVolC",
+            "name": "C相采集电压",
+            "dataType": {
+              "type": "int",
+              "specs": {
+                "min": "0",
+                "max": "100000",
+                "step": "1"
+              }
+            }
+          },
+          {
+            "identifier": "acCurC",
+            "name": "C相采集电流",
+            "dataType": {
+              "type": "int",
+              "specs": {
+                "min": "0",
+                "max": "10000000",
+                "step": "1"
+              }
+            }
+          },
+          {
+            "identifier": "caseTemp",
+            "name": "桩内温度",
+            "dataType": {
+              "type": "int",
+              "specs": {
+                "min": "-20000",
+                "max": "3000000",
+                "step": "1"
+              }
+            }
+          },
+          {
+            "identifier": "eleModelId",
+            "name": "电费模型编号",
+            "dataType": {
+              "type": "text",
+              "specs": {
+                "length": "2048"
+              }
+            }
+          },
+          {
+            "identifier": "serModelId",
+            "name": "服务模型编号",
+            "dataType": {
+              "type": "text",
+              "specs": {
+                "length": "2048"
+              }
+            }
+          },
+          {
+            "identifier": "inletTemp",
+            "name": "设备入风口温度",
+            "dataType": {
+              "type": "int",
+              "specs": {
+                "min": "0",
+                "max": "10000000",
+                "unit": "°C",
+                "step": "1"
+              }
+            }
+          },
+          {
+            "identifier": "outletTemp",
+            "name": "设备出风口温度",
+            "dataType": {
+              "type": "int",
+              "specs": {
+                "min": "0",
+                "max": "1000000000",
+                "unit": "°C",
+                "step": "1"
+              }
+            }
+          }
+        ]
+      }
+    }
+  ],
+  "events": [
+    {
+      "identifier": "post",
+      "name": "post",
+      "type": "info",
+      "required": true,
+      "desc": "属性上报",
+      "method": "thing.event.property.post",
+      "outputData": [
+        {
+          "identifier": "dcDeRealIty",
+          "name": "直流充电设备实时监测属性",
+          "dataType": {
+            "type": "struct",
+            "specs": [
+              {
+                "identifier": "netType",
+                "name": "网络类型",
+                "dataType": {
+                  "type": "int",
+                  "specs": {
+                    "min": "10",
+                    "max": "18",
+                    "step": "1"
+                  }
+                }
+              },
+              {
+                "identifier": "sigVal",
+                "name": "网络信号等级",
+                "dataType": {
+                  "type": "int",
+                  "specs": {
+                    "min": "0",
+                    "max": "32",
+                    "step": "1"
+                  }
+                }
+              },
+              {
+                "identifier": "netId",
+                "name": "网络运营商",
+                "dataType": {
+                  "type": "int",
+                  "specs": {
+                    "min": "10",
+                    "max": "14",
+                    "step": "1"
+                  }
+                }
+              },
+              {
+                "identifier": "acVolA",
+                "name": "A相采集电压",
+                "dataType": {
+                  "type": "int",
+                  "specs": {
+                    "min": "0",
+                    "max": "100000",
+                    "step": "1"
+                  }
+                }
+              },
+              {
+                "identifier": "acCurA",
+                "name": "A相采集电流",
+                "dataType": {
+                  "type": "int",
+                  "specs": {
+                    "min": "0",
+                    "max": "10000000",
+                    "step": "1"
+                  }
+                }
+              },
+              {
+                "identifier": "acVolB",
+                "name": "B相采集电压",
+                "dataType": {
+                  "type": "int",
+                  "specs": {
+                    "min": "0",
+                    "max": "10000000",
+                    "step": "1"
+                  }
+                }
+              },
+              {
+                "identifier": "acCurB",
+                "name": "B相采集电流",
+                "dataType": {
+                  "type": "int",
+                  "specs": {
+                    "min": "0",
+                    "max": "100000",
+                    "step": "1"
+                  }
+                }
+              },
+              {
+                "identifier": "acVolC",
+                "name": "C相采集电压",
+                "dataType": {
+                  "type": "int",
+                  "specs": {
+                    "min": "0",
+                    "max": "100000",
+                    "step": "1"
+                  }
+                }
+              },
+              {
+                "identifier": "acCurC",
+                "name": "C相采集电流",
+                "dataType": {
+                  "type": "int",
+                  "specs": {
+                    "min": "0",
+                    "max": "10000000",
+                    "step": "1"
+                  }
+                }
+              },
+              {
+                "identifier": "caseTemp",
+                "name": "桩内温度",
+                "dataType": {
+                  "type": "int",
+                  "specs": {
+                    "min": "-20000",
+                    "max": "3000000",
+                    "step": "1"
+                  }
+                }
+              },
+              {
+                "identifier": "eleModelId",
+                "name": "电费模型编号",
+                "dataType": {
+                  "type": "text",
+                  "specs": {
+                    "length": "2048"
+                  }
+                }
+              },
+              {
+                "identifier": "serModelId",
+                "name": "服务模型编号",
+                "dataType": {
+                  "type": "text",
+                  "specs": {
+                    "length": "2048"
+                  }
+                }
+              },
+              {
+                "identifier": "inletTemp",
+                "name": "设备入风口温度",
+                "dataType": {
+                  "type": "int",
+                  "specs": {
+                    "min": "0",
+                    "max": "10000000",
+                    "unit": "°C",
+                    "step": "1"
+                  }
+                }
+              },
+              {
+                "identifier": "outletTemp",
+                "name": "设备出风口温度",
+                "dataType": {
+                  "type": "int",
+                  "specs": {
+                    "min": "0",
+                    "max": "1000000000",
+                    "unit": "°C",
+                    "step": "1"
+                  }
+                }
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "identifier": "acCarInfoEvt",
+      "name": "充电前车辆信息上报",
+      "type": "info",
+      "required": false,
+      "method": "thing.event.acCarInfoEvt.post",
+      "outputData": [
+        {
+          "identifier": "batterySOC",
+          "name": "电池SOC",
+          "dataType": {
+            "type": "int",
+            "specs": {
+              "min": "1",
+              "max": "100",
+              "step": "1"
+            }
+          }
+        },
+        {
+          "identifier": "batteryCap",
+          "name": "电车容量",
+          "dataType": {
+            "type": "int",
+            "specs": {
+              "min": "0",
+              "max": "65535",
+              "step": "1"
+            }
+          }
+        },
+        {
+          "identifier": "vinCode",
+          "name": "VIN码",
+          "dataType": {
+            "type": "text",
+            "specs": {
+              "length": "20"
+            }
+          }
+        },
+        {
+          "identifier": "state",
+          "name": "获取车辆信息状态",
+          "dataType": {
+            "type": "int",
+            "specs": {
+              "min": "0",
+              "max": "255",
+              "step": "1"
+            }
+          }
+        },
+        {
+          "identifier": "gunNo",
+          "name": "充电枪编号",
+          "dataType": {
+            "type": "int",
+            "specs": {
+              "min": "1",
+              "max": "255",
+              "step": "1"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "identifier": "firmwareEvt",
+      "name": "固件信息上送",
+      "type": "info",
+      "required": false,
+      "desc": "固件信息",
+      "method": "thing.event.firmwareEvt.post",
+      "outputData": [
+        {
+          "identifier": "simNo",
+          "name": "SIM卡号",
+          "dataType": {
+            "type": "text",
+            "specs": {
+              "length": "1000"
+            }
+          }
+        },
+        {
+          "identifier": "eleModelId",
+          "name": "电费模型编号",
+          "dataType": {
+            "type": "text",
+            "specs": {
+              "length": "1000"
+            }
+          }
+        },
+        {
+          "identifier": "stakeModel",
+          "name": "充电桩型号",
+          "dataType": {
+            "type": "text",
+            "specs": {
+              "length": "1000"
+            }
+          }
+        },
+        {
+          "identifier": "vendorCode",
+          "name": "生产厂商编码",
+          "dataType": {
+            "type": "int",
+            "specs": {
+              "min": "1",
+              "max": "10000",
+              "step": "1"
+            }
+          }
+        },
+        {
+          "identifier": "devSn",
+          "name": "出厂编号",
+          "dataType": {
+            "type": "text",
+            "specs": {
+              "length": "2048"
+            }
+          }
+        },
+        {
+          "identifier": "devType",
+          "name": "桩类型",
+          "dataType": {
+            "type": "int",
+            "specs": {
+              "min": "1",
+              "max": "100",
+              "step": "1"
+            }
+          }
+        },
+        {
+          "identifier": "portNum",
+          "name": "充电接口数量",
+          "dataType": {
+            "type": "int",
+            "specs": {
+              "min": "1",
+              "max": "255",
+              "step": "1"
+            }
+          }
+        },
+        {
+          "identifier": "simMac",
+          "name": "网络MAC地址",
+          "dataType": {
+            "type": "text",
+            "specs": {
+              "length": "2048"
+            }
+          }
+        },
+        {
+          "identifier": "longitude",
+          "name": "经度",
+          "dataType": {
+            "type": "int",
+            "specs": {
+              "min": "-10000000",
+              "max": "10000000",
+              "step": "1"
+            }
+          }
+        },
+        {
+          "identifier": "latitude",
+          "name": "纬度",
+          "dataType": {
+            "type": "int",
+            "specs": {
+              "min": "-10000000",
+              "max": "10000000",
+              "step": "1"
+            }
+          }
+        },
+        {
+          "identifier": "height",
+          "name": "高度",
+          "dataType": {
+            "type": "int",
+            "specs": {
+              "min": "-100000000",
+              "max": "100000000",
+              "step": "1"
+            }
+          }
+        },
+        {
+          "identifier": "gridType",
+          "name": "坐标类型",
+          "dataType": {
+            "type": "int",
+            "specs": {
+              "min": "1",
+              "max": "100",
+              "step": "1"
+            }
+          }
+        },
+        {
+          "identifier": "btMac",
+          "name": "蓝牙MAC地址",
+          "dataType": {
+            "type": "text",
+            "specs": {
+              "length": "2048"
+            }
+          }
+        },
+        {
+          "identifier": "meaType",
+          "name": "计量方式",
+          "dataType": {
+            "type": "int",
+            "specs": {
+              "min": "1",
+              "max": "100",
+              "step": "1"
+            }
+          }
+        },
+        {
+          "identifier": "otRate",
+          "name": "额定功率",
+          "dataType": {
+            "type": "int",
+            "specs": {
+              "min": "1",
+              "max": "100000",
+              "step": "1"
+            }
+          }
+        },
+        {
+          "identifier": "otMinVol",
+          "name": "输出最小电压",
+          "dataType": {
+            "type": "int",
+            "specs": {
+              "min": "1",
+              "max": "100000",
+              "step": "1"
+            }
+          }
+        },
+        {
+          "identifier": "otMaxVol",
+          "name": "输出最大电压",
+          "dataType": {
+            "type": "int",
+            "specs": {
+              "min": "1",
+              "max": "100000",
+              "step": "1"
+            }
+          }
+        },
+        {
+          "identifier": "otCur",
+          "name": "输出最大电流",
+          "dataType": {
+            "type": "int",
+            "specs": {
+              "min": "1",
+              "max": "100000",
+              "step": "1"
+            }
+          }
+        },
+        {
+          "identifier": "inMeter",
+          "name": "直流输入电表地址",
+          "dataType": {
+            "type": "array",
+            "specs": {
+              "size": "512",
+              "item": {
+                "type": "text"
+              }
+            }
+          }
+        },
+        {
+          "identifier": "outMeter",
+          "name": "计量用电能表地址",
+          "dataType": {
+            "type": "array",
+            "specs": {
+              "size": "512",
+              "item": {
+                "type": "text"
+              }
+            }
+          }
+        },
+        {
+          "identifier": "CT",
+          "name": "电流互感器系数",
+          "dataType": {
+            "type": "int",
+            "specs": {
+              "min": "1",
+              "max": "100000",
+              "step": "1"
+            }
+          }
+        },
+        {
+          "identifier": "isGateLock",
+          "name": "是否有智能门锁",
+          "dataType": {
+            "type": "int",
+            "specs": {
+              "min": "1",
+              "max": "100",
+              "step": "1"
+            }
+          }
+        },
+        {
+          "identifier": "isGroundLock",
+          "name": "是否有地锁",
+          "dataType": {
+            "type": "int",
+            "specs": {
+              "min": "1",
+              "max": "100",
+              "step": "1"
+            }
+          }
+        },
+        {
+          "identifier": "serModelId",
+          "name": "服务费模型编号",
+          "dataType": {
+            "type": "text",
+            "specs": {
+              "length": "1000"
+            }
+          }
+        }
+      ]
+    }
+  ],
+  "services": [
+    {
+      "identifier": "set",
+      "name": "set",
+      "required": true,
+      "callType": "async",
+      "desc": "属性设置",
+      "method": "thing.service.property.set",
+      "inputData": [
+        {
+          "identifier": "dcDeRealIty",
+          "name": "直流充电设备实时监测属性",
+          "dataType": {
+            "type": "struct",
+            "specs": [
+              {
+                "identifier": "netType",
+                "name": "网络类型",
+                "dataType": {
+                  "type": "int",
+                  "specs": {
+                    "min": "10",
+                    "max": "18",
+                    "step": "1"
+                  }
+                }
+              },
+              {
+                "identifier": "sigVal",
+                "name": "网络信号等级",
+                "dataType": {
+                  "type": "int",
+                  "specs": {
+                    "min": "0",
+                    "max": "32",
+                    "step": "1"
+                  }
+                }
+              },
+              {
+                "identifier": "netId",
+                "name": "网络运营商",
+                "dataType": {
+                  "type": "int",
+                  "specs": {
+                    "min": "10",
+                    "max": "14",
+                    "step": "1"
+                  }
+                }
+              },
+              {
+                "identifier": "acVolA",
+                "name": "A相采集电压",
+                "dataType": {
+                  "type": "int",
+                  "specs": {
+                    "min": "0",
+                    "max": "100000",
+                    "step": "1"
+                  }
+                }
+              },
+              {
+                "identifier": "acCurA",
+                "name": "A相采集电流",
+                "dataType": {
+                  "type": "int",
+                  "specs": {
+                    "min": "0",
+                    "max": "10000000",
+                    "step": "1"
+                  }
+                }
+              },
+              {
+                "identifier": "acVolB",
+                "name": "B相采集电压",
+                "dataType": {
+                  "type": "int",
+                  "specs": {
+                    "min": "0",
+                    "max": "10000000",
+                    "step": "1"
+                  }
+                }
+              },
+              {
+                "identifier": "acCurB",
+                "name": "B相采集电流",
+                "dataType": {
+                  "type": "int",
+                  "specs": {
+                    "min": "0",
+                    "max": "100000",
+                    "step": "1"
+                  }
+                }
+              },
+              {
+                "identifier": "acVolC",
+                "name": "C相采集电压",
+                "dataType": {
+                  "type": "int",
+                  "specs": {
+                    "min": "0",
+                    "max": "100000",
+                    "step": "1"
+                  }
+                }
+              },
+              {
+                "identifier": "acCurC",
+                "name": "C相采集电流",
+                "dataType": {
+                  "type": "int",
+                  "specs": {
+                    "min": "0",
+                    "max": "10000000",
+                    "step": "1"
+                  }
+                }
+              },
+              {
+                "identifier": "caseTemp",
+                "name": "桩内温度",
+                "dataType": {
+                  "type": "int",
+                  "specs": {
+                    "min": "-20000",
+                    "max": "3000000",
+                    "step": "1"
+                  }
+                }
+              },
+              {
+                "identifier": "eleModelId",
+                "name": "电费模型编号",
+                "dataType": {
+                  "type": "text",
+                  "specs": {
+                    "length": "2048"
+                  }
+                }
+              },
+              {
+                "identifier": "serModelId",
+                "name": "服务模型编号",
+                "dataType": {
+                  "type": "text",
+                  "specs": {
+                    "length": "2048"
+                  }
+                }
+              },
+              {
+                "identifier": "inletTemp",
+                "name": "设备入风口温度",
+                "dataType": {
+                  "type": "int",
+                  "specs": {
+                    "min": "0",
+                    "max": "10000000",
+                    "unit": "°C",
+                    "step": "1"
+                  }
+                }
+              },
+              {
+                "identifier": "outletTemp",
+                "name": "设备出风口温度",
+                "dataType": {
+                  "type": "int",
+                  "specs": {
+                    "min": "0",
+                    "max": "1000000000",
+                    "unit": "°C",
+                    "step": "1"
+                  }
+                }
+              }
+            ]
+          }
+        }
+      ],
+      "outputData": []
+    },
+    {
+      "identifier": "get",
+      "name": "get",
+      "required": true,
+      "callType": "async",
+      "desc": "属性获取",
+      "method": "thing.service.property.get",
+      "inputData": [
+        "dcDeRealIty"
+      ],
+      "outputData": [
+        {
+          "identifier": "dcDeRealIty",
+          "name": "直流充电设备实时监测属性",
+          "dataType": {
+            "type": "struct",
+            "specs": [
+              {
+                "identifier": "netType",
+                "name": "网络类型",
+                "dataType": {
+                  "type": "int",
+                  "specs": {
+                    "min": "10",
+                    "max": "18",
+                    "step": "1"
+                  }
+                }
+              },
+              {
+                "identifier": "sigVal",
+                "name": "网络信号等级",
+                "dataType": {
+                  "type": "int",
+                  "specs": {
+                    "min": "0",
+                    "max": "32",
+                    "step": "1"
+                  }
+                }
+              },
+              {
+                "identifier": "netId",
+                "name": "网络运营商",
+                "dataType": {
+                  "type": "int",
+                  "specs": {
+                    "min": "10",
+                    "max": "14",
+                    "step": "1"
+                  }
+                }
+              },
+              {
+                "identifier": "acVolA",
+                "name": "A相采集电压",
+                "dataType": {
+                  "type": "int",
+                  "specs": {
+                    "min": "0",
+                    "max": "100000",
+                    "step": "1"
+                  }
+                }
+              },
+              {
+                "identifier": "acCurA",
+                "name": "A相采集电流",
+                "dataType": {
+                  "type": "int",
+                  "specs": {
+                    "min": "0",
+                    "max": "10000000",
+                    "step": "1"
+                  }
+                }
+              },
+              {
+                "identifier": "acVolB",
+                "name": "B相采集电压",
+                "dataType": {
+                  "type": "int",
+                  "specs": {
+                    "min": "0",
+                    "max": "10000000",
+                    "step": "1"
+                  }
+                }
+              },
+              {
+                "identifier": "acCurB",
+                "name": "B相采集电流",
+                "dataType": {
+                  "type": "int",
+                  "specs": {
+                    "min": "0",
+                    "max": "100000",
+                    "step": "1"
+                  }
+                }
+              },
+              {
+                "identifier": "acVolC",
+                "name": "C相采集电压",
+                "dataType": {
+                  "type": "int",
+                  "specs": {
+                    "min": "0",
+                    "max": "100000",
+                    "step": "1"
+                  }
+                }
+              },
+              {
+                "identifier": "acCurC",
+                "name": "C相采集电流",
+                "dataType": {
+                  "type": "int",
+                  "specs": {
+                    "min": "0",
+                    "max": "10000000",
+                    "step": "1"
+                  }
+                }
+              },
+              {
+                "identifier": "caseTemp",
+                "name": "桩内温度",
+                "dataType": {
+                  "type": "int",
+                  "specs": {
+                    "min": "-20000",
+                    "max": "3000000",
+                    "step": "1"
+                  }
+                }
+              },
+              {
+                "identifier": "eleModelId",
+                "name": "电费模型编号",
+                "dataType": {
+                  "type": "text",
+                  "specs": {
+                    "length": "2048"
+                  }
+                }
+              },
+              {
+                "identifier": "serModelId",
+                "name": "服务模型编号",
+                "dataType": {
+                  "type": "text",
+                  "specs": {
+                    "length": "2048"
+                  }
+                }
+              },
+              {
+                "identifier": "inletTemp",
+                "name": "设备入风口温度",
+                "dataType": {
+                  "type": "int",
+                  "specs": {
+                    "min": "0",
+                    "max": "10000000",
+                    "unit": "°C",
+                    "step": "1"
+                  }
+                }
+              },
+              {
+                "identifier": "outletTemp",
+                "name": "设备出风口温度",
+                "dataType": {
+                  "type": "int",
+                  "specs": {
+                    "min": "0",
+                    "max": "1000000000",
+                    "unit": "°C",
+                    "step": "1"
+                  }
+                }
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "identifier": "startChargeSrv",
+      "name": "直流桩启动充电",
+      "required": false,
+      "callType": "async",
+      "desc": "直流桩启动充电服务模型",
+      "method": "thing.service.startChargeSrv",
+      "inputData": [
+        {
+          "identifier": "gunNo",
+          "name": "充电枪编号",
+          "dataType": {
+            "type": "int",
+            "specs": {
+              "min": "1",
+              "max": "255",
+              "step": "1"
+            }
+          }
+        },
+        {
+          "identifier": "preTradeNo",
+          "name": "平台交易流水号",
+          "dataType": {
+            "type": "text",
+            "specs": {
+              "length": "2048"
+            }
+          }
+        },
+        {
+          "identifier": "tradeNo",
+          "name": "设备交易流水号",
+          "dataType": {
+            "type": "text",
+            "specs": {
+              "length": "2048"
+            }
+          }
+        },
+        {
+          "identifier": "startType",
+          "name": "启动方式",
+          "dataType": {
+            "type": "int",
+            "specs": {
+              "min": "1",
+              "max": "255",
+              "step": "1"
+            }
+          }
+        },
+        {
+          "identifier": "chargeMode",
+          "name": "充电模式",
+          "dataType": {
+            "type": "int",
+            "specs": {
+              "min": "1",
+              "max": "255",
+              "step": "1"
+            }
+          }
+        },
+        {
+          "identifier": "limitData",
+          "name": "限制值",
+          "dataType": {
+            "type": "int",
+            "specs": {
+              "min": "1",
+              "max": "255",
+              "step": "1"
+            }
+          }
+        },
+        {
+          "identifier": "stopCode",
+          "name": "停机码",
+          "dataType": {
+            "type": "int",
+            "specs": {
+              "min": "1",
+              "max": "999999",
+              "step": "1"
+            }
+          }
+        },
+        {
+          "identifier": "startMode",
+          "name": "启动模式",
+          "dataType": {
+            "type": "int",
+            "specs": {
+              "min": "1",
+              "max": "255",
+              "step": "1"
+            }
+          }
+        },
+        {
+          "identifier": "insertGunTime",
+          "name": "插枪事件时间戳",
+          "dataType": {
+            "type": "int",
+            "specs": {
+              "min": "1",
+              "max": "2147483647",
+              "step": "1"
+            }
+          }
+        }
+      ],
+      "outputData": [
+        {
+          "identifier": "gunNo",
+          "name": "充电枪编号",
+          "dataType": {
+            "type": "int",
+            "specs": {
+              "min": "1",
+              "max": "255",
+              "step": "1"
+            }
+          }
+        },
+        {
+          "identifier": "preTradeNo",
+          "name": "平台交易流水号",
+          "dataType": {
+            "type": "text",
+            "specs": {
+              "length": "2048"
+            }
+          }
+        },
+        {
+          "identifier": "tradeNo",
+          "name": "设备交易流水号",
+          "dataType": {
+            "type": "text",
+            "specs": {
+              "length": "2048"
+            }
+          }
+        }
+      ]
+    }
+  ]
+}

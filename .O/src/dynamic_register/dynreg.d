@@ -1,0 +1,11 @@
+/home/zhangqiang/evse/evse-sdk-3.20/.O/src/dynamic_register/dynreg.o: \
+ /home/zhangqiang/evse/evse-sdk-3.20/src/dynamic_register/dynreg.c \
+ src/infra/infra_state.h src/infra/infra_compat.h src/infra/infra_defs.h \
+ src/infra/infra_types.h src/infra/infra_config.h src/infra/infra_types.h \
+ src/infra/infra_defs.h src/infra/infra_string.h src/infra/infra_httpc.h \
+ src/infra/infra_net.h src/infra/infra_sha256.h \
+ /home/zhangqiang/evse/evse-sdk-3.20/src/dynamic_register/dynreg_internal.h \
+ wrappers/wrappers.h wrappers/wrappers_defs.h wrappers/wrappers_os.h \
+ wrappers/wrappers_tcp.h wrappers/wrappers_kv.h wrappers/wrappers_tls.h \
+ src/infra/infra_log.h \
+ /home/zhangqiang/evse/evse-sdk-3.20/src/dynamic_register/dynreg_api.h
