@@ -377,20 +377,22 @@ static int evs_service_update_config_handler(const char *request, char **respons
     if (item_qrCode != NULL && cJSON_IsArray(item_qrCode))
     {
         cJSON *item_arrayData;
+        int qrcode_len = 0;
         int qrcode_num = cJSON_GetArraySize(item_qrCode);
         qrcode_num = (qrcode_num <= EVS_MAX_PORT_NUM) ? qrcode_num : EVS_MAX_PORT_NUM;
-        int qrcode_len = strlen(item_arrayData->valuestring) + 1;
-        if (qrcode_len < EVS_MAX_QRCODE_LEN)
+
+        for (i = 0; i < qrcode_num; i++)
         {
-            for (i = 0; i < qrcode_num; i++)
+            item_arrayData = cJSON_GetArrayItem(item_qrCode, i);
+            qrcode_len = strlen(item_arrayData->valuestring);
+            if (qrcode_len < EVS_MAX_QRCODE_LEN)
             {
-                item_arrayData = cJSON_GetArrayItem(item_qrCode, i);
                 memcpy(service_dev_config_data.qrCode[i], item_arrayData->valuestring, qrcode_len);
             }
-        }
-        else
-        {
-            PROTOCOL_TRACE("QrCode buffer is too small!!!");
+            else
+            {
+                PROTOCOL_TRACE("QRCode is too big!");
+            }
         }
     }
 
